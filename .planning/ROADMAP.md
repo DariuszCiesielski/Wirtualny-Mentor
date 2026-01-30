@@ -52,12 +52,12 @@ Plans:
   4. Uzytkownik widzi dashboard z opcja edycji profilu (imie, avatar)
   5. Interfejs jest czysty i intuicyjny (inspiracja NotebookLM)
   6. Dark mode dziala poprawnie
-**Plans**: TBD
+**Plans**: 3 plans
 
 Plans:
-- [ ] 01-01: Supabase setup (database schema, auth, RLS)
-- [ ] 01-02: Auth UI (login, register, password reset)
-- [ ] 01-03: Dashboard i podstawowa nawigacja
+- [ ] 01-01-PLAN.md — Supabase setup, shadcn/ui, dark mode infrastructure
+- [ ] 01-02-PLAN.md — Auth flows (login, register, password reset)
+- [ ] 01-03-PLAN.md — Protected dashboard i edycja profilu
 
 ---
 
@@ -199,7 +199,7 @@ Phases execute in numeric order: 0 -> 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 0. Foundation & AI Architecture | 2/2 | ✓ Complete | 2025-01-30 |
-| 1. Auth & Basic UI | 0/3 | Not started | - |
+| 1. Auth & Basic UI | 0/3 | Planned | - |
 | 2. Curriculum Generation | 0/7 | Not started | - |
 | 3. Learning Materials | 0/4 | Not started | - |
 | 4. Assessment System | 0/4 | Not started | - |

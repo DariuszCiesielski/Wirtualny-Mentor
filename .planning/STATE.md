@@ -10,18 +10,18 @@ See: .planning/PROJECT.md (updated 2025-01-30)
 ## Current Position
 
 Phase: 2 of 7 (Curriculum Generation) - IN PROGRESS
-Plan: 1 of 7 in current phase - COMPLETE
+Plan: 2 of 7 in current phase - COMPLETE
 Status: In progress
-Last activity: 2026-01-30 - Completed 02-01-PLAN.md
+Last activity: 2026-01-30 - Completed 02-02-PLAN.md
 
-Progress: [██████░░░░] 43% (6/14 plans)
+Progress: [██████░░░░] 50% (7/14 plans)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 6
-- Average duration: 15 min
-- Total execution time: 1.6 hours
+- Total plans completed: 7
+- Average duration: 14 min
+- Total execution time: 1.7 hours
 
 **By Phase:**
 
@@ -29,11 +29,11 @@ Progress: [██████░░░░] 43% (6/14 plans)
 |-------|-------|-------|----------|
 | 00-foundation | 2/2 | 35 min | 17 min |
 | 01-auth-basic-ui | 3/3 | 55 min | 18 min |
-| 02-curriculum-generation | 1/7 | 5 min | 5 min |
+| 02-curriculum-generation | 2/7 | 13 min | 7 min |
 
 **Recent Trend:**
-- Last 5 plans: 01-01 (12 min), 01-02 (18 min), 01-03 (25 min), 02-01 (5 min)
-- Trend: Improving (02-01 was schema-only, fast)
+- Last 5 plans: 01-02 (18 min), 01-03 (25 min), 02-01 (5 min), 02-02 (8 min)
+- Trend: Stable (tooling plans are fast)
 
 *Updated after each plan completion*
 
@@ -61,6 +61,8 @@ Recent decisions affecting current work:
 - Course levels: 5 fixed Polish names (Poczatkujacy -> Guru)
 - Completion tracking: UUID arrays instead of join tables
 - RLS nested tables: Via course_id EXISTS join pattern
+- Lazy initialization: Tavily client inicjalizowany przy pierwszym uzyciu (build-time safety)
+- Curriculum schemas: curriculumSchema.levels.length(5) wymaga dokladnie 5 poziomow
 
 ### Pending Todos
 
@@ -74,9 +76,10 @@ None yet.
 - User setup: Supabase URL Configuration required (Site URL, Redirect URLs)
 - User setup: Supabase Storage bucket 'avatars' required for avatar uploads
 - User setup: Run curriculum migration in Supabase SQL Editor
+- User setup: TAVILY_API_KEY required for web search
 
 ## Session Continuity
 
-Last session: 2026-01-30 21:37
-Stopped at: Completed 02-01-PLAN.md (Curriculum Database Schema)
+Last session: 2026-01-30 21:40
+Stopped at: Completed 02-02-PLAN.md (AI Tooling - Tavily + Schemas)
 Resume file: None

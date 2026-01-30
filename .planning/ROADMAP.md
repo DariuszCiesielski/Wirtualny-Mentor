@@ -79,16 +79,16 @@ Plans:
   9. Uzytkownik moze miec wiele kursow rownolegle i przelaczac sie miedzy nimi
   10. Kazdy poziom wyswietla learning outcomes ("Po ukonczeniu tego poziomu bedziesz umial...")
   11. AI analizuje oficjalne programy nauczania (szkoly, uczelnie) i dopasowuje kurs do standardow rynkowych
-**Plans**: TBD
+**Plans**: 7 plans in 4 waves
 
 Plans:
-- [ ] 02-01: Topic input i clarifying questions flow
-- [ ] 02-02: Curriculum generation (5-level structure)
-- [ ] 02-03: Web search integration (Tavily)
-- [ ] 02-04: Progress tracking i nawigacja
-- [ ] 02-05: Multi-course dashboard i switching
-- [ ] 02-06: Learning outcomes per level
-- [ ] 02-07: Official curricula analysis (schools, universities, certifications)
+- [ ] 02-01-PLAN.md — Database schema dla courses/levels/chapters/progress (Wave 1)
+- [ ] 02-02-PLAN.md — Tavily client i Zod schemas dla curriculum (Wave 1)
+- [ ] 02-03-PLAN.md — Topic input i clarifying questions flow (Wave 2)
+- [ ] 02-04-PLAN.md — Curriculum generation z web search (Wave 2)
+- [ ] 02-05-PLAN.md — Curriculum TOC view i nawigacja (Wave 3)
+- [ ] 02-06-PLAN.md — Progress tracking, progress bar, chapter navigation (Wave 4)
+- [ ] 02-07-PLAN.md — Multi-course dashboard i course cards (Wave 4)
 
 ---
 
@@ -213,4 +213,4 @@ Phases execute in numeric order: 0 -> 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7
 
 ---
 *Roadmap created: 2025-01-30*
-*Last updated: 2025-01-30*
+*Last updated: 2026-01-30*

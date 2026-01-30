@@ -31,11 +31,11 @@ Wirtualny Mentor to platforma edukacyjna AI, która generuje spersonalizowane pr
   3. Prosty endpoint AI zwraca streaming response
   4. Struktura katalogow gotowa na service layer i AI orchestration
   5. Cost monitoring setup (alerty budzectowe w providerach AI)
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] 00-01: Next.js project setup z Vercel AI SDK
-- [ ] 00-02: Multi-model orchestration layer
+- [ ] 00-01-PLAN.md — Next.js 15 project setup z AI SDK 6 i struktura katalogow
+- [ ] 00-02-PLAN.md — Multi-model orchestration layer z cost tracking
 
 ---
 
@@ -196,7 +196,7 @@ Phases execute in numeric order: 0 -> 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 0. Foundation & AI Architecture | 0/2 | Not started | - |
+| 0. Foundation & AI Architecture | 0/2 | Planned | - |
 | 1. Auth & Basic UI | 0/3 | Not started | - |
 | 2. Curriculum Generation | 0/7 | Not started | - |
 | 3. Learning Materials | 0/4 | Not started | - |

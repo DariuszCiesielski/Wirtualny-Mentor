@@ -5,6 +5,15 @@ import { z } from "zod";
 // ============================================================================
 
 /**
+ * Typ zadania AI - routuje do odpowiedniego modelu
+ * - mentor: Claude dla mentoringu, long context, empathy
+ * - curriculum: GPT dla structured curriculum generation
+ * - quiz: Gemini dla szybkich quizow
+ * - embedding: OpenAI dla RAG embeddings
+ */
+export type AITask = "mentor" | "curriculum" | "quiz" | "embedding";
+
+/**
  * Status zadania AI
  */
 export type AITaskStatus = "pending" | "running" | "completed" | "failed" | "cancelled";
@@ -13,24 +22,6 @@ export type AITaskStatus = "pending" | "running" | "completed" | "failed" | "can
  * Typ modelu AI - wspierane providery
  */
 export type AIModelProvider = "anthropic" | "openai" | "google";
-
-/**
- * Zadanie AI do wykonania przez orchestrator
- */
-export interface AITask {
-  id: string;
-  type: string;
-  status: AITaskStatus;
-  provider: AIModelProvider;
-  model: string;
-  prompt: string;
-  context?: Record<string, unknown>;
-  result?: string;
-  error?: string;
-  createdAt: Date;
-  completedAt?: Date;
-  tokenUsage?: TokenUsage;
-}
 
 /**
  * Zuzycie tokenow
@@ -46,18 +37,15 @@ export interface TokenUsage {
 // ============================================================================
 
 /**
- * Log kosztu pojedynczego zapytania AI
+ * Log kosztu pojedynczego zapytania AI (uproszczony dla orchestrator)
  */
 export interface CostLog {
-  id: string;
-  taskId: string;
-  provider: AIModelProvider;
+  task: AITask;
   model: string;
-  tokenUsage: TokenUsage;
-  estimatedCostUSD: number;
+  inputTokens: number;
+  outputTokens: number;
   timestamp: Date;
-  userId?: string;
-  sessionId?: string;
+  durationMs?: number;
 }
 
 /**
@@ -195,31 +183,15 @@ export const TokenUsageSchema = z.object({
   totalTokens: z.number().int().nonnegative(),
 });
 
-export const AITaskSchema = z.object({
-  id: z.string(),
-  type: z.string(),
-  status: AITaskStatusSchema,
-  provider: AIModelProviderSchema,
-  model: z.string(),
-  prompt: z.string(),
-  context: z.record(z.string(), z.unknown()).optional(),
-  result: z.string().optional(),
-  error: z.string().optional(),
-  createdAt: z.date(),
-  completedAt: z.date().optional(),
-  tokenUsage: TokenUsageSchema.optional(),
-});
+export const AITaskSchema = z.enum(["mentor", "curriculum", "quiz", "embedding"]);
 
 export const CostLogSchema = z.object({
-  id: z.string(),
-  taskId: z.string(),
-  provider: AIModelProviderSchema,
+  task: AITaskSchema,
   model: z.string(),
-  tokenUsage: TokenUsageSchema,
-  estimatedCostUSD: z.number().nonnegative(),
+  inputTokens: z.number().int().nonnegative(),
+  outputTokens: z.number().int().nonnegative(),
   timestamp: z.date(),
-  userId: z.string().optional(),
-  sessionId: z.string().optional(),
+  durationMs: z.number().int().nonnegative().optional(),
 });
 
 export const ModelCapabilitySchema = z.enum([

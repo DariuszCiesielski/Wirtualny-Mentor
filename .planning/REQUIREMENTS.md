@@ -9,10 +9,10 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Authentication & Account
 
-- [ ] **AUTH-01**: User can sign up with email and password
-- [ ] **AUTH-02**: User can log in and session persists across browser refresh
-- [ ] **AUTH-03**: User can reset password via email link
-- [ ] **AUTH-04**: User can view and edit profile (name, avatar)
+- [x] **AUTH-01**: User can sign up with email and password
+- [x] **AUTH-02**: User can log in and session persists across browser refresh
+- [x] **AUTH-03**: User can reset password via email link
+- [x] **AUTH-04**: User can view and edit profile (name, avatar)
 
 ### Learning Program
 
@@ -73,11 +73,11 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### User Experience
 
-- [ ] **UX-01**: Clean, intuitive interface inspired by NotebookLM
+- [x] **UX-01**: Clean, intuitive interface inspired by NotebookLM
 - [ ] **UX-02**: Responsive design (works on mobile)
 - [ ] **UX-03**: Progress indicators (how far through level/course)
 - [ ] **UX-04**: Navigation between sections/levels
-- [ ] **UX-05**: Dark mode support
+- [x] **UX-05**: Dark mode support
 
 ## v2 Requirements
 
@@ -127,10 +127,10 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| AUTH-01 | Phase 1 | Pending |
-| AUTH-02 | Phase 1 | Pending |
-| AUTH-03 | Phase 1 | Pending |
-| AUTH-04 | Phase 1 | Pending |
+| AUTH-01 | Phase 1 | Complete |
+| AUTH-02 | Phase 1 | Complete |
+| AUTH-03 | Phase 1 | Complete |
+| AUTH-04 | Phase 1 | Complete |
 | PROG-01 | Phase 2 | Pending |
 | PROG-02 | Phase 2 | Pending |
 | PROG-03 | Phase 2 | Pending |
@@ -170,11 +170,11 @@ Which phases cover which requirements. Updated during roadmap creation.
 | KNOW-02 | Phase 2 | Pending |
 | KNOW-03 | Phase 7 | Pending |
 | KNOW-04 | Phase 3 | Pending |
-| UX-01 | Phase 1 | Pending |
+| UX-01 | Phase 1 | Complete |
 | UX-02 | Phase 7 | Pending |
 | UX-03 | Phase 2 | Pending |
 | UX-04 | Phase 2 | Pending |
-| UX-05 | Phase 1 | Pending |
+| UX-05 | Phase 1 | Complete |
 
 **Coverage:**
 - v1 requirements: 44 total

@@ -10,12 +10,15 @@
  * 4. Preview - Review and confirm curriculum
  */
 
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { TopicInput } from "@/components/curriculum/topic-input";
 import { ClarifyingChat } from "@/components/curriculum/clarifying-chat";
+import { CurriculumGenerator } from "@/components/curriculum/curriculum-generator";
+import { CurriculumPreview } from "@/components/curriculum/curriculum-preview";
 import { Check } from "lucide-react";
 import { cn } from "@/lib/utils";
-import type { UserInfo } from "@/lib/ai/curriculum/schemas";
+import type { UserInfo, Curriculum } from "@/lib/ai/curriculum/schemas";
+import { initiateCourseCreation, saveCurriculum } from "./actions";
 
 type Step = "topic" | "clarify" | "generate" | "preview";
 
@@ -94,8 +97,11 @@ export default function NewCoursePage() {
   const [currentStep, setCurrentStep] = useState<Step>("topic");
   const [topic, setTopic] = useState("");
   const [sourceUrl, setSourceUrl] = useState<string | undefined>();
-  const [userInfo, setUserInfo] = useState<Partial<UserInfo> | null>(null);
+  const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
+  const [courseId, setCourseId] = useState<string | null>(null);
+  const [curriculum, setCurriculum] = useState<Curriculum | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleTopicSubmit = (submittedTopic: string, submittedUrl?: string) => {
     setTopic(submittedTopic);
@@ -103,10 +109,54 @@ export default function NewCoursePage() {
     setCurrentStep("clarify");
   };
 
-  const handleClarifyComplete = (info: Partial<UserInfo>) => {
-    setUserInfo(info);
-    setCurrentStep("generate");
-    // TODO: Start curriculum generation in next plan
+  const handleClarifyComplete = async (info: Partial<UserInfo>) => {
+    // Convert partial to full UserInfo with defaults
+    const fullUserInfo: UserInfo = {
+      topic: info.topic || topic,
+      goals: info.goals || [],
+      experience: info.experience || "beginner",
+      weeklyHours: info.weeklyHours || 5,
+      sourceUrl: info.sourceUrl || sourceUrl,
+    };
+
+    setUserInfo(fullUserInfo);
+
+    // Create draft course in database
+    try {
+      setIsLoading(true);
+      const result = await initiateCourseCreation({
+        topic: fullUserInfo.topic,
+        sourceUrl: fullUserInfo.sourceUrl,
+        userGoals: fullUserInfo.goals,
+        userExperience: fullUserInfo.experience,
+        weeklyHours: fullUserInfo.weeklyHours,
+      });
+      setCourseId(result.courseId);
+      setCurrentStep("generate");
+    } catch (error) {
+      console.error("Failed to create course:", error);
+      // Stay on clarify step and show error
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleGenerationComplete = useCallback((generatedCurriculum: Curriculum) => {
+    setCurriculum(generatedCurriculum);
+    setCurrentStep("preview");
+  }, []);
+
+  const handleConfirmCurriculum = async () => {
+    if (!courseId || !curriculum) return;
+
+    try {
+      setIsSubmitting(true);
+      await saveCurriculum(courseId, curriculum);
+      // saveCurriculum redirects to /courses/[id]
+    } catch (error) {
+      console.error("Failed to save curriculum:", error);
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -133,34 +183,20 @@ export default function NewCoursePage() {
         />
       )}
 
-      {currentStep === "generate" && (
-        <div className="flex flex-col items-center justify-center py-16">
-          <div className="animate-pulse text-center">
-            <div className="h-12 w-12 mx-auto mb-4 rounded-full bg-primary/20" />
-            <h2 className="text-lg font-medium">Generowanie curriculum...</h2>
-            <p className="text-sm text-muted-foreground mt-2">
-              AI tworzy spersonalizowany program nauki
-            </p>
-          </div>
-          {/* Debug info */}
-          {userInfo && (
-            <div className="mt-8 p-4 bg-muted rounded-lg text-sm">
-              <p className="font-medium mb-2">Zebrane informacje:</p>
-              <pre className="text-xs overflow-auto">
-                {JSON.stringify(userInfo, null, 2)}
-              </pre>
-            </div>
-          )}
-        </div>
+      {currentStep === "generate" && userInfo && courseId && (
+        <CurriculumGenerator
+          userInfo={userInfo}
+          courseId={courseId}
+          onComplete={handleGenerationComplete}
+        />
       )}
 
-      {currentStep === "preview" && (
-        <div className="text-center py-16">
-          <h2 className="text-lg font-medium">Podglad curriculum</h2>
-          <p className="text-sm text-muted-foreground mt-2">
-            Wkrotce dostepne
-          </p>
-        </div>
+      {currentStep === "preview" && curriculum && (
+        <CurriculumPreview
+          curriculum={curriculum}
+          onConfirm={handleConfirmCurriculum}
+          isSubmitting={isSubmitting}
+        />
       )}
     </div>
   );

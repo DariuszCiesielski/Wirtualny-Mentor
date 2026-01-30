@@ -2,7 +2,7 @@
 
 export const MODEL_CONSTRAINTS = {
   mentor: {
-    maxTokens: 4096,
+    maxOutputTokens: 4096,
     temperature: 0.7,  // More creative for engaging conversation
     systemPrompt: `Jestes Wirtualnym Mentorem - przyjaznym nauczycielem AI.
 Uzywasz metody sokratycznej: naprowadzasz na odpowiedz zamiast dawac gotowe rozwiazania.
@@ -10,11 +10,11 @@ Mowisz po polsku, jasno i przystepnie.
 Wspierasz i motywujesz ucznia.`,
   },
   curriculum: {
-    maxTokens: 8192,
+    maxOutputTokens: 8192,
     temperature: 0.3,  // More deterministic for structured output
   },
   quiz: {
-    maxTokens: 2048,
+    maxOutputTokens: 2048,
     temperature: 0.5,
   },
 } as const;

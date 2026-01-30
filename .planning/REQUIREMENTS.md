@@ -1,7 +1,7 @@
 # Requirements: Wirtualny Mentor
 
 **Defined:** 2025-01-30
-**Core Value:** Każdy może nauczyć się czegokolwiek dzięki spersonalizowanemu, aktualnemu programowi nauczania z praktycznymi instrukcjami krok po kroku.
+**Core Value:** Kazdy moze nauczyc sie czegokolwiek dzieki spersonalizowanemu, aktualnemu programowi nauczania z praktycznymi instrukcjami krok po kroku.
 
 ## v1 Requirements
 
@@ -18,10 +18,13 @@ Requirements for initial release. Each maps to roadmap phases.
 
 - [ ] **PROG-01**: User can input learning topic or goal (text input)
 - [ ] **PROG-02**: AI asks clarifying questions (goals, experience, available time)
-- [ ] **PROG-03**: AI generates personalized curriculum with 5 levels (Początkujący → Średnio zaawansowany → Zaawansowany → Master → Guru)
+- [ ] **PROG-03**: AI generates personalized curriculum with 5 levels (Poczatkujacy -> Srednio zaawansowany -> Zaawansowany -> Master -> Guru)
 - [ ] **PROG-04**: Each level contains structured chapters/sections
 - [ ] **PROG-05**: User can view full curriculum structure (table of contents)
 - [ ] **PROG-06**: User progress is saved and persists
+- [ ] **PROG-07**: User can have multiple courses in parallel (switch between topics)
+- [ ] **PROG-08**: Each level shows learning outcomes checklist ("After completing this level you will be able to...")
+- [ ] **PROG-09**: AI analyzes official curricula (schools, universities, certifications) and aligns generated program with market/education standards
 
 ### Learning Materials
 
@@ -32,6 +35,7 @@ Requirements for initial release. Each maps to roadmap phases.
 - [ ] **MAT-05**: Materials include example commands with explanations
 - [ ] **MAT-06**: Materials include expected results and how to interpret them
 - [ ] **MAT-07**: Content is verifiable with citations/sources (anti-hallucination)
+- [ ] **MAT-08**: AI translates English source materials to Polish when needed
 
 ### Assessment System
 
@@ -63,7 +67,7 @@ Requirements for initial release. Each maps to roadmap phases.
 ### Current Knowledge
 
 - [ ] **KNOW-01**: AI uses real-time web search for current information
-- [ ] **KNOW-02**: User can provide link → AI creates learning material from it
+- [ ] **KNOW-02**: User can provide link -> AI creates learning material from it
 - [ ] **KNOW-03**: Knowledge base refreshes daily for dynamic domains (AI, tech, law)
 - [ ] **KNOW-04**: Sources are cited in generated content
 
@@ -133,6 +137,9 @@ Which phases cover which requirements. Updated during roadmap creation.
 | PROG-04 | Phase 2 | Pending |
 | PROG-05 | Phase 2 | Pending |
 | PROG-06 | Phase 2 | Pending |
+| PROG-07 | Phase 2 | Pending |
+| PROG-08 | Phase 2 | Pending |
+| PROG-09 | Phase 2 | Pending |
 | MAT-01 | Phase 3 | Pending |
 | MAT-02 | Phase 3 | Pending |
 | MAT-03 | Phase 3 | Pending |
@@ -140,6 +147,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | MAT-05 | Phase 3 | Pending |
 | MAT-06 | Phase 3 | Pending |
 | MAT-07 | Phase 3 | Pending |
+| MAT-08 | Phase 3 | Pending |
 | QUIZ-01 | Phase 4 | Pending |
 | QUIZ-02 | Phase 4 | Pending |
 | QUIZ-03 | Phase 4 | Pending |
@@ -158,8 +166,8 @@ Which phases cover which requirements. Updated during roadmap creation.
 | CHAT-04 | Phase 6 | Pending |
 | CHAT-05 | Phase 6 | Pending |
 | CHAT-06 | Phase 6 | Pending |
-| KNOW-01 | Phase 3 | Pending |
-| KNOW-02 | Phase 3 | Pending |
+| KNOW-01 | Phase 2 | Pending |
+| KNOW-02 | Phase 2 | Pending |
 | KNOW-03 | Phase 7 | Pending |
 | KNOW-04 | Phase 3 | Pending |
 | UX-01 | Phase 1 | Pending |
@@ -169,10 +177,10 @@ Which phases cover which requirements. Updated during roadmap creation.
 | UX-05 | Phase 1 | Pending |
 
 **Coverage:**
-- v1 requirements: 40 total
-- Mapped to phases: 40
-- Unmapped: 0 ✓
+- v1 requirements: 44 total
+- Mapped to phases: 44
+- Unmapped: 0
 
 ---
 *Requirements defined: 2025-01-30*
-*Last updated: 2025-01-30 after initial definition*
+*Last updated: 2025-01-30 after roadmap creation*

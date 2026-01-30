@@ -10,18 +10,18 @@ See: .planning/PROJECT.md (updated 2025-01-30)
 ## Current Position
 
 Phase: 2 of 7 (Curriculum Generation) - IN PROGRESS
-Plan: 3 of 7 in current phase - COMPLETE
+Plan: 4 of 7 in current phase - COMPLETE
 Status: In progress
-Last activity: 2026-01-30 - Completed 02-03-PLAN.md
+Last activity: 2026-01-30 - Completed 02-04-PLAN.md
 
-Progress: [██████░░░░] 57% (8/14 plans)
+Progress: [██████░░░░] 64% (9/14 plans)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 8
-- Average duration: 14 min
-- Total execution time: 1.9 hours
+- Total plans completed: 9
+- Average duration: 13 min
+- Total execution time: 2.0 hours
 
 **By Phase:**
 
@@ -29,11 +29,11 @@ Progress: [██████░░░░] 57% (8/14 plans)
 |-------|-------|-------|----------|
 | 00-foundation | 2/2 | 35 min | 17 min |
 | 01-auth-basic-ui | 3/3 | 55 min | 18 min |
-| 02-curriculum-generation | 3/7 | 28 min | 9 min |
+| 02-curriculum-generation | 4/7 | 36 min | 9 min |
 
 **Recent Trend:**
-- Last 5 plans: 01-03 (25 min), 02-01 (5 min), 02-02 (8 min), 02-03 (15 min)
-- Trend: Stable
+- Last 5 plans: 02-01 (5 min), 02-02 (8 min), 02-03 (15 min), 02-04 (8 min)
+- Trend: Fast execution in Phase 2
 
 *Updated after each plan completion*
 
@@ -64,6 +64,7 @@ Recent decisions affecting current work:
 - Lazy initialization: Tavily client inicjalizowany przy pierwszym uzyciu (build-time safety)
 - Curriculum schemas: curriculumSchema.levels.length(5) wymaga dokladnie 5 poziomow
 - AI SDK v6 chat: DefaultChatTransport zamiast api prop, UIMessage.parts zamiast content, sendMessage({ text })
+- Streaming object: streamObject dla structured AI output, manual buffer parsing dla partial UI
 
 ### Pending Todos
 
@@ -81,6 +82,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-01-30 22:00
-Stopped at: Completed 02-03-PLAN.md (Topic Input & Clarifying Questions)
+Last session: 2026-01-30 22:10
+Stopped at: Completed 02-04-PLAN.md (Curriculum Generation)
 Resume file: None

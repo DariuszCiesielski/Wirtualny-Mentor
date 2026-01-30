@@ -7,13 +7,31 @@
  * IMPORTANT: Do NOT rely solely on middleware for auth checks.
  * Always verify the session close to where data is accessed (DAL pattern).
  *
+ * Supports mock auth mode for testing without Supabase.
+ *
  * @see https://nextjs.org/docs/app/guides/authentication
  */
 
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
+import { cookies } from "next/headers";
 import { cache } from "react";
 import type { User } from "@supabase/supabase-js";
+
+// Check if mock auth is enabled
+function isMockAuth(): boolean {
+  return process.env.NEXT_PUBLIC_MOCK_AUTH === "true";
+}
+
+// Mock user type that matches Supabase User structure
+interface MockUser {
+  id: string;
+  email: string;
+  user_metadata: {
+    full_name?: string;
+    avatar_url?: string;
+  };
+}
 
 /**
  * Get the current authenticated user.
@@ -24,6 +42,32 @@ import type { User } from "@supabase/supabase-js";
  * @returns The authenticated user or null if not logged in
  */
 export const getUser = cache(async (): Promise<User | null> => {
+  // Mock auth mode
+  if (isMockAuth()) {
+    const cookieStore = await cookies();
+    const mockUserCookie = cookieStore.get("mock_auth_user");
+
+    if (!mockUserCookie?.value) {
+      return null;
+    }
+
+    try {
+      const mockUser: MockUser = JSON.parse(mockUserCookie.value);
+      // Return mock user as Supabase User-like object
+      return {
+        id: mockUser.id,
+        email: mockUser.email,
+        user_metadata: mockUser.user_metadata,
+        app_metadata: {},
+        aud: "authenticated",
+        created_at: new Date().toISOString(),
+      } as User;
+    } catch {
+      return null;
+    }
+  }
+
+  // Real Supabase auth
   const supabase = await createClient();
 
   const {

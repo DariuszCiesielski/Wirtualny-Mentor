@@ -4,11 +4,19 @@
  * Profile Server Actions
  *
  * Handles profile updates including name and avatar.
+ * Supports mock auth mode for testing without Supabase.
  */
 
 import { z } from "zod/v4";
 import { verifySession } from "@/lib/dal/auth";
 import { createClient } from "@/lib/supabase/server";
+import { cookies } from "next/headers";
+import { revalidatePath } from "next/cache";
+
+// Check if mock auth is enabled
+function isMockAuth(): boolean {
+  return process.env.NEXT_PUBLIC_MOCK_AUTH === "true";
+}
 
 const profileSchema = z.object({
   name: z
@@ -43,6 +51,32 @@ export async function updateProfile(
       };
     }
 
+    // Mock auth mode
+    if (isMockAuth()) {
+      const cookieStore = await cookies();
+      const mockUserCookie = cookieStore.get("mock_auth_user");
+
+      if (mockUserCookie?.value) {
+        const mockUser = JSON.parse(mockUserCookie.value);
+        mockUser.user_metadata = {
+          ...mockUser.user_metadata,
+          full_name: result.data.name,
+        };
+
+        cookieStore.set("mock_auth_user", JSON.stringify(mockUser), {
+          httpOnly: true,
+          secure: process.env.NODE_ENV === "production",
+          sameSite: "lax",
+          maxAge: 60 * 60 * 24 * 7,
+        });
+
+        revalidatePath("/profile");
+        revalidatePath("/dashboard");
+        return { success: true };
+      }
+    }
+
+    // Real Supabase auth
     const supabase = await createClient();
 
     // Update user metadata
@@ -54,6 +88,8 @@ export async function updateProfile(
       return { error: "Nie udalo sie zaktualizowac profilu" };
     }
 
+    revalidatePath("/profile");
+    revalidatePath("/dashboard");
     return { success: true };
   } catch {
     return { error: "Wystapil blad podczas aktualizacji profilu" };
@@ -94,6 +130,35 @@ export async function uploadAvatar(
       return { error: "Dozwolone formaty: JPEG, PNG, GIF, WebP" };
     }
 
+    // Mock auth mode - use a placeholder avatar
+    if (isMockAuth()) {
+      const cookieStore = await cookies();
+      const mockUserCookie = cookieStore.get("mock_auth_user");
+
+      if (mockUserCookie?.value) {
+        const mockUser = JSON.parse(mockUserCookie.value);
+        // Use a placeholder avatar URL based on user email
+        const avatarUrl = `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(mockUser.email)}&backgroundColor=3b82f6`;
+
+        mockUser.user_metadata = {
+          ...mockUser.user_metadata,
+          avatar_url: avatarUrl,
+        };
+
+        cookieStore.set("mock_auth_user", JSON.stringify(mockUser), {
+          httpOnly: true,
+          secure: process.env.NODE_ENV === "production",
+          sameSite: "lax",
+          maxAge: 60 * 60 * 24 * 7,
+        });
+
+        revalidatePath("/profile");
+        revalidatePath("/dashboard");
+        return { success: true, url: avatarUrl };
+      }
+    }
+
+    // Real Supabase auth
     const supabase = await createClient();
 
     // Generate unique filename
@@ -127,6 +192,8 @@ export async function uploadAvatar(
       return { error: "Nie udalo sie zaktualizowac avatara" };
     }
 
+    revalidatePath("/profile");
+    revalidatePath("/dashboard");
     return { success: true, url: publicUrl };
   } catch {
     return { error: "Wystapil blad podczas przesylania avatara" };

@@ -10,29 +10,29 @@ See: .planning/PROJECT.md (updated 2025-01-30)
 ## Current Position
 
 Phase: 1 of 7 (Auth & Basic UI)
-Plan: 1 of 3 in current phase - COMPLETE
+Plan: 2 of 3 in current phase - COMPLETE
 Status: In progress
-Last activity: 2025-01-30 - Completed 01-01-PLAN.md
+Last activity: 2025-01-30 - Completed 01-02-PLAN.md
 
-Progress: [███░░░░░░░] 21% (3/14 plans)
+Progress: [████░░░░░░] 28% (4/14 plans)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 3
-- Average duration: 16 min
-- Total execution time: 0.8 hours
+- Total plans completed: 4
+- Average duration: 17 min
+- Total execution time: 1.1 hours
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | 00-foundation | 2/2 | 35 min | 17 min |
-| 01-auth-basic-ui | 1/3 | 12 min | 12 min |
+| 01-auth-basic-ui | 2/3 | 30 min | 15 min |
 
 **Recent Trend:**
-- Last 5 plans: 00-01 (15 min), 00-02 (20 min), 01-01 (12 min)
-- Trend: Improving
+- Last 5 plans: 00-01 (15 min), 00-02 (20 min), 01-01 (12 min), 01-02 (18 min)
+- Trend: Stable
 
 *Updated after each plan completion*
 
@@ -53,6 +53,8 @@ Recent decisions affecting current work:
 - Auth pattern: Middleware ONLY refreshes session, auth verification in DAL (CVE-2025-29927)
 - Supabase auth: Use getUser() not getSession() for server-side (token revalidation)
 - UI: shadcn/ui New York style with Zinc palette, Tailwind v4 dark mode
+- Auth forms: Server Component + Client Form pattern (unika hydration issues)
+- Form errors: Zod flatten().fieldErrors dla per-field validation errors
 
 ### Pending Todos
 
@@ -63,10 +65,10 @@ None yet.
 - Research needed: Prompt engineering dla metody sokratycznej (Phase 6)
 - Research needed: Fact-checking automation (Phase 3)
 - Cost monitoring: Setup complete in Phase 0, track real usage patterns going forward
-- User setup: Supabase project configuration required before auth testing
+- User setup: Supabase URL Configuration required (Site URL, Redirect URLs)
 
 ## Session Continuity
 
-Last session: 2025-01-30 15:42
-Stopped at: Completed 01-01-PLAN.md (Supabase Auth Foundation)
+Last session: 2025-01-30 16:20
+Stopped at: Completed 01-02-PLAN.md (Auth Pages)
 Resume file: None

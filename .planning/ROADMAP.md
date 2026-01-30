@@ -10,7 +10,7 @@ Wirtualny Mentor to platforma edukacyjna AI, która generuje spersonalizowane pr
 - Integer phases (0, 1, 2...): Planned milestone work
 - Decimal phases (2.1, 2.2): Urgent insertions (marked with INSERTED)
 
-- [ ] **Phase 0: Foundation & AI Architecture** - Setup Next.js, Vercel AI SDK, model tiering strategy
+- [x] **Phase 0: Foundation & AI Architecture** - Setup Next.js, Vercel AI SDK, model tiering strategy ✓
 - [ ] **Phase 1: Auth & Basic UI** - Supabase auth, database schema, podstawowy interfejs
 - [ ] **Phase 2: Curriculum Generation** - Generowanie spersonalizowanego programu nauczania z 5 poziomami
 - [ ] **Phase 3: Learning Materials** - Materialy podre­cznikowe z praktycznymi instrukcjami
@@ -34,8 +34,10 @@ Wirtualny Mentor to platforma edukacyjna AI, która generuje spersonalizowane pr
 **Plans**: 2 plans
 
 Plans:
-- [ ] 00-01-PLAN.md — Next.js 15 project setup z AI SDK 6 i struktura katalogow
-- [ ] 00-02-PLAN.md — Multi-model orchestration layer z cost tracking
+- [x] 00-01-PLAN.md — Next.js 15 project setup z AI SDK 6 i struktura katalogow ✓
+- [x] 00-02-PLAN.md — Multi-model orchestration layer z cost tracking ✓
+
+**Completed:** 2025-01-30
 
 ---
 
@@ -196,7 +198,7 @@ Phases execute in numeric order: 0 -> 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 0. Foundation & AI Architecture | 0/2 | Planned | - |
+| 0. Foundation & AI Architecture | 2/2 | ✓ Complete | 2025-01-30 |
 | 1. Auth & Basic UI | 0/3 | Not started | - |
 | 2. Curriculum Generation | 0/7 | Not started | - |
 | 3. Learning Materials | 0/4 | Not started | - |
@@ -205,7 +207,7 @@ Phases execute in numeric order: 0 -> 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7
 | 6. Mentor Chatbot | 0/4 | Not started | - |
 | 7. Polish & Optimization | 0/4 | Not started | - |
 
-**Total:** 0/31 plans complete (0%)
+**Total:** 2/31 plans complete (6%)
 
 ---
 *Roadmap created: 2025-01-30*

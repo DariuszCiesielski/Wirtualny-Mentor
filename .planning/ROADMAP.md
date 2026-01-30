@@ -11,7 +11,7 @@ Wirtualny Mentor to platforma edukacyjna AI, która generuje spersonalizowane pr
 - Decimal phases (2.1, 2.2): Urgent insertions (marked with INSERTED)
 
 - [x] **Phase 0: Foundation & AI Architecture** - Setup Next.js, Vercel AI SDK, model tiering strategy ✓
-- [ ] **Phase 1: Auth & Basic UI** - Supabase auth, database schema, podstawowy interfejs
+- [x] **Phase 1: Auth & Basic UI** - Supabase auth, database schema, podstawowy interfejs
 - [ ] **Phase 2: Curriculum Generation** - Generowanie spersonalizowanego programu nauczania z 5 poziomami
 - [ ] **Phase 3: Learning Materials** - Materialy podre­cznikowe z praktycznymi instrukcjami
 - [ ] **Phase 4: Assessment System** - Quizy, testy, adaptacyjna remediacja
@@ -55,9 +55,11 @@ Plans:
 **Plans**: 3 plans
 
 Plans:
-- [ ] 01-01-PLAN.md — Supabase setup, shadcn/ui, dark mode infrastructure
-- [ ] 01-02-PLAN.md — Auth flows (login, register, password reset)
-- [ ] 01-03-PLAN.md — Protected dashboard i edycja profilu
+- [x] 01-01-PLAN.md — Supabase setup, shadcn/ui, dark mode infrastructure
+- [x] 01-02-PLAN.md — Auth flows (login, register, password reset)
+- [x] 01-03-PLAN.md — Protected dashboard i edycja profilu
+
+**Completed:** 2025-01-30
 
 ---
 
@@ -199,7 +201,7 @@ Phases execute in numeric order: 0 -> 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 0. Foundation & AI Architecture | 2/2 | ✓ Complete | 2025-01-30 |
-| 1. Auth & Basic UI | 0/3 | Planned | - |
+| 1. Auth & Basic UI | 3/3 | ✓ Complete | 2025-01-30 |
 | 2. Curriculum Generation | 0/7 | Not started | - |
 | 3. Learning Materials | 0/4 | Not started | - |
 | 4. Assessment System | 0/4 | Not started | - |
@@ -207,7 +209,7 @@ Phases execute in numeric order: 0 -> 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7
 | 6. Mentor Chatbot | 0/4 | Not started | - |
 | 7. Polish & Optimization | 0/4 | Not started | - |
 
-**Total:** 2/31 plans complete (6%)
+**Total:** 5/31 plans complete (16%)
 
 ---
 *Roadmap created: 2025-01-30*

@@ -12,7 +12,7 @@ Wirtualny Mentor to platforma edukacyjna AI, która generuje spersonalizowane pr
 
 - [x] **Phase 0: Foundation & AI Architecture** - Setup Next.js, Vercel AI SDK, model tiering strategy ✓
 - [x] **Phase 1: Auth & Basic UI** - Supabase auth, database schema, podstawowy interfejs
-- [ ] **Phase 2: Curriculum Generation** - Generowanie spersonalizowanego programu nauczania z 5 poziomami
+- [x] **Phase 2: Curriculum Generation** - Generowanie spersonalizowanego programu nauczania z 5 poziomami ✓
 - [ ] **Phase 3: Learning Materials** - Materialy podre­cznikowe z praktycznymi instrukcjami
 - [ ] **Phase 4: Assessment System** - Quizy, testy, adaptacyjna remediacja
 - [ ] **Phase 5: Notes System & Embeddings** - Notatki uzytkownika z wektoryzacja do RAG
@@ -82,13 +82,15 @@ Plans:
 **Plans**: 7 plans in 4 waves
 
 Plans:
-- [ ] 02-01-PLAN.md — Database schema dla courses/levels/chapters/progress (Wave 1)
-- [ ] 02-02-PLAN.md — Tavily client i Zod schemas dla curriculum (Wave 1)
-- [ ] 02-03-PLAN.md — Topic input i clarifying questions flow (Wave 2)
-- [ ] 02-04-PLAN.md — Curriculum generation z web search (Wave 2)
-- [ ] 02-05-PLAN.md — Curriculum TOC view i nawigacja (Wave 3)
-- [ ] 02-06-PLAN.md — Progress tracking, progress bar, chapter navigation (Wave 4)
-- [ ] 02-07-PLAN.md — Multi-course dashboard i course cards (Wave 4)
+- [x] 02-01-PLAN.md — Database schema dla courses/levels/chapters/progress (Wave 1) ✓
+- [x] 02-02-PLAN.md — Tavily client i Zod schemas dla curriculum (Wave 1) ✓
+- [x] 02-03-PLAN.md — Topic input i clarifying questions flow (Wave 2) ✓
+- [x] 02-04-PLAN.md — Curriculum generation z web search (Wave 2) ✓
+- [x] 02-05-PLAN.md — Curriculum TOC view i nawigacja (Wave 3) ✓
+- [x] 02-06-PLAN.md — Progress tracking, progress bar, chapter navigation (Wave 4) ✓
+- [x] 02-07-PLAN.md — Multi-course dashboard i course cards (Wave 4) ✓
+
+**Completed:** 2026-01-31
 
 ---
 
@@ -202,14 +204,14 @@ Phases execute in numeric order: 0 -> 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7
 |-------|----------------|--------|-----------|
 | 0. Foundation & AI Architecture | 2/2 | ✓ Complete | 2025-01-30 |
 | 1. Auth & Basic UI | 3/3 | ✓ Complete | 2025-01-30 |
-| 2. Curriculum Generation | 0/7 | Not started | - |
+| 2. Curriculum Generation | 7/7 | ✓ Complete | 2026-01-31 |
 | 3. Learning Materials | 0/4 | Not started | - |
 | 4. Assessment System | 0/4 | Not started | - |
 | 5. Notes System & Embeddings | 0/3 | Not started | - |
 | 6. Mentor Chatbot | 0/4 | Not started | - |
 | 7. Polish & Optimization | 0/4 | Not started | - |
 
-**Total:** 5/31 plans complete (16%)
+**Total:** 12/31 plans complete (39%)
 
 ---
 *Roadmap created: 2025-01-30*

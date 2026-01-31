@@ -5,6 +5,7 @@ import { getCourse } from "@/lib/dal/courses";
 import { getProgress, getProgressStats } from "@/lib/dal/progress";
 import { Button } from "@/components/ui/button";
 import { CurriculumTOC } from "@/components/curriculum/curriculum-toc";
+import { MessageCircle } from "lucide-react";
 
 interface CoursePageProps {
   params: Promise<{ courseId: string }>;
@@ -78,16 +79,24 @@ export default async function CoursePage({ params }: CoursePageProps) {
         )}
       </header>
 
-      {/* Continue learning button */}
-      {hasContinueLink && (
-        <Button asChild className="mb-8">
-          <Link
-            href={`/courses/${courseId}/${currentLevelId}/${currentChapterId}`}
-          >
-            {stats.percentage === 0 ? "Rozpocznij nauke" : "Kontynuuj nauke"}
+      {/* Action buttons */}
+      <div className="flex flex-wrap gap-2 mb-8">
+        {hasContinueLink && (
+          <Button asChild>
+            <Link
+              href={`/courses/${courseId}/${currentLevelId}/${currentChapterId}`}
+            >
+              {stats.percentage === 0 ? "Rozpocznij nauke" : "Kontynuuj nauke"}
+            </Link>
+          </Button>
+        )}
+        <Button asChild variant="outline">
+          <Link href={`/courses/${courseId}/chat`}>
+            <MessageCircle className="h-4 w-4 mr-2" />
+            Chat z mentorem
           </Link>
         </Button>
-      )}
+      </div>
 
       {/* Course completion message */}
       {stats.isComplete && (

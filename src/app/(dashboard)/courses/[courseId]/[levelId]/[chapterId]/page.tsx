@@ -17,11 +17,13 @@ import { requireAuth } from "@/lib/dal/auth";
 import { getCourse } from "@/lib/dal/courses";
 import { getSectionContent } from "@/lib/dal/materials";
 import { getProgress, calculateProgressPercentage } from "@/lib/dal/progress";
+import { getNotes } from "@/lib/dal/notes";
 import { notFound } from "next/navigation";
 import { ProgressBar } from "@/components/curriculum/progress-bar";
 import { ChapterNavigation } from "@/components/curriculum/chapter-navigation";
 import { ChapterContent } from "@/components/materials/chapter-content";
 import { GeneratingState } from "@/components/materials/generating-state";
+import { NotesList } from "@/components/notes/notes-list";
 import { Button } from "@/components/ui/button";
 import { markComplete } from "./actions";
 import { CheckCircle2, ArrowLeft, ClipboardList } from "lucide-react";
@@ -92,6 +94,9 @@ export default async function ChapterPage({ params }: ChapterPageProps) {
   // Get existing content (may be null - triggers lazy generation in client)
   // This is the SERVER-SIDE check - client will handle generation if null
   const existingContent = await getSectionContent(chapterId);
+
+  // Get user's notes for this chapter
+  const notes = await getNotes(user.id, courseId, chapterId);
 
   // Build course context for content generation
   const courseContext = `
@@ -172,6 +177,15 @@ Grupa docelowa: ${course.target_audience || "Nie okreslono"}
           </Button>
         </div>
       )}
+
+      {/* Notes Section */}
+      <div className="mt-12">
+        <NotesList
+          courseId={courseId}
+          chapterId={chapterId}
+          initialNotes={notes}
+        />
+      </div>
 
       {/* Navigation */}
       <div className="mt-12">

@@ -31,9 +31,9 @@ export interface Note {
  * Note with context information (for display)
  */
 export interface NoteWithContext extends Note {
-  chapter_title?: string;
-  level_name?: string;
-  course_title?: string;
+  chapter_title: string | null;
+  level_name: string | null;
+  course_title: string | null;
 }
 
 // ============================================================================

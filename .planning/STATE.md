@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2025-01-30)
 
 **Core value:** Kazdy moze nauczyc sie czegokolwiek dzieki spersonalizowanemu, aktualnemu programowi nauczania z praktycznymi instrukcjami krok po kroku.
-**Current focus:** Phase 4 - Assessment System (IN PROGRESS)
+**Current focus:** Phase 4 - Assessment System (COMPLETE)
 
 ## Current Position
 
-Phase: 4 of 7 (Assessment System) - IN PROGRESS
-Plan: 3 of 4 in current phase - COMPLETE
-Status: Plan 04-03 complete, ready for 04-04
-Last activity: 2026-01-31 - Completed 04-03-PLAN.md (Quiz UI)
+Phase: 4 of 7 (Assessment System) - COMPLETE
+Plan: 4 of 4 in current phase - COMPLETE
+Status: Phase 4 complete, ready for Phase 5
+Last activity: 2026-01-31 - Completed 04-04-PLAN.md (Level Progression)
 
-Progress: [██████████░░] 65% (20/31 plans)
+Progress: [███████████░] 68% (21/31 plans)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 20
+- Total plans completed: 21
 - Average duration: 9 min
-- Total execution time: 3.0 hours
+- Total execution time: 3.1 hours
 
 **By Phase:**
 
@@ -31,10 +31,10 @@ Progress: [██████████░░] 65% (20/31 plans)
 | 01-auth-basic-ui | 3/3 | 55 min | 18 min |
 | 02-curriculum-generation | 7/7 | 57 min | 8 min |
 | 03-learning-materials | 5/5 | 32 min | 6 min |
-| 04-assessment-system | 3/4 | 11 min | 4 min |
+| 04-assessment-system | 4/4 | 18 min | 5 min |
 
 **Recent Trend:**
-- Last 5 plans: 03-04 (5 min), 03-05 (7 min), 04-01 (3 min), 04-02 (3 min), 04-03 (5 min)
+- Last 5 plans: 03-05 (7 min), 04-01 (3 min), 04-02 (3 min), 04-03 (5 min), 04-04 (7 min)
 - Trend: Consistent fast execution
 
 *Updated after each plan completion*
@@ -80,6 +80,8 @@ Recent decisions affecting current work:
 - Server-side scoring: Anti-cheat pattern - correct answers never sent to client
 - Auto level unlock: Automatic progression when level test passed
 - Quiz state machine: useReducer with discriminated union for complex UI flows
+- Level unlock: First level always accessible, subsequent require test pass or skip
+- Skip tracking: unlockType: 'manual_skip' for analytics
 
 ### Pending Todos
 
@@ -100,5 +102,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-01-31
-Stopped at: Completed 04-03-PLAN.md, ready for 04-04
+Stopped at: Completed 04-04-PLAN.md, Phase 4 complete
 Resume file: None

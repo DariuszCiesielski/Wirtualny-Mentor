@@ -177,13 +177,12 @@ Plans:
   4. Chatbot wspiera i motywuje (rola coacha)
   5. Chatbot odpowiada na zaawansowane pytania (nie ograniczony do aktualnego poziomu)
   6. Odpowiedzi sa streamowane w czasie rzeczywistym
-**Plans**: TBD
+**Plans**: 3 plans in 2 waves
 
 Plans:
-- [ ] 06-01: Chat UI (useChat, streaming)
-- [ ] 06-02: RAG integration (notatki uzytkownika)
-- [ ] 06-03: Socratic method prompting
-- [ ] 06-04: Coach persona i context management
+- [ ] 06-01-PLAN.md — Mentor prompts i searchNotes tool (Wave 1)
+- [ ] 06-02-PLAN.md — Chat API endpoint z streaming (Wave 1)
+- [ ] 06-03-PLAN.md — Chat UI page i nawigacja (Wave 2)
 
 ---
 
@@ -217,10 +216,10 @@ Phases execute in numeric order: 0 -> 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7
 | 3. Learning Materials | 5/5 | ✓ Complete | 2026-01-31 |
 | 4. Assessment System | 4/4 | ✓ Complete | 2026-01-31 |
 | 5. Notes System & Embeddings | 5/5 | ✓ Complete | 2026-01-31 |
-| 6. Mentor Chatbot | 0/4 | Not started | - |
+| 6. Mentor Chatbot | 0/3 | Planned | - |
 | 7. Polish & Optimization | 0/4 | Not started | - |
 
-**Total:** 26/32 plans complete (81%)
+**Total:** 26/31 plans complete (84%)
 
 ---
 *Roadmap created: 2025-01-30*

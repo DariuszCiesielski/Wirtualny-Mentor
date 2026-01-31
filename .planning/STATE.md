@@ -10,18 +10,18 @@ See: .planning/PROJECT.md (updated 2025-01-30)
 ## Current Position
 
 Phase: 4 of 7 (Assessment System) - IN PROGRESS
-Plan: 1 of 4 in current phase - COMPLETE
-Status: Plan 04-01 complete, ready for 04-02
-Last activity: 2026-01-31 - Completed 04-01-PLAN.md (Quiz Schema and Types)
+Plan: 2 of 4 in current phase - COMPLETE
+Status: Plan 04-02 complete, ready for 04-03
+Last activity: 2026-01-31 - Completed 04-02-PLAN.md (Quiz Backend)
 
-Progress: [████████░░] 58% (18/31 plans)
+Progress: [██████████░░] 61% (19/31 plans)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 18
+- Total plans completed: 19
 - Average duration: 10 min
-- Total execution time: 2.85 hours
+- Total execution time: 2.9 hours
 
 **By Phase:**
 
@@ -31,10 +31,10 @@ Progress: [████████░░] 58% (18/31 plans)
 | 01-auth-basic-ui | 3/3 | 55 min | 18 min |
 | 02-curriculum-generation | 7/7 | 57 min | 8 min |
 | 03-learning-materials | 5/5 | 32 min | 6 min |
-| 04-assessment-system | 1/4 | 3 min | 3 min |
+| 04-assessment-system | 2/4 | 6 min | 3 min |
 
 **Recent Trend:**
-- Last 5 plans: 03-02 (6 min), 03-03 (8 min), 03-04 (5 min), 03-05 (7 min), 04-01 (3 min)
+- Last 5 plans: 03-03 (8 min), 03-04 (5 min), 03-05 (7 min), 04-01 (3 min), 04-02 (3 min)
 - Trend: Consistent fast execution
 
 *Updated after each plan completion*
@@ -76,6 +76,9 @@ Recent decisions affecting current work:
 - Quiz JSONB: questions stored as JSONB array for flexibility
 - Quiz parent CHECK: exactly one of chapter_id or level_id must be NOT NULL
 - Bloom taxonomy: Question classification using remembering/understanding/applying/analyzing
+- Quiz generation: Gemini 2.0 Flash for fast, cheap quiz generation
+- Server-side scoring: Anti-cheat pattern - correct answers never sent to client
+- Auto level unlock: Automatic progression when level test passed
 
 ### Pending Todos
 
@@ -96,5 +99,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-01-31
-Stopped at: Completed 04-01-PLAN.md, ready for 04-02
+Stopped at: Completed 04-02-PLAN.md, ready for 04-03
 Resume file: None

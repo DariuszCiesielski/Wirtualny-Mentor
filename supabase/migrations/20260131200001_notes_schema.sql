@@ -97,3 +97,44 @@ CREATE TRIGGER update_notes_updated_at
   BEFORE UPDATE ON notes
   FOR EACH ROW
   EXECUTE FUNCTION update_updated_at_column();
+
+-- ============================================================================
+-- RPC FUNCTIONS
+-- ============================================================================
+
+-- Vector similarity search function for RAG chatbot
+-- Called from searchNotesSemantic() in dal/notes.ts
+CREATE OR REPLACE FUNCTION search_notes_semantic(
+  p_user_id UUID,
+  p_course_id UUID,
+  p_embedding TEXT,  -- JSON array of floats
+  p_match_threshold FLOAT DEFAULT 0.7,
+  p_match_count INT DEFAULT 5
+)
+RETURNS TABLE(
+  id UUID,
+  content TEXT,
+  similarity FLOAT,
+  chapter_id UUID
+) AS $$
+DECLARE
+  v_embedding halfvec(1536);
+BEGIN
+  -- Parse JSON to halfvec
+  v_embedding := p_embedding::halfvec(1536);
+
+  RETURN QUERY
+  SELECT
+    notes.id,
+    notes.content,
+    (1 - (notes.embedding <=> v_embedding))::FLOAT as similarity,
+    notes.chapter_id
+  FROM notes
+  WHERE notes.user_id = p_user_id
+    AND notes.course_id = p_course_id
+    AND notes.embedding IS NOT NULL
+    AND 1 - (notes.embedding <=> v_embedding) > p_match_threshold
+  ORDER BY notes.embedding <=> v_embedding
+  LIMIT p_match_count;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;

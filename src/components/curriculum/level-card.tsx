@@ -1,6 +1,8 @@
 "use client";
 
-import { ChevronDown, CheckCircle } from "lucide-react";
+import { ChevronDown, CheckCircle, Lock, Unlock, SkipForward } from "lucide-react";
+import Link from "next/link";
+import type { UnlockType } from "@/types/quiz";
 import { cn } from "@/lib/utils";
 import {
   Card,
@@ -24,6 +26,9 @@ interface LevelCardProps {
   onToggle: () => void;
   progress: UserProgress;
   courseId: string;
+  isUnlocked?: boolean;
+  unlockType?: UnlockType | null;
+  isFirstLevel?: boolean;
 }
 
 export function LevelCard({
@@ -33,9 +38,16 @@ export function LevelCard({
   onToggle,
   progress,
   courseId,
+  isUnlocked = true,
+  unlockType = null,
+  isFirstLevel = false,
 }: LevelCardProps) {
   const isCompleted = progress.completed_levels.includes(level.id);
   const isCurrent = progress.current_level_id === level.id;
+
+  // First level is always accessible
+  const isAccessible = isFirstLevel || isUnlocked || isCompleted;
+  const wasSkipped = unlockType === "manual_skip";
 
   // Get learning outcomes from level_outcomes
   const learningOutcomes = level.level_outcomes || [];
@@ -45,12 +57,17 @@ export function LevelCard({
       className={cn(
         "mb-4",
         isCompleted && "border-green-500/50",
-        isCurrent && !isCompleted && "border-primary"
+        isCurrent && !isCompleted && "border-primary",
+        !isAccessible && "opacity-60"
       )}
     >
-      <Collapsible open={isExpanded} onOpenChange={onToggle}>
+      <Collapsible open={isExpanded} onOpenChange={isAccessible ? onToggle : undefined}>
         <CollapsibleTrigger asChild>
-          <CardHeader className="cursor-pointer hover:bg-muted/50 transition-colors">
+          <CardHeader className={cn(
+            "transition-colors",
+            isAccessible && "cursor-pointer hover:bg-muted/50",
+            !isAccessible && "cursor-not-allowed"
+          )}>
             <div className="flex justify-between items-start gap-4">
               <div className="flex-1">
                 <div className="flex items-center gap-2 mb-2">
@@ -62,6 +79,18 @@ export function LevelCard({
                   {isCompleted && (
                     <Badge variant="outline" className="text-green-600 border-green-600">
                       Ukonczony
+                    </Badge>
+                  )}
+                  {wasSkipped && !isCompleted && (
+                    <Badge variant="outline" className="text-yellow-600 border-yellow-600">
+                      <SkipForward className="h-3 w-3 mr-1" />
+                      Przeskoczony
+                    </Badge>
+                  )}
+                  {!isAccessible && (
+                    <Badge variant="outline" className="text-muted-foreground">
+                      <Lock className="h-3 w-3 mr-1" />
+                      Zablokowany
                     </Badge>
                   )}
                 </div>
@@ -78,12 +107,16 @@ export function LevelCard({
                     {level.estimated_hours}h
                   </span>
                 )}
-                <ChevronDown
-                  className={cn(
-                    "h-5 w-5 text-muted-foreground transition-transform",
-                    isExpanded && "rotate-180"
-                  )}
-                />
+                {isAccessible ? (
+                  <ChevronDown
+                    className={cn(
+                      "h-5 w-5 text-muted-foreground transition-transform",
+                      isExpanded && "rotate-180"
+                    )}
+                  />
+                ) : (
+                  <Lock className="h-5 w-5 text-muted-foreground" />
+                )}
               </div>
             </div>
           </CardHeader>
@@ -125,6 +158,19 @@ export function LevelCard({
                   courseId={courseId}
                   levelId={level.id}
                 />
+              </div>
+            )}
+
+            {/* Level Test Link */}
+            {isAccessible && !isCompleted && (
+              <div className="mt-6 pt-4 border-t">
+                <Link
+                  href={`/courses/${courseId}/${level.id}/test`}
+                  className="inline-flex items-center gap-2 text-sm font-medium text-primary hover:underline"
+                >
+                  <Unlock className="h-4 w-4" />
+                  Przejdz do testu koncowego poziomu
+                </Link>
               </div>
             )}
           </CardContent>

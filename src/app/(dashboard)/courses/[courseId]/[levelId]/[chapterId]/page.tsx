@@ -1,20 +1,31 @@
 /**
- * Chapter Page
+ * Chapter Detail Page
  *
- * Displays chapter content, progress bar, and navigation.
- * Allows users to mark chapters as complete and navigate between chapters.
+ * Server component that displays chapter content with learning materials.
+ *
+ * WIRING PATTERN (Server -> Client):
+ * 1. Server calls getSectionContent(chapterId) to check if content exists
+ * 2. Passes result as initialContent prop to ChapterContent client component
+ * 3. If initialContent is null, ChapterContent will trigger generation via API
+ * 4. If initialContent exists, ChapterContent renders immediately
+ *
+ * This ensures content is generated only on first visit, not on every page load.
  */
 
+import { Suspense } from "react";
 import { requireAuth } from "@/lib/dal/auth";
 import { getCourse } from "@/lib/dal/courses";
+import { getSectionContent } from "@/lib/dal/materials";
 import { getProgress, calculateProgressPercentage } from "@/lib/dal/progress";
 import { notFound } from "next/navigation";
 import { ProgressBar } from "@/components/curriculum/progress-bar";
 import { ChapterNavigation } from "@/components/curriculum/chapter-navigation";
+import { ChapterContent } from "@/components/materials/chapter-content";
+import { GeneratingState } from "@/components/materials/generating-state";
 import { Button } from "@/components/ui/button";
 import { markComplete } from "./actions";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { CheckCircle2 } from "lucide-react";
+import { CheckCircle2, ArrowLeft } from "lucide-react";
+import Link from "next/link";
 
 interface ChapterPageProps {
   params: Promise<{ courseId: string; levelId: string; chapterId: string }>;
@@ -78,6 +89,17 @@ export default async function ChapterPage({ params }: ChapterPageProps) {
     nextChapter = { levelId: nextLevel.id, chapterId: nextLevel.chapters[0].id };
   }
 
+  // Get existing content (may be null - triggers lazy generation in client)
+  // This is the SERVER-SIDE check - client will handle generation if null
+  const existingContent = await getSectionContent(chapterId);
+
+  // Build course context for content generation
+  const courseContext = `
+Kurs: ${course.title}
+Poziom: ${level.name} - ${level.description}
+Grupa docelowa: ${course.target_audience || "Nie okreslono"}
+`.trim();
+
   return (
     <div className="container max-w-4xl py-8">
       {/* Progress Bar */}
@@ -88,62 +110,66 @@ export default async function ChapterPage({ params }: ChapterPageProps) {
         currentLevel={level.name}
       />
 
-      {/* Breadcrumb */}
-      <div className="text-sm text-muted-foreground mb-4">
-        {course.title} / {level.name} / Rozdzial {chapterIndex + 1}
-      </div>
+      {/* Back navigation */}
+      <Button variant="ghost" asChild className="mb-6">
+        <Link href={`/courses/${courseId}`}>
+          <ArrowLeft className="mr-2 h-4 w-4" />
+          Wroc do kursu
+        </Link>
+      </Button>
 
-      {/* Chapter Content */}
-      <Card className="mb-8">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            {chapter.title}
-            {isCompleted && (
-              <CheckCircle2 className="h-5 w-5 text-green-500" />
-            )}
-          </CardTitle>
-          {chapter.description && (
-            <p className="text-muted-foreground">{chapter.description}</p>
+      {/* Chapter header */}
+      <header className="mb-8">
+        <div className="text-sm text-muted-foreground mb-2">
+          {level.name} &bull; Rozdzial {chapter.order_index}
+          {isCompleted && (
+            <CheckCircle2 className="inline ml-2 h-4 w-4 text-green-500" />
           )}
-          <div className="flex gap-4 text-sm text-muted-foreground">
-            {chapter.estimated_minutes && (
-              <span>~{chapter.estimated_minutes} min</span>
-            )}
-            {chapter.topics && chapter.topics.length > 0 && (
-              <span>Tematy: {chapter.topics.join(", ")}</span>
-            )}
-          </div>
-        </CardHeader>
-        <CardContent>
-          {/* Placeholder dla content - Phase 3 */}
-          <div className="bg-muted/50 rounded-lg p-8 text-center text-muted-foreground">
-            <p>
-              Tresc rozdzialu zostanie wygenerowana w Phase 3 (Learning
-              Materials).
-            </p>
-            <p className="text-sm mt-2">
-              Na razie mozesz oznaczyc rozdzial jako ukonczony i przejsc dalej.
-            </p>
-          </div>
-        </CardContent>
-      </Card>
+        </div>
+        <h1 className="text-3xl font-bold">{chapter.title}</h1>
+        <p className="text-muted-foreground mt-2">{chapter.description}</p>
+      </header>
+
+      {/* Chapter content with Suspense */}
+      <Suspense
+        fallback={
+          <GeneratingState chapterTitle={chapter.title} phase="searching" />
+        }
+      >
+        <ChapterContent
+          chapter={{
+            id: chapter.id,
+            title: chapter.title,
+            description: chapter.description || "",
+            topics: chapter.topics || [],
+            estimatedMinutes: chapter.estimated_minutes || 15,
+          }}
+          courseContext={courseContext}
+          initialContent={existingContent}
+        />
+      </Suspense>
 
       {/* Complete Button */}
       {!isCompleted && (
-        <form action={markComplete.bind(null, courseId, levelId, chapterId)}>
-          <Button type="submit" size="lg" className="w-full mb-8">
+        <form
+          action={markComplete.bind(null, courseId, levelId, chapterId)}
+          className="mt-8"
+        >
+          <Button type="submit" size="lg" className="w-full">
             Ukoncz rozdzial i przejdz dalej
           </Button>
         </form>
       )}
 
       {/* Navigation */}
-      <ChapterNavigation
-        courseId={courseId}
-        prevChapter={prevChapter}
-        nextChapter={nextChapter}
-        isCompleted={isCompleted}
-      />
+      <div className="mt-12">
+        <ChapterNavigation
+          courseId={courseId}
+          prevChapter={prevChapter}
+          nextChapter={nextChapter}
+          isCompleted={isCompleted}
+        />
+      </div>
     </div>
   );
 }

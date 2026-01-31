@@ -15,7 +15,7 @@ interface QuizContainerProps {
   courseId: string;
   chapterTitle?: string;
   levelName?: string;
-  onComplete?: (passed: boolean) => void;
+  onComplete?: (passed: boolean, attemptId?: string) => void;
 }
 
 type QuizState =
@@ -145,7 +145,7 @@ export function QuizContainer({
       if (!res.ok) throw new Error('Submit failed');
       const data = await res.json();
       dispatch({ type: 'RESULTS', results: data.results });
-      onComplete?.(data.results.passed);
+      onComplete?.(data.results.passed, data.attempt?.id);
     } catch {
       dispatch({ type: 'ERROR', message: 'Nie udalo sie wyslac odpowiedzi' });
     }

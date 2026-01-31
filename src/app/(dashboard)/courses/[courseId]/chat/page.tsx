@@ -1,7 +1,14 @@
+/**
+ * Chat Page - Server Component
+ *
+ * Verifies course ownership and renders MentorChat.
+ * MentorChat is lazy-loaded via LazyMentorChat for better initial bundle.
+ */
+
 import { redirect, notFound } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
 import { getCourse } from '@/lib/dal/courses';
-import { MentorChat } from './components/mentor-chat';
+import { LazyMentorChat } from './components/lazy-mentor-chat';
 
 interface ChatPageProps {
   params: Promise<{ courseId: string }>;
@@ -39,7 +46,7 @@ export default async function ChatPage({ params }: ChatPageProps) {
         <p className="text-sm text-muted-foreground">{course.title}</p>
       </div>
       <div className="flex-1 overflow-hidden">
-        <MentorChat courseId={courseId} courseTitle={course.title} />
+        <LazyMentorChat courseId={courseId} courseTitle={course.title} />
       </div>
     </div>
   );

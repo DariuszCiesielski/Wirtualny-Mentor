@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2025-01-30)
 
 **Core value:** Kazdy moze nauczyc sie czegokolwiek dzieki spersonalizowanemu, aktualnemu programowi nauczania z praktycznymi instrukcjami krok po kroku.
-**Current focus:** Phase 4 - Assessment System (READY TO PLAN)
+**Current focus:** Phase 4 - Assessment System (IN PROGRESS)
 
 ## Current Position
 
-Phase: 4 of 7 (Assessment System) - NOT STARTED
-Plan: 0 of 4 in current phase - READY TO PLAN
-Status: Phase 3 verified, ready for Phase 4
-Last activity: 2026-01-31 - Completed Phase 3 (Learning Materials) - VERIFIED
+Phase: 4 of 7 (Assessment System) - IN PROGRESS
+Plan: 1 of 4 in current phase - COMPLETE
+Status: Plan 04-01 complete, ready for 04-02
+Last activity: 2026-01-31 - Completed 04-01-PLAN.md (Quiz Schema and Types)
 
-Progress: [████████░░] 55% (17/31 plans)
+Progress: [████████░░] 58% (18/31 plans)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 17
+- Total plans completed: 18
 - Average duration: 10 min
-- Total execution time: 2.8 hours
+- Total execution time: 2.85 hours
 
 **By Phase:**
 
@@ -31,9 +31,10 @@ Progress: [████████░░] 55% (17/31 plans)
 | 01-auth-basic-ui | 3/3 | 55 min | 18 min |
 | 02-curriculum-generation | 7/7 | 57 min | 8 min |
 | 03-learning-materials | 5/5 | 32 min | 6 min |
+| 04-assessment-system | 1/4 | 3 min | 3 min |
 
 **Recent Trend:**
-- Last 5 plans: 03-01 (6 min), 03-02 (6 min), 03-03 (8 min), 03-04 (5 min), 03-05 (7 min)
+- Last 5 plans: 03-02 (6 min), 03-03 (8 min), 03-04 (5 min), 03-05 (7 min), 04-01 (3 min)
 - Trend: Consistent fast execution
 
 *Updated after each plan completion*
@@ -72,6 +73,9 @@ Recent decisions affecting current work:
 - AI SDK v6 tool calling: stopWhen: stepCountIs(N) dla multi-step, toolResult.output zamiast result
 - Markdown rendering: react-markdown + remark-gfm + rehype-highlight z github-dark theme
 - Lazy generation: Server passes initialContent, client fetches only when null
+- Quiz JSONB: questions stored as JSONB array for flexibility
+- Quiz parent CHECK: exactly one of chapter_id or level_id must be NOT NULL
+- Bloom taxonomy: Question classification using remembering/understanding/applying/analyzing
 
 ### Pending Todos
 
@@ -87,9 +91,10 @@ None yet.
 - User setup: Run curriculum migration in Supabase SQL Editor
 - User setup: Run section_content migration in Supabase SQL Editor
 - User setup: TAVILY_API_KEY required for web search
+- User setup: Run quizzes_schema migration in Supabase SQL Editor
 
 ## Session Continuity
 
 Last session: 2026-01-31
-Stopped at: Phase 3 complete and verified, ready for Phase 4 planning
+Stopped at: Completed 04-01-PLAN.md, ready for 04-02
 Resume file: None

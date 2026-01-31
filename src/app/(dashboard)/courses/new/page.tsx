@@ -17,7 +17,10 @@ import { CurriculumGenerator } from "@/components/curriculum/curriculum-generato
 import { CurriculumPreview } from "@/components/curriculum/curriculum-preview";
 import { Check } from "lucide-react";
 import { cn } from "@/lib/utils";
-import type { UserInfo, Curriculum } from "@/lib/ai/curriculum/schemas";
+import type { UserInfo, Curriculum, ClarificationResponse } from "@/lib/ai/curriculum/schemas";
+
+// Type for collected info from AI clarification
+type CollectedInfo = ClarificationResponse['collectedInfo'];
 import { initiateCourseCreation, saveCurriculum } from "./actions";
 
 type Step = "topic" | "clarify" | "generate" | "preview";
@@ -109,12 +112,16 @@ export default function NewCoursePage() {
     setCurrentStep("clarify");
   };
 
-  const handleClarifyComplete = async (info: Partial<UserInfo>) => {
-    // Convert partial to full UserInfo with defaults
+  const handleClarifyComplete = async (info: CollectedInfo) => {
+    // Convert CollectedInfo to UserInfo with proper types
+    const experience = (['beginner', 'intermediate', 'advanced'].includes(info.experience)
+      ? info.experience
+      : 'beginner') as UserInfo['experience'];
+
     const fullUserInfo: UserInfo = {
       topic: info.topic || topic,
       goals: info.goals || [],
-      experience: info.experience || "beginner",
+      experience,
       weeklyHours: info.weeklyHours || 5,
       sourceUrl: info.sourceUrl || sourceUrl,
     };

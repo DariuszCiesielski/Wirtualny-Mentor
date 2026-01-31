@@ -21,12 +21,15 @@ import {
 } from "@/components/ui/card";
 import { MessageCircle, Send, ArrowRight, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import type { UserInfo, ClarificationResponse } from "@/lib/ai/curriculum/schemas";
+import type { ClarificationResponse } from "@/lib/ai/curriculum/schemas";
+
+// Collected info from AI clarification (flexible type for OpenAI compatibility)
+type CollectedInfo = ClarificationResponse['collectedInfo'];
 
 interface ClarifyingChatProps {
   topic: string;
   sourceUrl?: string;
-  onComplete: (info: Partial<UserInfo>) => void;
+  onComplete: (info: CollectedInfo) => void;
 }
 
 /**
@@ -110,9 +113,12 @@ export function ClarifyingChat({
 
   const handleForceComplete = () => {
     // Force completion with whatever info we have
-    const collectedInfo: Partial<UserInfo> = {
+    const collectedInfo: CollectedInfo = {
       topic,
-      sourceUrl,
+      goals: [],
+      experience: '',
+      weeklyHours: 0,
+      sourceUrl: sourceUrl || '',
     };
     onComplete(collectedInfo);
   };

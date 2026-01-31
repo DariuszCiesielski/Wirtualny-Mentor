@@ -5,7 +5,7 @@
  * Uses structured output to parse AI responses with isComplete flag.
  */
 
-import { streamText, Output, type CoreMessage } from "ai";
+import { streamText, Output, type ModelMessage } from "ai";
 import { getModel } from "@/lib/ai/providers";
 import { clarificationSchema } from "@/lib/ai/curriculum/schemas";
 import { CLARIFYING_SYSTEM_PROMPT } from "@/lib/ai/curriculum/prompts";
@@ -22,7 +22,7 @@ interface UIMessage {
   content?: string;
 }
 
-function convertToCoreMessages(messages: UIMessage[]): CoreMessage[] {
+function convertToCoreMessages(messages: UIMessage[]): ModelMessage[] {
   return messages.map((msg) => {
     // If already has content string, use it
     if (typeof msg.content === "string") {

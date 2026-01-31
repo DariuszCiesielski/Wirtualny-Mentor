@@ -109,8 +109,8 @@ Plans:
 **Plans**: 5 plans in 3 waves
 
 Plans:
-- [ ] 03-01-PLAN.md — Database schema i TypeScript types dla section_content (Wave 1)
-- [ ] 03-02-PLAN.md — AI prompts i web search tools dla grounded generation (Wave 1)
+- [x] 03-01-PLAN.md — Database schema i TypeScript types dla section_content (Wave 1) ✓
+- [x] 03-02-PLAN.md — AI prompts i web search tools dla grounded generation (Wave 1) ✓
 - [ ] 03-03-PLAN.md — DAL i API endpoint dla material generation (Wave 2)
 - [ ] 03-04-PLAN.md — Markdown renderer i UI components (Wave 2)
 - [ ] 03-05-PLAN.md — Chapter page z lazy content generation (Wave 3)
@@ -206,13 +206,13 @@ Phases execute in numeric order: 0 -> 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7
 | 0. Foundation & AI Architecture | 2/2 | ✓ Complete | 2025-01-30 |
 | 1. Auth & Basic UI | 3/3 | ✓ Complete | 2025-01-30 |
 | 2. Curriculum Generation | 7/7 | ✓ Complete | 2026-01-31 |
-| 3. Learning Materials | 0/5 | Planned | - |
+| 3. Learning Materials | 2/5 | In progress | - |
 | 4. Assessment System | 0/4 | Not started | - |
 | 5. Notes System & Embeddings | 0/3 | Not started | - |
 | 6. Mentor Chatbot | 0/4 | Not started | - |
 | 7. Polish & Optimization | 0/4 | Not started | - |
 
-**Total:** 12/32 plans complete (38%)
+**Total:** 14/32 plans complete (44%)
 
 ---
 *Roadmap created: 2025-01-30*

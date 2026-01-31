@@ -10,18 +10,18 @@ See: .planning/PROJECT.md (updated 2025-01-30)
 ## Current Position
 
 Phase: 3 of 7 (Learning Materials) - IN PROGRESS
-Plan: 1 of 4 in current phase - COMPLETED
-Status: Plan 03-01 complete, ready for 03-02
-Last activity: 2026-01-31 - Completed 03-01-PLAN.md (Database Foundation)
+Plan: 2 of 4 in current phase - COMPLETED
+Status: Plan 03-02 complete, ready for 03-03
+Last activity: 2026-01-31 - Completed 03-02-PLAN.md (AI Tools & Prompts)
 
-Progress: [████████░░] 42% (13/31 plans)
+Progress: [████████░░] 45% (14/31 plans)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 13
+- Total plans completed: 14
 - Average duration: 10 min
-- Total execution time: 2.4 hours
+- Total execution time: 2.5 hours
 
 **By Phase:**
 
@@ -30,10 +30,10 @@ Progress: [████████░░] 42% (13/31 plans)
 | 00-foundation | 2/2 | 35 min | 17 min |
 | 01-auth-basic-ui | 3/3 | 55 min | 18 min |
 | 02-curriculum-generation | 7/7 | 57 min | 8 min |
-| 03-learning-materials | 1/4 | 6 min | 6 min |
+| 03-learning-materials | 2/4 | 12 min | 6 min |
 
 **Recent Trend:**
-- Last 5 plans: 02-04 (8 min), 02-05 (5 min), 02-06 (8 min), 02-07 (8 min), 03-01 (6 min)
+- Last 5 plans: 02-05 (5 min), 02-06 (8 min), 02-07 (8 min), 03-01 (6 min), 03-02 (6 min)
 - Trend: Consistent fast execution
 
 *Updated after each plan completion*
@@ -68,6 +68,7 @@ Recent decisions affecting current work:
 - Streaming object: streamObject dla structured AI output, manual buffer parsing dla partial UI
 - Materials versioning: UNIQUE(chapter_id, version) dla regeneracji bez utraty starej wersji
 - JSONB structured data: key_concepts, practical_steps, tools, external_resources, sources jako JSONB
+- AI SDK v6 tools: inputSchema zamiast parameters dla tool definition
 
 ### Pending Todos
 
@@ -87,5 +88,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-01-31
-Stopped at: Completed 03-01-PLAN.md (Database Foundation)
+Stopped at: Completed 03-02-PLAN.md (AI Tools & Prompts)
 Resume file: None

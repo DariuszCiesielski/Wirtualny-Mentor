@@ -6,6 +6,117 @@
  */
 
 import { createClient } from "@/lib/supabase/server";
+
+// ============================================================================
+// Dynamic Domain Detection for Knowledge Refresh
+// ============================================================================
+
+/**
+ * Dynamic domains that require frequent knowledge updates.
+ * These fields evolve rapidly and course materials may become outdated.
+ */
+const DYNAMIC_DOMAINS = [
+  // AI & Machine Learning
+  "ai",
+  "artificial intelligence",
+  "sztuczna inteligencja",
+  "machine learning",
+  "ml",
+  "llm",
+  "chatgpt",
+  "claude",
+  "gpt",
+  "deep learning",
+  "neural network",
+
+  // Technology & Programming
+  "tech",
+  "technologia",
+  "programming",
+  "programowanie",
+  "software",
+  "javascript",
+  "typescript",
+  "react",
+  "next.js",
+  "python",
+  "rust",
+  "node.js",
+  "aws",
+  "cloud",
+
+  // Law & Regulations
+  "prawo",
+  "law",
+  "legal",
+  "ustawa",
+  "przepisy",
+  "regulacje",
+  "gdpr",
+  "rodo",
+
+  // Crypto & Blockchain
+  "crypto",
+  "blockchain",
+  "web3",
+  "bitcoin",
+  "ethereum",
+  "defi",
+
+  // Security
+  "cybersecurity",
+  "bezpieczenstwo",
+  "security",
+  "hacking",
+  "pentesting",
+] as const;
+
+/**
+ * Check if course topic is in a dynamic domain requiring frequent updates.
+ *
+ * @param topic - The course topic to check
+ * @returns True if topic is in a dynamic domain
+ */
+export function isDynamicDomain(topic: string): boolean {
+  const lowerTopic = topic.toLowerCase();
+  return DYNAMIC_DOMAINS.some((domain) => lowerTopic.includes(domain));
+}
+
+/**
+ * Get courses that need knowledge refresh.
+ * Returns courses in dynamic domains that haven't been updated in the last 24 hours.
+ *
+ * @returns Array of courses needing refresh with id, topic, and userId
+ */
+export async function getCoursesNeedingRefresh(): Promise<
+  {
+    id: string;
+    topic: string;
+    userId: string;
+  }[]
+> {
+  const supabase = await createClient();
+  const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
+
+  const { data, error } = await supabase
+    .from("courses")
+    .select("id, title, user_id, updated_at")
+    .eq("status", "active")
+    .lt("updated_at", oneDayAgo);
+
+  if (error) {
+    throw new Error(`Failed to get courses for refresh: ${error.message}`);
+  }
+
+  // Filter to only dynamic domains
+  return (data || [])
+    .filter((course) => isDynamicDomain(course.title))
+    .map((course) => ({
+      id: course.id,
+      topic: course.title,
+      userId: course.user_id,
+    }));
+}
 import type {
   Course,
   CourseWithDetails,

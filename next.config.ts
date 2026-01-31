@@ -1,7 +1,20 @@
-import type { NextConfig } from "next";
+import type { NextConfig } from 'next';
+import bundleAnalyzer from '@next/bundle-analyzer';
+
+const withBundleAnalyzer = bundleAnalyzer({
+  enabled: process.env.ANALYZE === 'true',
+  openAnalyzer: true,
+});
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  experimental: {
+    // Tree-shaking for icon libraries
+    optimizePackageImports: ['lucide-react', '@radix-ui/react-icons'],
+  },
+  // Modern image formats for better compression
+  images: {
+    formats: ['image/avif', 'image/webp'],
+  },
 };
 
-export default nextConfig;
+export default withBundleAnalyzer(nextConfig);

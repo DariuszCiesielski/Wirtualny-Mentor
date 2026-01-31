@@ -10,18 +10,18 @@ See: .planning/PROJECT.md (updated 2025-01-30)
 ## Current Position
 
 Phase: 3 of 7 (Learning Materials) - COMPLETE
-Plan: 4 of 4 in current phase - COMPLETED
+Plan: 5 of 5 in current phase - COMPLETED
 Status: Phase 3 complete, ready for Phase 4
-Last activity: 2026-01-31 - Completed 03-04-PLAN.md (Material Display Components)
+Last activity: 2026-01-31 - Completed 03-05-PLAN.md (Chapter Page with Lazy Generation)
 
-Progress: [████████░░] 52% (16/31 plans)
+Progress: [████████░░] 55% (17/31 plans)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 16
+- Total plans completed: 17
 - Average duration: 10 min
-- Total execution time: 2.7 hours
+- Total execution time: 2.8 hours
 
 **By Phase:**
 
@@ -30,10 +30,10 @@ Progress: [████████░░] 52% (16/31 plans)
 | 00-foundation | 2/2 | 35 min | 17 min |
 | 01-auth-basic-ui | 3/3 | 55 min | 18 min |
 | 02-curriculum-generation | 7/7 | 57 min | 8 min |
-| 03-learning-materials | 4/4 | 25 min | 6 min |
+| 03-learning-materials | 5/5 | 32 min | 6 min |
 
 **Recent Trend:**
-- Last 5 plans: 02-07 (8 min), 03-01 (6 min), 03-02 (6 min), 03-03 (8 min), 03-04 (5 min)
+- Last 5 plans: 03-01 (6 min), 03-02 (6 min), 03-03 (8 min), 03-04 (5 min), 03-05 (7 min)
 - Trend: Consistent fast execution
 
 *Updated after each plan completion*
@@ -71,6 +71,7 @@ Recent decisions affecting current work:
 - AI SDK v6 tools: inputSchema zamiast parameters dla tool definition
 - AI SDK v6 tool calling: stopWhen: stepCountIs(N) dla multi-step, toolResult.output zamiast result
 - Markdown rendering: react-markdown + remark-gfm + rehype-highlight z github-dark theme
+- Lazy generation: Server passes initialContent, client fetches only when null
 
 ### Pending Todos
 
@@ -90,5 +91,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-01-31
-Stopped at: Completed 03-04-PLAN.md (Material Display Components) - Phase 3 complete
+Stopped at: Completed 03-05-PLAN.md (Chapter Page with Lazy Generation) - Phase 3 complete
 Resume file: None

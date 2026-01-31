@@ -1,10 +1,10 @@
 "use server";
 
 /**
- * Server Actions - Chapter Progress
+ * Server Actions - Chapter Progress & Notes
  *
- * Handle chapter completion and navigation.
- * Saves progress to database and redirects to next chapter.
+ * Handle chapter completion, navigation, and user notes.
+ * Saves progress and notes to database.
  */
 
 import { requireAuth } from "@/lib/dal/auth";
@@ -14,8 +14,10 @@ import {
   updateProgress,
 } from "@/lib/dal/progress";
 import { getCourse } from "@/lib/dal/courses";
+import { createNote, updateNote, deleteNote } from "@/lib/dal/notes";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import type { CreateNoteInput } from "@/types/notes";
 
 /**
  * Mark current chapter as complete and navigate to next
@@ -102,4 +104,111 @@ export async function navigateToChapter(
   });
 
   revalidatePath(`/courses/${courseId}`);
+}
+
+// ============================================================================
+// NOTES ACTIONS
+// ============================================================================
+
+/**
+ * Create a new note for the current chapter
+ *
+ * Server Action - generates embedding synchronously
+ */
+export async function createNoteAction(formData: FormData) {
+  const user = await requireAuth();
+
+  const content = formData.get("content") as string;
+  const courseId = formData.get("courseId") as string;
+  const chapterId = formData.get("chapterId") as string | null;
+
+  if (!content || content.trim().length === 0) {
+    return { error: "Content is required" };
+  }
+
+  if (!courseId) {
+    return { error: "Course ID is required" };
+  }
+
+  try {
+    const input: CreateNoteInput = {
+      course_id: courseId,
+      chapter_id: chapterId || null,
+      content: content.trim(),
+    };
+
+    const note = await createNote(user.id, input);
+
+    revalidatePath(`/courses/${courseId}`);
+
+    return { data: note };
+  } catch (error) {
+    console.error("Create note error:", error);
+    return {
+      error: error instanceof Error ? error.message : "Failed to create note",
+    };
+  }
+}
+
+/**
+ * Update an existing note
+ *
+ * Re-generates embedding for updated content
+ */
+export async function updateNoteAction(formData: FormData) {
+  const user = await requireAuth();
+
+  const noteId = formData.get("noteId") as string;
+  const content = formData.get("content") as string;
+  const courseId = formData.get("courseId") as string;
+
+  if (!noteId) {
+    return { error: "Note ID is required" };
+  }
+
+  if (!content || content.trim().length === 0) {
+    return { error: "Content is required" };
+  }
+
+  try {
+    const note = await updateNote(noteId, user.id, {
+      content: content.trim(),
+    });
+
+    revalidatePath(`/courses/${courseId}`);
+
+    return { data: note };
+  } catch (error) {
+    console.error("Update note error:", error);
+    return {
+      error: error instanceof Error ? error.message : "Failed to update note",
+    };
+  }
+}
+
+/**
+ * Delete a note
+ */
+export async function deleteNoteAction(formData: FormData) {
+  const user = await requireAuth();
+
+  const noteId = formData.get("noteId") as string;
+  const courseId = formData.get("courseId") as string;
+
+  if (!noteId) {
+    return { error: "Note ID is required" };
+  }
+
+  try {
+    await deleteNote(noteId, user.id);
+
+    revalidatePath(`/courses/${courseId}`);
+
+    return { success: true };
+  } catch (error) {
+    console.error("Delete note error:", error);
+    return {
+      error: error instanceof Error ? error.message : "Failed to delete note",
+    };
+  }
 }

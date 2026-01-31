@@ -16,7 +16,7 @@ Wirtualny Mentor to platforma edukacyjna AI, która generuje spersonalizowane pr
 - [x] **Phase 3: Learning Materials** - Materialy podre­cznikowe z praktycznymi instrukcjami ✓
 - [x] **Phase 4: Assessment System** - Quizy, testy, adaptacyjna remediacja ✓
 - [x] **Phase 5: Notes System & Embeddings** - Notatki uzytkownika z wektoryzacja do RAG ✓
-- [ ] **Phase 6: Mentor Chatbot** - Chatbot z metoda sokratyczna i dostepem do notatek
+- [x] **Phase 6: Mentor Chatbot** - Chatbot z metoda sokratyczna i dostepem do notatek ✓
 - [ ] **Phase 7: Polish & Optimization** - Responsywnosc, odswiezanie wiedzy, monitoring
 
 ## Phase Details
@@ -180,9 +180,11 @@ Plans:
 **Plans**: 3 plans in 2 waves
 
 Plans:
-- [ ] 06-01-PLAN.md — Mentor prompts i searchNotes tool (Wave 1)
-- [ ] 06-02-PLAN.md — Chat API endpoint z streaming (Wave 1)
-- [ ] 06-03-PLAN.md — Chat UI page i nawigacja (Wave 2)
+- [x] 06-01-PLAN.md — Mentor prompts i searchNotes tool (Wave 1) ✓
+- [x] 06-02-PLAN.md — Chat API endpoint z streaming (Wave 1) ✓
+- [x] 06-03-PLAN.md — Chat UI page i nawigacja (Wave 2) ✓
+
+**Completed:** 2026-01-31
 
 ---
 
@@ -216,10 +218,10 @@ Phases execute in numeric order: 0 -> 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7
 | 3. Learning Materials | 5/5 | ✓ Complete | 2026-01-31 |
 | 4. Assessment System | 4/4 | ✓ Complete | 2026-01-31 |
 | 5. Notes System & Embeddings | 5/5 | ✓ Complete | 2026-01-31 |
-| 6. Mentor Chatbot | 0/3 | Planned | - |
+| 6. Mentor Chatbot | 3/3 | ✓ Complete | 2026-01-31 |
 | 7. Polish & Optimization | 0/4 | Not started | - |
 
-**Total:** 26/31 plans complete (84%)
+**Total:** 29/31 plans complete (94%)
 
 ---
 *Roadmap created: 2025-01-30*

@@ -16,26 +16,26 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Learning Program
 
-- [ ] **PROG-01**: User can input learning topic or goal (text input)
-- [ ] **PROG-02**: AI asks clarifying questions (goals, experience, available time)
-- [ ] **PROG-03**: AI generates personalized curriculum with 5 levels (Poczatkujacy -> Srednio zaawansowany -> Zaawansowany -> Master -> Guru)
-- [ ] **PROG-04**: Each level contains structured chapters/sections
-- [ ] **PROG-05**: User can view full curriculum structure (table of contents)
-- [ ] **PROG-06**: User progress is saved and persists
-- [ ] **PROG-07**: User can have multiple courses in parallel (switch between topics)
-- [ ] **PROG-08**: Each level shows learning outcomes checklist ("After completing this level you will be able to...")
-- [ ] **PROG-09**: AI analyzes official curricula (schools, universities, certifications) and aligns generated program with market/education standards
+- [x] **PROG-01**: User can input learning topic or goal (text input)
+- [x] **PROG-02**: AI asks clarifying questions (goals, experience, available time)
+- [x] **PROG-03**: AI generates personalized curriculum with 5 levels (Poczatkujacy -> Srednio zaawansowany -> Zaawansowany -> Master -> Guru)
+- [x] **PROG-04**: Each level contains structured chapters/sections
+- [x] **PROG-05**: User can view full curriculum structure (table of contents)
+- [x] **PROG-06**: User progress is saved and persists
+- [x] **PROG-07**: User can have multiple courses in parallel (switch between topics)
+- [x] **PROG-08**: Each level shows learning outcomes checklist ("After completing this level you will be able to...")
+- [x] **PROG-09**: AI analyzes official curricula (schools, universities, certifications) and aligns generated program with market/education standards
 
 ### Learning Materials
 
-- [ ] **MAT-01**: AI generates textbook-like content for each section
-- [ ] **MAT-02**: Materials include links to external resources (docs, courses, articles)
-- [ ] **MAT-03**: Materials include practical tool links with URLs
-- [ ] **MAT-04**: Materials include step-by-step installation instructions
-- [ ] **MAT-05**: Materials include example commands with explanations
-- [ ] **MAT-06**: Materials include expected results and how to interpret them
-- [ ] **MAT-07**: Content is verifiable with citations/sources (anti-hallucination)
-- [ ] **MAT-08**: AI translates English source materials to Polish when needed
+- [x] **MAT-01**: AI generates textbook-like content for each section
+- [x] **MAT-02**: Materials include links to external resources (docs, courses, articles)
+- [x] **MAT-03**: Materials include practical tool links with URLs
+- [x] **MAT-04**: Materials include step-by-step installation instructions
+- [x] **MAT-05**: Materials include example commands with explanations
+- [x] **MAT-06**: Materials include expected results and how to interpret them
+- [x] **MAT-07**: Content is verifiable with citations/sources (anti-hallucination)
+- [x] **MAT-08**: AI translates English source materials to Polish when needed
 
 ### Assessment System
 
@@ -49,34 +49,34 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Mentor Chatbot
 
-- [ ] **CHAT-01**: User can ask questions about learning topic
-- [ ] **CHAT-02**: Chatbot uses Socratic method (guides, doesn't give direct answers)
-- [ ] **CHAT-03**: Chatbot has access to user's notes (RAG)
-- [ ] **CHAT-04**: Chatbot provides support and motivation (coach role)
-- [ ] **CHAT-05**: Chatbot can answer advanced questions (not limited to current level)
-- [ ] **CHAT-06**: Responses are streamed in real-time
+- [x] **CHAT-01**: User can ask questions about learning topic
+- [x] **CHAT-02**: Chatbot uses Socratic method (guides, doesn't give direct answers)
+- [x] **CHAT-03**: Chatbot has access to user's notes (RAG)
+- [x] **CHAT-04**: Chatbot provides support and motivation (coach role)
+- [x] **CHAT-05**: Chatbot can answer advanced questions (not limited to current level)
+- [x] **CHAT-06**: Responses are streamed in real-time
 
 ### Notes System
 
-- [ ] **NOTE-01**: User can create notes while learning
-- [ ] **NOTE-02**: User can view and browse saved notes
-- [ ] **NOTE-03**: Notes are linked to specific lesson/section context
-- [ ] **NOTE-04**: Notes are searchable
-- [ ] **NOTE-05**: Notes are embedded in vector DB for chatbot RAG
+- [x] **NOTE-01**: User can create notes while learning
+- [x] **NOTE-02**: User can view and browse saved notes
+- [x] **NOTE-03**: Notes are linked to specific lesson/section context
+- [x] **NOTE-04**: Notes are searchable
+- [x] **NOTE-05**: Notes are embedded in vector DB for chatbot RAG
 
 ### Current Knowledge
 
-- [ ] **KNOW-01**: AI uses real-time web search for current information
-- [ ] **KNOW-02**: User can provide link -> AI creates learning material from it
+- [x] **KNOW-01**: AI uses real-time web search for current information
+- [x] **KNOW-02**: User can provide link -> AI creates learning material from it
 - [ ] **KNOW-03**: Knowledge base refreshes daily for dynamic domains (AI, tech, law)
-- [ ] **KNOW-04**: Sources are cited in generated content
+- [x] **KNOW-04**: Sources are cited in generated content
 
 ### User Experience
 
 - [x] **UX-01**: Clean, intuitive interface inspired by NotebookLM
 - [ ] **UX-02**: Responsive design (works on mobile)
-- [ ] **UX-03**: Progress indicators (how far through level/course)
-- [ ] **UX-04**: Navigation between sections/levels
+- [x] **UX-03**: Progress indicators (how far through level/course)
+- [x] **UX-04**: Navigation between sections/levels
 - [x] **UX-05**: Dark mode support
 
 ## v2 Requirements
@@ -131,23 +131,23 @@ Which phases cover which requirements. Updated during roadmap creation.
 | AUTH-02 | Phase 1 | Complete |
 | AUTH-03 | Phase 1 | Complete |
 | AUTH-04 | Phase 1 | Complete |
-| PROG-01 | Phase 2 | Pending |
-| PROG-02 | Phase 2 | Pending |
-| PROG-03 | Phase 2 | Pending |
-| PROG-04 | Phase 2 | Pending |
-| PROG-05 | Phase 2 | Pending |
-| PROG-06 | Phase 2 | Pending |
-| PROG-07 | Phase 2 | Pending |
-| PROG-08 | Phase 2 | Pending |
-| PROG-09 | Phase 2 | Pending |
-| MAT-01 | Phase 3 | Pending |
-| MAT-02 | Phase 3 | Pending |
-| MAT-03 | Phase 3 | Pending |
-| MAT-04 | Phase 3 | Pending |
-| MAT-05 | Phase 3 | Pending |
-| MAT-06 | Phase 3 | Pending |
-| MAT-07 | Phase 3 | Pending |
-| MAT-08 | Phase 3 | Pending |
+| PROG-01 | Phase 2 | Complete |
+| PROG-02 | Phase 2 | Complete |
+| PROG-03 | Phase 2 | Complete |
+| PROG-04 | Phase 2 | Complete |
+| PROG-05 | Phase 2 | Complete |
+| PROG-06 | Phase 2 | Complete |
+| PROG-07 | Phase 2 | Complete |
+| PROG-08 | Phase 2 | Complete |
+| PROG-09 | Phase 2 | Complete |
+| MAT-01 | Phase 3 | Complete |
+| MAT-02 | Phase 3 | Complete |
+| MAT-03 | Phase 3 | Complete |
+| MAT-04 | Phase 3 | Complete |
+| MAT-05 | Phase 3 | Complete |
+| MAT-06 | Phase 3 | Complete |
+| MAT-07 | Phase 3 | Complete |
+| MAT-08 | Phase 3 | Complete |
 | QUIZ-01 | Phase 4 | Complete |
 | QUIZ-02 | Phase 4 | Complete |
 | QUIZ-03 | Phase 4 | Complete |
@@ -155,25 +155,25 @@ Which phases cover which requirements. Updated during roadmap creation.
 | QUIZ-05 | Phase 4 | Complete |
 | QUIZ-06 | Phase 4 | Complete |
 | QUIZ-07 | Phase 4 | Complete |
-| NOTE-01 | Phase 5 | Pending |
-| NOTE-02 | Phase 5 | Pending |
-| NOTE-03 | Phase 5 | Pending |
-| NOTE-04 | Phase 5 | Pending |
-| NOTE-05 | Phase 5 | Pending |
-| CHAT-01 | Phase 6 | Pending |
-| CHAT-02 | Phase 6 | Pending |
-| CHAT-03 | Phase 6 | Pending |
-| CHAT-04 | Phase 6 | Pending |
-| CHAT-05 | Phase 6 | Pending |
-| CHAT-06 | Phase 6 | Pending |
-| KNOW-01 | Phase 2 | Pending |
-| KNOW-02 | Phase 2 | Pending |
+| NOTE-01 | Phase 5 | Complete |
+| NOTE-02 | Phase 5 | Complete |
+| NOTE-03 | Phase 5 | Complete |
+| NOTE-04 | Phase 5 | Complete |
+| NOTE-05 | Phase 5 | Complete |
+| CHAT-01 | Phase 6 | Complete |
+| CHAT-02 | Phase 6 | Complete |
+| CHAT-03 | Phase 6 | Complete |
+| CHAT-04 | Phase 6 | Complete |
+| CHAT-05 | Phase 6 | Complete |
+| CHAT-06 | Phase 6 | Complete |
+| KNOW-01 | Phase 2 | Complete |
+| KNOW-02 | Phase 2 | Complete |
 | KNOW-03 | Phase 7 | Pending |
-| KNOW-04 | Phase 3 | Pending |
+| KNOW-04 | Phase 3 | Complete |
 | UX-01 | Phase 1 | Complete |
 | UX-02 | Phase 7 | Pending |
-| UX-03 | Phase 2 | Pending |
-| UX-04 | Phase 2 | Pending |
+| UX-03 | Phase 2 | Complete |
+| UX-04 | Phase 2 | Complete |
 | UX-05 | Phase 1 | Complete |
 
 **Coverage:**
@@ -183,4 +183,4 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 ---
 *Requirements defined: 2025-01-30*
-*Last updated: 2026-01-31 - Phase 4 complete (QUIZ-01 through QUIZ-07)*
+*Last updated: 2026-01-31 - Phase 6 complete (CHAT-01 through CHAT-06)*

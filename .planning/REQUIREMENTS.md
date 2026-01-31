@@ -39,13 +39,13 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Assessment System
 
-- [ ] **QUIZ-01**: Short quizzes after sections to check understanding
-- [ ] **QUIZ-02**: End-of-level test for each of 5 levels
-- [ ] **QUIZ-03**: User must pass test to unlock next level (default path)
-- [ ] **QUIZ-04**: User can manually skip level (for advanced users)
-- [ ] **QUIZ-05**: Wrong answers trigger additional remediation materials
-- [ ] **QUIZ-06**: User can retry test after reviewing remediation
-- [ ] **QUIZ-07**: Feedback on answers (why correct/incorrect)
+- [x] **QUIZ-01**: Short quizzes after sections to check understanding
+- [x] **QUIZ-02**: End-of-level test for each of 5 levels
+- [x] **QUIZ-03**: User must pass test to unlock next level (default path)
+- [x] **QUIZ-04**: User can manually skip level (for advanced users)
+- [x] **QUIZ-05**: Wrong answers trigger additional remediation materials
+- [x] **QUIZ-06**: User can retry test after reviewing remediation
+- [x] **QUIZ-07**: Feedback on answers (why correct/incorrect)
 
 ### Mentor Chatbot
 
@@ -148,13 +148,13 @@ Which phases cover which requirements. Updated during roadmap creation.
 | MAT-06 | Phase 3 | Pending |
 | MAT-07 | Phase 3 | Pending |
 | MAT-08 | Phase 3 | Pending |
-| QUIZ-01 | Phase 4 | Pending |
-| QUIZ-02 | Phase 4 | Pending |
-| QUIZ-03 | Phase 4 | Pending |
-| QUIZ-04 | Phase 4 | Pending |
-| QUIZ-05 | Phase 4 | Pending |
-| QUIZ-06 | Phase 4 | Pending |
-| QUIZ-07 | Phase 4 | Pending |
+| QUIZ-01 | Phase 4 | Complete |
+| QUIZ-02 | Phase 4 | Complete |
+| QUIZ-03 | Phase 4 | Complete |
+| QUIZ-04 | Phase 4 | Complete |
+| QUIZ-05 | Phase 4 | Complete |
+| QUIZ-06 | Phase 4 | Complete |
+| QUIZ-07 | Phase 4 | Complete |
 | NOTE-01 | Phase 5 | Pending |
 | NOTE-02 | Phase 5 | Pending |
 | NOTE-03 | Phase 5 | Pending |
@@ -183,4 +183,4 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 ---
 *Requirements defined: 2025-01-30*
-*Last updated: 2025-01-30 after roadmap creation*
+*Last updated: 2026-01-31 - Phase 4 complete (QUIZ-01 through QUIZ-07)*

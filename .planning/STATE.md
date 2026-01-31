@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2025-01-30)
 
 **Core value:** Kazdy moze nauczyc sie czegokolwiek dzieki spersonalizowanemu, aktualnemu programowi nauczania z praktycznymi instrukcjami krok po kroku.
-**Current focus:** Phase 4 - Assessment System (COMPLETE)
+**Current focus:** Phase 5 - Notes System & Embeddings (IN PROGRESS)
 
 ## Current Position
 
 Phase: 5 of 7 (Notes System & Embeddings)
-Plan: 2 of 5 in current phase - COMPLETE
+Plan: 3 of 5 in current phase - COMPLETE
 Status: In progress - Phase 5
-Last activity: 2026-01-31 - Completed 05-02-PLAN.md (Embedding Generation)
+Last activity: 2026-01-31 - Completed 05-03-PLAN.md (Notes DAL & Server Actions)
 
-Progress: [███████████░] 71% (22/31 plans)
+Progress: [████████████░] 74% (23/31 plans)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 22
-- Average duration: 9 min
-- Total execution time: 3.1 hours
+- Total plans completed: 23
+- Average duration: 8 min
+- Total execution time: 3.2 hours
 
 **By Phase:**
 
@@ -32,10 +32,10 @@ Progress: [███████████░] 71% (22/31 plans)
 | 02-curriculum-generation | 7/7 | 57 min | 8 min |
 | 03-learning-materials | 5/5 | 32 min | 6 min |
 | 04-assessment-system | 4/4 | 18 min | 5 min |
-| 05-notes-system-embeddings | 1/5 | 1 min | 1 min |
+| 05-notes-system-embeddings | 3/5 | 4 min | 1 min |
 
 **Recent Trend:**
-- Last 5 plans: 04-01 (3 min), 04-02 (3 min), 04-03 (5 min), 04-04 (7 min), 05-02 (1 min)
+- Last 5 plans: 04-02 (3 min), 04-03 (5 min), 04-04 (7 min), 05-02 (1 min), 05-03 (3 min)
 - Trend: Consistent fast execution
 
 *Updated after each plan completion*
@@ -84,6 +84,9 @@ Recent decisions affecting current work:
 - Level unlock: First level always accessible, subsequent require test pass or skip
 - Skip tracking: unlockType: 'manual_skip' for analytics
 - Embedding pattern: generateEmbedding/generateEmbeddings from embeddings.ts with AI SDK
+- Notes embedding: Sync generation at write time (createNote/updateNote)
+- Notes DAL pattern: Dual search (fulltext for UI, semantic for RAG)
+- RPC SECURITY DEFINER: For vector search bypass RLS in trusted context
 
 ### Pending Todos
 
@@ -100,9 +103,10 @@ None yet.
 - User setup: Run section_content migration in Supabase SQL Editor
 - User setup: TAVILY_API_KEY required for web search
 - User setup: Run quizzes_schema migration in Supabase SQL Editor
+- User setup: Run notes_schema migration in Supabase SQL Editor (includes RPC function)
 
 ## Session Continuity
 
 Last session: 2026-01-31
-Stopped at: Completed 05-02-PLAN.md (Embedding Generation Module)
+Stopped at: Completed 05-03-PLAN.md (Notes DAL & Server Actions)
 Resume file: None

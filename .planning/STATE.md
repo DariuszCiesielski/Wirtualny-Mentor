@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2025-01-30)
 
 **Core value:** Kazdy moze nauczyc sie czegokolwiek dzieki spersonalizowanemu, aktualnemu programowi nauczania z praktycznymi instrukcjami krok po kroku.
-**Current focus:** Phase 3 - Learning Materials (READY TO PLAN)
+**Current focus:** Phase 3 - Learning Materials (IN PROGRESS)
 
 ## Current Position
 
-Phase: 3 of 7 (Learning Materials) - NOT STARTED
-Plan: 0 of 4 in current phase - READY TO PLAN
-Status: Phase 2 complete, ready for Phase 3
-Last activity: 2026-01-31 - Completed Phase 2 (Curriculum Generation)
+Phase: 3 of 7 (Learning Materials) - IN PROGRESS
+Plan: 1 of 4 in current phase - COMPLETED
+Status: Plan 03-01 complete, ready for 03-02
+Last activity: 2026-01-31 - Completed 03-01-PLAN.md (Database Foundation)
 
-Progress: [████████░░] 39% (12/31 plans)
+Progress: [████████░░] 42% (13/31 plans)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 12
-- Average duration: 11 min
-- Total execution time: 2.3 hours
+- Total plans completed: 13
+- Average duration: 10 min
+- Total execution time: 2.4 hours
 
 **By Phase:**
 
@@ -30,10 +30,11 @@ Progress: [████████░░] 39% (12/31 plans)
 | 00-foundation | 2/2 | 35 min | 17 min |
 | 01-auth-basic-ui | 3/3 | 55 min | 18 min |
 | 02-curriculum-generation | 7/7 | 57 min | 8 min |
+| 03-learning-materials | 1/4 | 6 min | 6 min |
 
 **Recent Trend:**
-- Last 5 plans: 02-03 (15 min), 02-04 (8 min), 02-05 (5 min), 02-06 (8 min), 02-07 (8 min)
-- Trend: Fast execution in Phase 2
+- Last 5 plans: 02-04 (8 min), 02-05 (5 min), 02-06 (8 min), 02-07 (8 min), 03-01 (6 min)
+- Trend: Consistent fast execution
 
 *Updated after each plan completion*
 
@@ -65,6 +66,8 @@ Recent decisions affecting current work:
 - Curriculum schemas: curriculumSchema.levels.length(5) wymaga dokladnie 5 poziomow
 - AI SDK v6 chat: DefaultChatTransport zamiast api prop, UIMessage.parts zamiast content, sendMessage({ text })
 - Streaming object: streamObject dla structured AI output, manual buffer parsing dla partial UI
+- Materials versioning: UNIQUE(chapter_id, version) dla regeneracji bez utraty starej wersji
+- JSONB structured data: key_concepts, practical_steps, tools, external_resources, sources jako JSONB
 
 ### Pending Todos
 
@@ -78,10 +81,11 @@ None yet.
 - User setup: Supabase URL Configuration required (Site URL, Redirect URLs)
 - User setup: Supabase Storage bucket 'avatars' required for avatar uploads
 - User setup: Run curriculum migration in Supabase SQL Editor
+- User setup: Run section_content migration in Supabase SQL Editor
 - User setup: TAVILY_API_KEY required for web search
 
 ## Session Continuity
 
 Last session: 2026-01-31
-Stopped at: Phase 2 complete, ready for Phase 3 planning
+Stopped at: Completed 03-01-PLAN.md (Database Foundation)
 Resume file: None

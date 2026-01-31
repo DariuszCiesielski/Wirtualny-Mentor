@@ -131,13 +131,13 @@ Plans:
   5. Bledne odpowiedzi wywoluja dodatkowe materialy remediacyjne
   6. Uzytkownik moze powtorzyc test po przerobeniu remediacji
   7. Feedback na odpowiedzi wyjasnia dlaczego poprawna/bledna
-**Plans**: TBD
+**Plans**: 4 plans in 3 waves
 
 Plans:
-- [ ] 04-01: Quiz generation engine
-- [ ] 04-02: Quiz-taking UI i scoring
-- [ ] 04-03: Level progression i skip mechanism
-- [ ] 04-04: Adaptive remediation
+- [ ] 04-01-PLAN.md — Quiz database schema i TypeScript types (Wave 1)
+- [ ] 04-02-PLAN.md — Quiz generation engine z AI prompts i DAL (Wave 1)
+- [ ] 04-03-PLAN.md — Quiz UI components i scoring (Wave 2)
+- [ ] 04-04-PLAN.md — Level progression, skip mechanism i remediation (Wave 3)
 
 ---
 
@@ -209,12 +209,12 @@ Phases execute in numeric order: 0 -> 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7
 | 1. Auth & Basic UI | 3/3 | ✓ Complete | 2025-01-30 |
 | 2. Curriculum Generation | 7/7 | ✓ Complete | 2026-01-31 |
 | 3. Learning Materials | 5/5 | ✓ Complete | 2026-01-31 |
-| 4. Assessment System | 0/4 | Not started | - |
+| 4. Assessment System | 0/4 | Planned | - |
 | 5. Notes System & Embeddings | 0/3 | Not started | - |
 | 6. Mentor Chatbot | 0/4 | Not started | - |
 | 7. Polish & Optimization | 0/4 | Not started | - |
 
-**Total:** 17/32 plans complete (53%)
+**Total:** 17/31 plans complete (55%)
 
 ---
 *Roadmap created: 2025-01-30*

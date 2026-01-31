@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2025-01-30)
 
 **Core value:** Kazdy moze nauczyc sie czegokolwiek dzieki spersonalizowanemu, aktualnemu programowi nauczania z praktycznymi instrukcjami krok po kroku.
-**Current focus:** Phase 5 - Notes System & Embeddings (COMPLETE)
+**Current focus:** Phase 6 - Mentor Chatbot
 
 ## Current Position
 
-Phase: 5 of 7 (Notes System & Embeddings)
-Plan: 5 of 5 in current phase - COMPLETE
-Status: Phase 5 COMPLETE
-Last activity: 2026-01-31 - Completed 05-05-PLAN.md (Notes Listing Page)
+Phase: 6 of 7 (Mentor Chatbot)
+Plan: 1 of 4 in current phase
+Status: In progress
+Last activity: 2026-01-31 - Completed 06-01-PLAN.md (System Prompt & Tool Definition)
 
-Progress: [██████████████░] 81% (25/31 plans)
+Progress: [██████████████░] 84% (26/31 plans)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 25
+- Total plans completed: 26
 - Average duration: 8 min
-- Total execution time: 3.4 hours
+- Total execution time: 3.45 hours
 
 **By Phase:**
 
@@ -33,9 +33,10 @@ Progress: [██████████████░] 81% (25/31 plans)
 | 03-learning-materials | 5/5 | 32 min | 6 min |
 | 04-assessment-system | 4/4 | 18 min | 5 min |
 | 05-notes-system-embeddings | 5/5 | 12 min | 2 min |
+| 06-mentor-chatbot | 1/4 | 3 min | 3 min |
 
 **Recent Trend:**
-- Last 5 plans: 04-04 (7 min), 05-02 (1 min), 05-03 (3 min), 05-04 (4 min), 05-05 (4 min)
+- Last 5 plans: 05-02 (1 min), 05-03 (3 min), 05-04 (4 min), 05-05 (4 min), 06-01 (3 min)
 - Trend: Consistent fast execution
 
 *Updated after each plan completion*
@@ -89,6 +90,9 @@ Recent decisions affecting current work:
 - RPC SECURITY DEFINER: For vector search bypass RLS in trusted context
 - Notes UI: Optimistic updates with useState for instant feedback
 - Notes search: Bound server action pattern for search with courseId
+- Mentor prompts: Socratic method with strict NIGDY/ZAWSZE rules
+- Tool factory pattern: Context injection (userId, courseId) for per-session binding
+- RAG threshold: 0.5 for better recall in chatbot context (vs 0.7 default)
 
 ### Pending Todos
 
@@ -96,7 +100,7 @@ None yet.
 
 ### Blockers/Concerns
 
-- Research needed: Prompt engineering dla metody sokratycznej (Phase 6)
+- RESOLVED: Prompt engineering dla metody sokratycznej (06-01 complete)
 - Research needed: Fact-checking automation (addressed via grounded generation in Phase 3)
 - Cost monitoring: Setup complete in Phase 0, track real usage patterns going forward
 - User setup: Supabase URL Configuration required (Site URL, Redirect URLs)
@@ -110,5 +114,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-01-31
-Stopped at: Completed 05-05-PLAN.md (Notes Listing Page) - Phase 5 COMPLETE
+Stopped at: Completed 06-01-PLAN.md (System Prompt & Tool Definition)
 Resume file: None

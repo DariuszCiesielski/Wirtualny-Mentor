@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2025-01-30)
 
 **Core value:** Kazdy moze nauczyc sie czegokolwiek dzieki spersonalizowanemu, aktualnemu programowi nauczania z praktycznymi instrukcjami krok po kroku.
-**Current focus:** Phase 6 - Mentor Chatbot (COMPLETE)
+**Current focus:** Phase 7 - Polish & Optimization (IN PROGRESS)
 
 ## Current Position
 
-Phase: 6 of 7 (Mentor Chatbot)
-Plan: 3 of 3 in current phase - COMPLETE
-Status: Phase 6 COMPLETE
-Last activity: 2026-01-31 - Completed 06-03-PLAN.md (Chat UI) - Phase verified
+Phase: 7 of 7 (Polish & Optimization)
+Plan: 2 of 3 in current phase
+Status: In Progress
+Last activity: 2026-01-31 - Completed 07-02-PLAN.md (Helicone Monitoring)
 
-Progress: [█████████████████░] 94% (29/31 plans)
+Progress: [██████████████████] 97% (31/32 plans)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 29
+- Total plans completed: 31
 - Average duration: 7 min
-- Total execution time: 3.7 hours
+- Total execution time: 3.8 hours
 
 **By Phase:**
 
@@ -34,9 +34,10 @@ Progress: [█████████████████░] 94% (29/31 pl
 | 04-assessment-system | 4/4 | 18 min | 5 min |
 | 05-notes-system-embeddings | 5/5 | 12 min | 2 min |
 | 06-mentor-chatbot | 3/3 | 14 min | 5 min |
+| 07-polish-optimization | 2/3 | 8 min | 4 min |
 
 **Recent Trend:**
-- Last 5 plans: 05-04 (4 min), 05-05 (4 min), 06-01 (3 min), 06-02 (4 min), 06-03 (7 min)
+- Last 5 plans: 05-05 (4 min), 06-01 (3 min), 06-02 (4 min), 06-03 (7 min), 07-02 (3 min)
 - Trend: Consistent fast execution
 
 *Updated after each plan completion*
@@ -96,6 +97,8 @@ Recent decisions affecting current work:
 - Chat API pattern: Auth + course ownership verification before streaming
 - Chat API: Edge runtime for better streaming performance
 - AI SDK v6 useChat: Use 'messages' prop (not deprecated 'initialMessages')
+- Helicone integration: Gateway proxy pattern with conditional config (no overhead when disabled)
+- Helicone: Factory functions (createAnthropic etc.) for baseURL override support
 
 ### Pending Todos
 
@@ -113,9 +116,10 @@ None yet.
 - User setup: TAVILY_API_KEY required for web search
 - User setup: Run quizzes_schema migration in Supabase SQL Editor
 - User setup: Run notes_schema migration in Supabase SQL Editor (includes RPC function)
+- User setup: HELICONE_API_KEY optional for cost monitoring dashboard
 
 ## Session Continuity
 
 Last session: 2026-01-31
-Stopped at: Phase 6 COMPLETE - Mentor Chatbot verified
+Stopped at: Completed 07-02-PLAN.md (Helicone Monitoring)
 Resume file: None

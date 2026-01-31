@@ -10,18 +10,18 @@ See: .planning/PROJECT.md (updated 2025-01-30)
 ## Current Position
 
 Phase: 6 of 7 (Mentor Chatbot)
-Plan: 1 of 4 in current phase
+Plan: 2 of 4 in current phase
 Status: In progress
-Last activity: 2026-01-31 - Completed 06-01-PLAN.md (System Prompt & Tool Definition)
+Last activity: 2026-01-31 - Completed 06-02-PLAN.md (Streaming Chat API)
 
-Progress: [██████████████░] 84% (26/31 plans)
+Progress: [███████████████░] 87% (27/31 plans)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 26
+- Total plans completed: 27
 - Average duration: 8 min
-- Total execution time: 3.45 hours
+- Total execution time: 3.5 hours
 
 **By Phase:**
 
@@ -33,10 +33,10 @@ Progress: [██████████████░] 84% (26/31 plans)
 | 03-learning-materials | 5/5 | 32 min | 6 min |
 | 04-assessment-system | 4/4 | 18 min | 5 min |
 | 05-notes-system-embeddings | 5/5 | 12 min | 2 min |
-| 06-mentor-chatbot | 1/4 | 3 min | 3 min |
+| 06-mentor-chatbot | 2/4 | 7 min | 3 min |
 
 **Recent Trend:**
-- Last 5 plans: 05-02 (1 min), 05-03 (3 min), 05-04 (4 min), 05-05 (4 min), 06-01 (3 min)
+- Last 5 plans: 05-03 (3 min), 05-04 (4 min), 05-05 (4 min), 06-01 (3 min), 06-02 (4 min)
 - Trend: Consistent fast execution
 
 *Updated after each plan completion*
@@ -93,6 +93,8 @@ Recent decisions affecting current work:
 - Mentor prompts: Socratic method with strict NIGDY/ZAWSZE rules
 - Tool factory pattern: Context injection (userId, courseId) for per-session binding
 - RAG threshold: 0.5 for better recall in chatbot context (vs 0.7 default)
+- Chat API pattern: Auth + course ownership verification before streaming
+- Chat API: Edge runtime for better streaming performance
 
 ### Pending Todos
 
@@ -114,5 +116,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-01-31
-Stopped at: Completed 06-01-PLAN.md (System Prompt & Tool Definition)
+Stopped at: Completed 06-02-PLAN.md (Streaming Chat API)
 Resume file: None

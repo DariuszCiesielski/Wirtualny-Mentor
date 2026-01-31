@@ -106,13 +106,14 @@ Plans:
   5. Komendy do uzycia maja wyjasnienia i oczekiwane wyniki
   6. Zrodla sa cytowane w wygenerowanych tresciach (anti-halucynacja)
   7. Angielskie materialy zrodlowe sa tlumaczone na polski
-**Plans**: TBD
+**Plans**: 5 plans in 3 waves
 
 Plans:
-- [ ] 03-01: Content generation engine (textbook-style)
-- [ ] 03-02: Practical instructions (tools, commands, results)
-- [ ] 03-03: Citations i source verification
-- [ ] 03-04: English to Polish translation layer
+- [ ] 03-01-PLAN.md — Database schema i TypeScript types dla section_content (Wave 1)
+- [ ] 03-02-PLAN.md — AI prompts i web search tools dla grounded generation (Wave 1)
+- [ ] 03-03-PLAN.md — DAL i API endpoint dla material generation (Wave 2)
+- [ ] 03-04-PLAN.md — Markdown renderer i UI components (Wave 2)
+- [ ] 03-05-PLAN.md — Chapter page z lazy content generation (Wave 3)
 
 ---
 
@@ -205,14 +206,14 @@ Phases execute in numeric order: 0 -> 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7
 | 0. Foundation & AI Architecture | 2/2 | ✓ Complete | 2025-01-30 |
 | 1. Auth & Basic UI | 3/3 | ✓ Complete | 2025-01-30 |
 | 2. Curriculum Generation | 7/7 | ✓ Complete | 2026-01-31 |
-| 3. Learning Materials | 0/4 | Not started | - |
+| 3. Learning Materials | 0/5 | Planned | - |
 | 4. Assessment System | 0/4 | Not started | - |
 | 5. Notes System & Embeddings | 0/3 | Not started | - |
 | 6. Mentor Chatbot | 0/4 | Not started | - |
 | 7. Polish & Optimization | 0/4 | Not started | - |
 
-**Total:** 12/31 plans complete (39%)
+**Total:** 12/32 plans complete (38%)
 
 ---
 *Roadmap created: 2025-01-30*
-*Last updated: 2026-01-30*
+*Last updated: 2026-01-31*

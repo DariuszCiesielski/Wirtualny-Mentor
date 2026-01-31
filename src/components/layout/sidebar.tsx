@@ -23,7 +23,7 @@ const navItems = [
     label: "Moje kursy",
     href: "/courses",
     icon: BookOpen,
-    disabled: true,
+    disabled: false,
   },
   {
     label: "Notatki",

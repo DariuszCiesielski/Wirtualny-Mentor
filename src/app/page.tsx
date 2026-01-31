@@ -1,44 +1,14 @@
-"use client";
-
-import { useState } from "react";
+import { redirect } from "next/navigation";
+import { getUser } from "@/lib/dal/auth";
+import Link from "next/link";
 import { ThemeToggle } from "@/components/layout/theme-toggle";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
-export default function Home() {
-  const [response, setResponse] = useState<string>("");
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  async function testAI() {
-    setLoading(true);
-    setError(null);
-    setResponse("");
-
-    try {
-      const res = await fetch("/api/test-ai");
-
-      if (!res.ok) {
-        throw new Error(`HTTP ${res.status}: ${res.statusText}`);
-      }
-
-      const reader = res.body?.getReader();
-      if (!reader) throw new Error("No response body");
-
-      const decoder = new TextDecoder();
-
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-
-        const chunk = decoder.decode(value, { stream: true });
-        setResponse((prev) => prev + chunk);
-      }
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Unknown error");
-    } finally {
-      setLoading(false);
-    }
+export default async function Home() {
+  // Redirect to dashboard if already logged in
+  const user = await getUser();
+  if (user) {
+    redirect("/dashboard");
   }
 
   return (
@@ -54,44 +24,57 @@ export default function Home() {
             Spersonalizowana platforma nauki z AI
           </p>
           <p className="text-sm text-muted-foreground/70 mt-2">
-            Phase 1: Auth & Basic UI
+            Naucz sie czegokolwiek z pomoca AI
           </p>
         </div>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Test AI Connection</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <Button onClick={testAI} disabled={loading} className="w-full">
-              {loading ? "AI odpowiada..." : "Przetestuj AI"}
-            </Button>
+        <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <Button asChild size="lg">
+            <Link href="/login">Zaloguj sie</Link>
+          </Button>
+          <Button asChild variant="outline" size="lg">
+            <Link href="/sign-up">Zarejestruj sie</Link>
+          </Button>
+        </div>
 
-            {error && (
-              <div className="p-4 bg-destructive/10 border border-destructive rounded-lg">
-                <p className="text-destructive">{error}</p>
-                <p className="text-sm text-destructive/80 mt-2">
-                  Sprawdz czy klucze API sa skonfigurowane w .env.local
+        <div className="mt-16 text-center">
+          <h2 className="text-2xl font-semibold mb-6">Jak to dziala?</h2>
+          <div className="grid gap-6 text-left max-w-md mx-auto">
+            <div className="flex gap-4">
+              <div className="flex-shrink-0 w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold">
+                1
+              </div>
+              <div>
+                <h3 className="font-medium">Podaj temat</h3>
+                <p className="text-sm text-muted-foreground">
+                  Wpisz czego chcesz sie nauczyc lub podaj link do zrodla
                 </p>
               </div>
-            )}
-
-            {response && (
-              <div className="p-4 bg-muted rounded-lg">
-                <p className="text-sm text-muted-foreground mb-2">
-                  Odpowiedz AI:
-                </p>
-                <p className="text-foreground whitespace-pre-wrap">{response}</p>
+            </div>
+            <div className="flex gap-4">
+              <div className="flex-shrink-0 w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold">
+                2
               </div>
-            )}
-          </CardContent>
-        </Card>
-
-        <p className="text-center text-muted-foreground text-sm mt-8">
-          Kliknij przycisk powyzej aby przetestowac polaczenie z AI.
-          <br />
-          Wymaga skonfigurowanych kluczy API w .env.local
-        </p>
+              <div>
+                <h3 className="font-medium">AI tworzy program</h3>
+                <p className="text-sm text-muted-foreground">
+                  Spersonalizowany kurs z 5 poziomami: od poczatkujacego do guru
+                </p>
+              </div>
+            </div>
+            <div className="flex gap-4">
+              <div className="flex-shrink-0 w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold">
+                3
+              </div>
+              <div>
+                <h3 className="font-medium">Ucz sie z mentorem</h3>
+                <p className="text-sm text-muted-foreground">
+                  Materialy, quizy i chatbot-mentor do pomocy
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </main>
   );

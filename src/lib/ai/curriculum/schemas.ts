@@ -1,6 +1,8 @@
 import { z } from 'zod';
 
 // Schema dla zebranych informacji o uzytkowniku
+// Note: Using z.string() instead of z.string().url() for sourceUrl
+// because OpenAI structured output doesn't support 'uri' format
 export const userInfoSchema = z.object({
   topic: z.string().describe('Temat nauki'),
   goals: z.array(z.string()).describe('Cele uzytkownika'),
@@ -8,19 +10,24 @@ export const userInfoSchema = z.object({
     .enum(['beginner', 'intermediate', 'advanced'])
     .describe('Poziom doswiadczenia'),
   weeklyHours: z.number().positive().describe('Godziny nauki tygodniowo'),
-  sourceUrl: z.string().url().optional().describe('Opcjonalny link zrodlowy'),
+  sourceUrl: z.string().optional().describe('Opcjonalny link zrodlowy'),
 });
 export type UserInfo = z.infer<typeof userInfoSchema>;
 
 // Schema dla odpowiedzi AI w fazie clarifying questions
+// Note: OpenAI structured output requires all properties to be required,
+// so we can't use .partial(). Instead, all fields in collectedInfo have defaults.
 export const clarificationSchema = z.object({
   question: z.string().describe('Pytanie do uzytkownika'),
-  options: z.array(z.string()).optional().describe('Sugerowane odpowiedzi'),
+  options: z.array(z.string()).describe('Sugerowane odpowiedzi (pusta tablica jesli brak)'),
   isComplete: z.boolean().describe('Czy zebrano wystarczajaco informacji'),
-  collectedInfo: userInfoSchema
-    .partial()
-    .optional()
-    .describe('Dotychczas zebrane informacje'),
+  collectedInfo: z.object({
+    topic: z.string().describe('Temat nauki (pusty string jesli nieznany)'),
+    goals: z.array(z.string()).describe('Cele uzytkownika'),
+    experience: z.string().describe('Poziom: beginner, intermediate lub advanced (pusty jesli nieznany)'),
+    weeklyHours: z.number().describe('Godziny nauki tygodniowo (0 jesli nieznane)'),
+    sourceUrl: z.string().describe('Opcjonalny link zrodlowy (pusty jesli brak)'),
+  }).describe('Dotychczas zebrane informacje'),
 });
 export type ClarificationResponse = z.infer<typeof clarificationSchema>;
 

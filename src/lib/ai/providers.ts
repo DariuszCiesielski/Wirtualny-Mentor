@@ -45,8 +45,8 @@ export const MODEL_CONFIG = {
   // Claude Sonnet 4 - mentoring, long context, empathy, Polish language
   mentor: anthropicProvider('claude-sonnet-4-20250514'),
 
-  // GPT-4.1 - structured curriculum generation, reliable JSON
-  curriculum: openaiProvider('gpt-4.1'),
+  // GPT-5.2 - structured curriculum generation, reliable JSON
+  curriculum: openaiProvider('gpt-5.2'),
 
   // Gemini 2.0 Flash - fast, cheap quizzes
   quiz: googleProvider('gemini-2.0-flash'),

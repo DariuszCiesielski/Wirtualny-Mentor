@@ -3,7 +3,7 @@
 /**
  * Topic Input Component
  *
- * Form for entering learning topic and optional source URL.
+ * Form for entering learning topic and optional source URLs.
  * First step in course creation flow.
  */
 
@@ -18,7 +18,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { BookOpen, Link as LinkIcon } from "lucide-react";
+import { BookOpen, Link as LinkIcon, Plus, X } from "lucide-react";
 
 interface TopicInputProps {
   onSubmit: (topic: string, sourceUrl?: string) => void;
@@ -27,8 +27,8 @@ interface TopicInputProps {
 
 export function TopicInput({ onSubmit, isLoading = false }: TopicInputProps) {
   const [topic, setTopic] = useState("");
-  const [sourceUrl, setSourceUrl] = useState("");
-  const [urlError, setUrlError] = useState<string | null>(null);
+  const [sourceUrls, setSourceUrls] = useState<string[]>([""]);
+  const [urlErrors, setUrlErrors] = useState<(string | null)[]>([null]);
 
   const isTopicValid = topic.trim().length >= 3;
 
@@ -42,21 +42,44 @@ export function TopicInput({ onSubmit, isLoading = false }: TopicInputProps) {
     }
   };
 
-  const handleUrlChange = (value: string) => {
-    setSourceUrl(value);
+  const handleUrlChange = (index: number, value: string) => {
+    const newUrls = [...sourceUrls];
+    newUrls[index] = value;
+    setSourceUrls(newUrls);
+
+    const newErrors = [...urlErrors];
     if (value && !validateUrl(value)) {
-      setUrlError("Podaj poprawny adres URL");
+      newErrors[index] = "Podaj poprawny adres URL";
     } else {
-      setUrlError(null);
+      newErrors[index] = null;
     }
+    setUrlErrors(newErrors);
   };
+
+  const addUrlField = () => {
+    setSourceUrls([...sourceUrls, ""]);
+    setUrlErrors([...urlErrors, null]);
+  };
+
+  const removeUrlField = (index: number) => {
+    if (sourceUrls.length <= 1) return;
+    const newUrls = sourceUrls.filter((_, i) => i !== index);
+    const newErrors = urlErrors.filter((_, i) => i !== index);
+    setSourceUrls(newUrls);
+    setUrlErrors(newErrors);
+  };
+
+  const hasAnyUrlError = urlErrors.some((error) => error !== null);
+  const validUrls = sourceUrls.filter((url) => url.trim() && validateUrl(url));
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!isTopicValid) return;
-    if (sourceUrl && !validateUrl(sourceUrl)) return;
+    if (hasAnyUrlError) return;
 
-    onSubmit(topic.trim(), sourceUrl.trim() || undefined);
+    // Combine valid URLs into single string (separated by newlines)
+    const combinedUrls = validUrls.length > 0 ? validUrls.join("\n") : undefined;
+    onSubmit(topic.trim(), combinedUrls);
   };
 
   return (
@@ -69,7 +92,7 @@ export function TopicInput({ onSubmit, isLoading = false }: TopicInputProps) {
           <div>
             <CardTitle>Nowy kurs</CardTitle>
             <CardDescription>
-              Podaj temat, ktorego chcesz sie nauczyc
+              Podaj temat, którego chcesz się nauczyć
             </CardDescription>
           </div>
         </div>
@@ -88,46 +111,76 @@ export function TopicInput({ onSubmit, isLoading = false }: TopicInputProps) {
               id="topic"
               value={topic}
               onChange={(e) => setTopic(e.target.value)}
-              placeholder="Czego chcesz sie nauczyc? np. 'programowanie w Python' lub 'prawo cywilne w Polsce'"
+              placeholder="Czego chcesz się nauczyć? np. 'programowanie w Python' lub 'prawo cywilne w Polsce'"
               className="min-h-[100px] resize-none"
               disabled={isLoading}
             />
             <p className="text-xs text-muted-foreground">
-              Opisz temat mozliwie dokladnie - AI dostosuje program do Twoich
+              Opisz temat możliwie dokładnie - AI dostosuje program do Twoich
               potrzeb
             </p>
           </div>
 
-          {/* Source URL input */}
-          <div className="space-y-2">
-            <label
-              htmlFor="sourceUrl"
-              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-            >
+          {/* Source URLs input */}
+          <div className="space-y-3">
+            <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
               <span className="flex items-center gap-2">
                 <LinkIcon className="h-4 w-4" />
-                Link do zrodla (opcjonalnie)
+                Linki do źródeł (opcjonalnie)
               </span>
             </label>
-            <Input
-              id="sourceUrl"
-              type="url"
-              value={sourceUrl}
-              onChange={(e) => handleUrlChange(e.target.value)}
-              placeholder="Opcjonalnie: link do materialu, na podstawie ktorego chcesz sie uczyc"
+
+            {sourceUrls.map((url, index) => (
+              <div key={index} className="flex gap-2">
+                <div className="flex-1 space-y-1">
+                  <Input
+                    type="url"
+                    value={url}
+                    onChange={(e) => handleUrlChange(index, e.target.value)}
+                    placeholder="https://example.com/material"
+                    disabled={isLoading}
+                    aria-invalid={!!urlErrors[index]}
+                  />
+                  {urlErrors[index] && (
+                    <p className="text-xs text-destructive">{urlErrors[index]}</p>
+                  )}
+                </div>
+                {sourceUrls.length > 1 && (
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => removeUrlField(index)}
+                    disabled={isLoading}
+                    className="shrink-0"
+                  >
+                    <X className="h-4 w-4" />
+                  </Button>
+                )}
+              </div>
+            ))}
+
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={addUrlField}
               disabled={isLoading}
-              aria-invalid={!!urlError}
-            />
-            {urlError && <p className="text-xs text-destructive">{urlError}</p>}
+              className="w-full"
+            >
+              <Plus className="h-4 w-4 mr-2" />
+              Dodaj kolejny link
+            </Button>
+
             <p className="text-xs text-muted-foreground">
-              Mozesz podac link do artykulu, kursu online lub dokumentacji
+              Możesz podać linki do artykułów, kursów online lub dokumentacji
             </p>
           </div>
 
           {/* Submit button */}
           <Button
             type="submit"
-            disabled={!isTopicValid || !!urlError || isLoading}
+            disabled={!isTopicValid || hasAnyUrlError || isLoading}
             className="w-full"
           >
             {isLoading ? "Przetwarzanie..." : "Rozpocznij"}

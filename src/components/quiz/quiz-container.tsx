@@ -24,7 +24,7 @@ type QuizState =
   | { status: 'ready'; quiz: Quiz }
   | { status: 'in_progress'; quiz: Quiz; currentIndex: number; answers: Record<string, string>; showFeedback: boolean }
   | { status: 'submitting'; quiz: Quiz; answers: Record<string, string> }
-  | { status: 'completed'; quiz: Quiz; results: QuizResultsType };
+  | { status: 'completed'; quiz: Quiz; results: QuizResultsType; attemptId?: string };
 
 type QuizAction =
   | { type: 'LOADED'; quiz: Quiz }
@@ -34,7 +34,7 @@ type QuizAction =
   | { type: 'SHOW_FEEDBACK' }
   | { type: 'NEXT' }
   | { type: 'SUBMIT' }
-  | { type: 'RESULTS'; results: QuizResultsType }
+  | { type: 'RESULTS'; results: QuizResultsType; attemptId?: string }
   | { type: 'RETRY' };
 
 function quizReducer(state: QuizState, action: QuizAction): QuizState {
@@ -88,6 +88,7 @@ function quizReducer(state: QuizState, action: QuizAction): QuizState {
         status: 'completed',
         quiz: state.quiz,
         results: action.results,
+        attemptId: action.attemptId,
       };
 
     case 'RETRY':
@@ -144,7 +145,7 @@ export function QuizContainer({
       });
       if (!res.ok) throw new Error('Submit failed');
       const data = await res.json();
-      dispatch({ type: 'RESULTS', results: data.results });
+      dispatch({ type: 'RESULTS', results: data.results, attemptId: data.attempt?.id });
       onComplete?.(data.results.passed, data.attempt?.id);
     } catch {
       dispatch({ type: 'ERROR', message: 'Nie udalo sie wyslac odpowiedzi' });
@@ -208,6 +209,7 @@ export function QuizContainer({
       <QuizResults
         results={state.results}
         quiz={state.quiz}
+        attemptId={state.attemptId}
         onRetry={() => dispatch({ type: 'RETRY' })}
       />
     );

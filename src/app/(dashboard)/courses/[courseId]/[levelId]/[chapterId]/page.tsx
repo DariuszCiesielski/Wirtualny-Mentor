@@ -24,7 +24,7 @@ import { ChapterContent } from "@/components/materials/chapter-content";
 import { GeneratingState } from "@/components/materials/generating-state";
 import { Button } from "@/components/ui/button";
 import { markComplete } from "./actions";
-import { CheckCircle2, ArrowLeft } from "lucide-react";
+import { CheckCircle2, ArrowLeft, ClipboardList } from "lucide-react";
 import Link from "next/link";
 
 interface ChapterPageProps {
@@ -159,6 +159,18 @@ Grupa docelowa: ${course.target_audience || "Nie okreslono"}
             Ukoncz rozdzial i przejdz dalej
           </Button>
         </form>
+      )}
+
+      {/* Quiz Link - after completing chapter */}
+      {isCompleted && (
+        <div className="mt-8">
+          <Button asChild variant="outline" size="lg" className="w-full">
+            <Link href={`/courses/${courseId}/${levelId}/${chapterId}/quiz`}>
+              <ClipboardList className="mr-2 h-5 w-5" />
+              Sprawdz wiedze - Quiz
+            </Link>
+          </Button>
+        </div>
       )}
 
       {/* Navigation */}

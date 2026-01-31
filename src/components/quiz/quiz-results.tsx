@@ -1,15 +1,18 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
-import { Trophy, XCircle, RotateCcw, ArrowRight } from 'lucide-react';
-import type { Quiz, QuizResults as QuizResultsType } from '@/types/quiz';
+import { Trophy, XCircle, RotateCcw, ArrowRight, Loader2 } from 'lucide-react';
+import { RemediationContent } from './remediation-content';
+import type { Quiz, QuizResults as QuizResultsType, RemediationContent as RemediationType } from '@/types/quiz';
 
 interface QuizResultsProps {
   results: QuizResultsType;
   quiz: Quiz;
+  attemptId?: string;
   onRetry: () => void;
   onContinue?: () => void;
 }
@@ -17,11 +20,61 @@ interface QuizResultsProps {
 export function QuizResults({
   results,
   quiz,
+  attemptId,
   onRetry,
   onContinue,
 }: QuizResultsProps) {
   const passThreshold = quiz.passThreshold ?? 0.7;
   const scorePercent = Math.round(results.score);
+
+  const [remediation, setRemediation] = useState<RemediationType | null>(null);
+  const [loadingRemediation, setLoadingRemediation] = useState(false);
+  const [showRemediation, setShowRemediation] = useState(false);
+
+  // Fetch remediation when quiz failed
+  useEffect(() => {
+    if (results.passed || !attemptId) return;
+
+    async function fetchRemediation() {
+      setLoadingRemediation(true);
+      try {
+        const res = await fetch('/api/quiz/remediation', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            attemptId,
+            quizId: quiz.id,
+            wrongQuestionIds: results.questionResults
+              .filter(qr => !qr.isCorrect)
+              .map(qr => qr.questionId),
+          }),
+        });
+        if (res.ok) {
+          const data = await res.json();
+          setRemediation(data.remediation);
+        }
+      } catch {
+        // Remediation is optional - don't block on errors
+      } finally {
+        setLoadingRemediation(false);
+      }
+    }
+    fetchRemediation();
+  }, [results.passed, attemptId, quiz.id, results.questionResults]);
+
+  // Show remediation view
+  if (showRemediation && remediation) {
+    return (
+      <RemediationContent
+        remediation={remediation}
+        onRetry={() => {
+          setShowRemediation(false);
+          onRetry();
+        }}
+        onComplete={() => setShowRemediation(false)}
+      />
+    );
+  }
 
   return (
     <Card>
@@ -82,16 +135,35 @@ export function QuizResults({
         </div>
       </CardContent>
 
-      <CardFooter className="flex gap-4 justify-center">
-        <Button variant="outline" onClick={onRetry}>
-          <RotateCcw className="mr-2 h-4 w-4" />
-          Sprobuj ponownie
-        </Button>
-        {results.passed && onContinue && (
-          <Button onClick={onContinue}>
-            Kontynuuj <ArrowRight className="ml-2 h-4 w-4" />
+      <CardFooter className="flex flex-col gap-4">
+        {/* Remediation button when failed */}
+        {!results.passed && remediation && (
+          <Button
+            variant="default"
+            className="w-full"
+            onClick={() => setShowRemediation(true)}
+          >
+            Przejrzyj material uzupelniajacy
           </Button>
         )}
+        {!results.passed && loadingRemediation && (
+          <div className="flex items-center gap-2 text-muted-foreground">
+            <Loader2 className="h-4 w-4 animate-spin" />
+            Przygotowywanie materialu uzupelniajacego...
+          </div>
+        )}
+
+        <div className="flex gap-4 justify-center">
+          <Button variant="outline" onClick={onRetry}>
+            <RotateCcw className="mr-2 h-4 w-4" />
+            Sprobuj ponownie
+          </Button>
+          {results.passed && onContinue && (
+            <Button onClick={onContinue}>
+              Kontynuuj <ArrowRight className="ml-2 h-4 w-4" />
+            </Button>
+          )}
+        </div>
       </CardFooter>
     </Card>
   );

@@ -15,7 +15,7 @@ Wirtualny Mentor to platforma edukacyjna AI, która generuje spersonalizowane pr
 - [x] **Phase 2: Curriculum Generation** - Generowanie spersonalizowanego programu nauczania z 5 poziomami ✓
 - [x] **Phase 3: Learning Materials** - Materialy podre­cznikowe z praktycznymi instrukcjami ✓
 - [x] **Phase 4: Assessment System** - Quizy, testy, adaptacyjna remediacja ✓
-- [ ] **Phase 5: Notes System & Embeddings** - Notatki uzytkownika z wektoryzacja do RAG
+- [x] **Phase 5: Notes System & Embeddings** - Notatki uzytkownika z wektoryzacja do RAG ✓
 - [ ] **Phase 6: Mentor Chatbot** - Chatbot z metoda sokratyczna i dostepem do notatek
 - [ ] **Phase 7: Polish & Optimization** - Responsywnosc, odswiezanie wiedzy, monitoring
 
@@ -156,11 +156,13 @@ Plans:
 **Plans**: 5 plans in 3 waves
 
 Plans:
-- [ ] 05-01-PLAN.md — Notes database schema i TypeScript types (Wave 1)
-- [ ] 05-02-PLAN.md — Embedding generation functions (Wave 1)
-- [ ] 05-03-PLAN.md — Notes DAL i Server Actions z embedowaniem (Wave 2)
-- [ ] 05-04-PLAN.md — Notes UI components na stronie rozdzialu (Wave 3)
-- [ ] 05-05-PLAN.md — Notes search page z full-text search (Wave 3)
+- [x] 05-01-PLAN.md — Notes database schema i TypeScript types (Wave 1) ✓
+- [x] 05-02-PLAN.md — Embedding generation functions (Wave 1) ✓
+- [x] 05-03-PLAN.md — Notes DAL i Server Actions z embedowaniem (Wave 2) ✓
+- [x] 05-04-PLAN.md — Notes UI components na stronie rozdzialu (Wave 3) ✓
+- [x] 05-05-PLAN.md — Notes search page z full-text search (Wave 3) ✓
+
+**Completed:** 2026-01-31
 
 ---
 
@@ -214,11 +216,11 @@ Phases execute in numeric order: 0 -> 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7
 | 2. Curriculum Generation | 7/7 | ✓ Complete | 2026-01-31 |
 | 3. Learning Materials | 5/5 | ✓ Complete | 2026-01-31 |
 | 4. Assessment System | 4/4 | ✓ Complete | 2026-01-31 |
-| 5. Notes System & Embeddings | 0/5 | Planned | - |
+| 5. Notes System & Embeddings | 5/5 | ✓ Complete | 2026-01-31 |
 | 6. Mentor Chatbot | 0/4 | Not started | - |
 | 7. Polish & Optimization | 0/4 | Not started | - |
 
-**Total:** 21/32 plans complete (66%)
+**Total:** 26/32 plans complete (81%)
 
 ---
 *Roadmap created: 2025-01-30*

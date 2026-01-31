@@ -197,13 +197,13 @@ Plans:
   2. Baza wiedzy odswiezana automatycznie dla dynamicznych dziedzin (AI, tech, prawo)
   3. Dashboard z metrykami kosztow AI dostepny dla administratora
   4. Performance zoptymalizowany (lazy loading, caching)
-**Plans**: TBD
+**Plans**: 4 plans in 3 waves
 
 Plans:
-- [ ] 07-01: Responsive design audit i fixes
-- [ ] 07-02: Knowledge refresh mechanism (scheduled jobs)
-- [ ] 07-03: Cost monitoring dashboard
-- [ ] 07-04: Performance optimization
+- [ ] 07-01-PLAN.md — Responsive design z collapsible sidebar i mobile drawer (Wave 1)
+- [ ] 07-02-PLAN.md — Helicone integration dla AI cost monitoring (Wave 1)
+- [ ] 07-03-PLAN.md — Knowledge refresh mechanism z Vercel Cron Jobs (Wave 2)
+- [ ] 07-04-PLAN.md — Bundle analyzer, lazy loading, performance optimization (Wave 3)
 
 ## Progress
 
@@ -219,9 +219,9 @@ Phases execute in numeric order: 0 -> 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7
 | 4. Assessment System | 4/4 | ✓ Complete | 2026-01-31 |
 | 5. Notes System & Embeddings | 5/5 | ✓ Complete | 2026-01-31 |
 | 6. Mentor Chatbot | 3/3 | ✓ Complete | 2026-01-31 |
-| 7. Polish & Optimization | 0/4 | Not started | - |
+| 7. Polish & Optimization | 0/4 | Planned | - |
 
-**Total:** 29/31 plans complete (94%)
+**Total:** 29/33 plans complete (88%)
 
 ---
 *Roadmap created: 2025-01-30*

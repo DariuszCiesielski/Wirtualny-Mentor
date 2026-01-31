@@ -10,18 +10,18 @@ See: .planning/PROJECT.md (updated 2025-01-30)
 ## Current Position
 
 Phase: 3 of 7 (Learning Materials) - IN PROGRESS
-Plan: 2 of 4 in current phase - COMPLETED
-Status: Plan 03-02 complete, ready for 03-03
-Last activity: 2026-01-31 - Completed 03-02-PLAN.md (AI Tools & Prompts)
+Plan: 3 of 4 in current phase - COMPLETED
+Status: Plan 03-03 complete, ready for 03-04
+Last activity: 2026-01-31 - Completed 03-03-PLAN.md (DAL & API Endpoint)
 
-Progress: [████████░░] 45% (14/31 plans)
+Progress: [████████░░] 48% (15/31 plans)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 14
+- Total plans completed: 15
 - Average duration: 10 min
-- Total execution time: 2.5 hours
+- Total execution time: 2.6 hours
 
 **By Phase:**
 
@@ -30,10 +30,10 @@ Progress: [████████░░] 45% (14/31 plans)
 | 00-foundation | 2/2 | 35 min | 17 min |
 | 01-auth-basic-ui | 3/3 | 55 min | 18 min |
 | 02-curriculum-generation | 7/7 | 57 min | 8 min |
-| 03-learning-materials | 2/4 | 12 min | 6 min |
+| 03-learning-materials | 3/4 | 20 min | 7 min |
 
 **Recent Trend:**
-- Last 5 plans: 02-05 (5 min), 02-06 (8 min), 02-07 (8 min), 03-01 (6 min), 03-02 (6 min)
+- Last 5 plans: 02-06 (8 min), 02-07 (8 min), 03-01 (6 min), 03-02 (6 min), 03-03 (8 min)
 - Trend: Consistent fast execution
 
 *Updated after each plan completion*
@@ -69,6 +69,7 @@ Recent decisions affecting current work:
 - Materials versioning: UNIQUE(chapter_id, version) dla regeneracji bez utraty starej wersji
 - JSONB structured data: key_concepts, practical_steps, tools, external_resources, sources jako JSONB
 - AI SDK v6 tools: inputSchema zamiast parameters dla tool definition
+- AI SDK v6 tool calling: stopWhen: stepCountIs(N) dla multi-step, toolResult.output zamiast result
 
 ### Pending Todos
 
@@ -88,5 +89,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-01-31
-Stopped at: Completed 03-02-PLAN.md (AI Tools & Prompts)
+Stopped at: Completed 03-03-PLAN.md (DAL & API Endpoint)
 Resume file: None

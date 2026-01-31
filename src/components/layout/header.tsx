@@ -33,7 +33,7 @@ export function Header({ user }: HeaderProps) {
   const initials = getInitials(fullName, user.email || "U");
 
   return (
-    <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b bg-background px-6">
+    <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b bg-background px-4 pl-16 lg:px-6 lg:pl-6">
       {/* Left side - can be used for breadcrumbs or page title */}
       <div />
 

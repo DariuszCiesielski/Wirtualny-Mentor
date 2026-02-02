@@ -45,24 +45,33 @@ interface ChapterContentProps {
 
 type GenerationPhase = 'idle' | 'searching' | 'generating' | 'saving' | 'complete' | 'error';
 
+interface GenerationProgress {
+  phase: GenerationPhase;
+  sourcesFound?: number;
+  message?: string;
+}
+
 export function ChapterContent({ chapter, courseContext, initialContent }: ChapterContentProps) {
   const [content, setContent] = useState<SectionContent | null>(initialContent || null);
-  const [phase, setPhase] = useState<GenerationPhase>(initialContent ? 'complete' : 'idle');
+  const [progress, setProgress] = useState<GenerationProgress>({
+    phase: initialContent ? 'complete' : 'idle',
+  });
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     // CRITICAL: If we already have content (from server), skip generation
     // This is the key to lazy generation - only generate when initialContent is null
     if (content) {
-      setPhase('complete');
+      setProgress({ phase: 'complete' });
       return;
     }
 
-    // No content exists - start generation
+    // No content exists - start generation with SSE
     const generateContent = async () => {
       try {
-        setPhase('searching');
+        setProgress({ phase: 'searching', message: 'Rozpoczynam wyszukiwanie...' });
 
+        // Make POST request to get SSE stream
         const response = await fetch('/api/materials/generate', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -75,26 +84,78 @@ export function ChapterContent({ chapter, courseContext, initialContent }: Chapt
           }),
         });
 
-        setPhase('generating');
-
         if (!response.ok) {
-          const data = await response.json();
-          throw new Error(data.error || 'Failed to generate content');
+          const errorData = await response.json();
+          throw new Error(errorData.error || 'Failed to generate content');
         }
 
-        setPhase('saving');
-        const data = await response.json();
-
-        if (!data.success || !data.content) {
-          throw new Error('Invalid response from server');
+        // Read SSE stream
+        const reader = response.body?.getReader();
+        if (!reader) {
+          throw new Error('No response body');
         }
 
-        setContent(data.content);
-        setPhase('complete');
+        const decoder = new TextDecoder();
+        let buffer = '';
+
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+
+          buffer += decoder.decode(value, { stream: true });
+          const lines = buffer.split('\n');
+          buffer = lines.pop() || '';
+
+          let eventType = '';
+          let eventData = '';
+
+          for (const line of lines) {
+            if (line.startsWith('event: ')) {
+              eventType = line.slice(7);
+            } else if (line.startsWith('data: ')) {
+              eventData = line.slice(6);
+            } else if (line === '' && eventType && eventData) {
+              // Process complete event
+              try {
+                const parsed = JSON.parse(eventData);
+
+                switch (eventType) {
+                  case 'phase':
+                    setProgress({
+                      phase: parsed.phase as GenerationPhase,
+                      message: parsed.message,
+                    });
+                    break;
+                  case 'progress':
+                    setProgress({
+                      phase: parsed.phase as GenerationPhase,
+                      sourcesFound: parsed.sourcesFound,
+                      message: parsed.message,
+                    });
+                    break;
+                  case 'complete':
+                    setContent(parsed.content as SectionContent);
+                    setProgress({ phase: 'complete' });
+                    break;
+                  case 'error':
+                    throw new Error(parsed.message);
+                }
+              } catch (e) {
+                if (e instanceof SyntaxError) {
+                  console.error('Failed to parse SSE data:', eventData);
+                } else {
+                  throw e;
+                }
+              }
+              eventType = '';
+              eventData = '';
+            }
+          }
+        }
       } catch (err) {
         console.error('Content generation error:', err);
         setError(err instanceof Error ? err.message : 'Nieznany błąd');
-        setPhase('error');
+        setProgress({ phase: 'error' });
       }
     };
 
@@ -102,7 +163,7 @@ export function ChapterContent({ chapter, courseContext, initialContent }: Chapt
   }, [chapter, courseContext, content]);
 
   // Error state
-  if (phase === 'error') {
+  if (progress.phase === 'error') {
     return (
       <Alert variant="destructive">
         <AlertCircle className="h-4 w-4" />
@@ -115,11 +176,13 @@ export function ChapterContent({ chapter, courseContext, initialContent }: Chapt
   }
 
   // Loading state - shown only when initialContent was null and generation in progress
-  if (phase !== 'complete' || !content) {
+  if (progress.phase !== 'complete' || !content) {
     return (
       <GeneratingState
         chapterTitle={chapter.title}
-        phase={phase === 'idle' ? 'searching' : (phase as 'searching' | 'generating' | 'saving')}
+        phase={progress.phase === 'idle' ? 'searching' : (progress.phase as 'searching' | 'generating' | 'saving')}
+        sourcesFound={progress.sourcesFound}
+        message={progress.message}
       />
     );
   }

@@ -64,8 +64,8 @@ export function CurriculumGenerator({
         (level) =>
           level?.id &&
           level?.name &&
-          level?.chapters?.length >= 3 &&
-          level?.learningOutcomes?.length >= 3
+          (level?.chapters?.length ?? 0) >= 3 &&
+          (level?.learningOutcomes?.length ?? 0) >= 3
       );
       if (isComplete) {
         hasCompleted.current = true;
@@ -95,8 +95,8 @@ export function CurriculumGenerator({
         level?.id &&
         level?.name &&
         level?.description &&
-        level?.chapters?.length >= 1 &&
-        level?.learningOutcomes?.length >= 1
+        (level?.chapters?.length ?? 0) >= 1 &&
+        (level?.learningOutcomes?.length ?? 0) >= 1
     ).length || 0;
 
   // Calculate overall progress percentage
@@ -186,8 +186,8 @@ export function CurriculumGenerator({
               const hasBasicData = level?.id && level?.name;
               const isComplete =
                 hasBasicData &&
-                level?.chapters?.length >= 1 &&
-                level?.learningOutcomes?.length >= 1;
+                (level?.chapters?.length ?? 0) >= 1 &&
+                (level?.learningOutcomes?.length ?? 0) >= 1;
               const isGenerating = isLoading && hasBasicData && !isComplete;
               const isWaiting = isLoading && !hasBasicData && index === completedLevels;
 

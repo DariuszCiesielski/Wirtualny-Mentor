@@ -78,7 +78,7 @@ export function Sidebar() {
                 {item.label}
                 {item.disabled && (
                   <span className="ml-auto text-xs text-muted-foreground">
-                    Wkrotce
+                    Wkrótce
                   </span>
                 )}
               </Link>

@@ -19,18 +19,18 @@ interface GeneratingStateProps {
 const phaseMessages = {
   searching: {
     icon: Search,
-    title: 'Szukam zrodel...',
-    description: 'Przeszukuje dokumentacje i tutoriale dla najnowszych informacji.',
+    title: 'Szukam źródeł...',
+    description: 'Przeszukuję dokumentację i tutoriale dla najnowszych informacji.',
   },
   generating: {
     icon: Sparkles,
-    title: 'Generuje materialy...',
-    description: 'Tworze tresc edukacyjna na podstawie znalezionych zrodel.',
+    title: 'Generuję materiały...',
+    description: 'Tworzę treść edukacyjną na podstawie znalezionych źródeł.',
   },
   saving: {
     icon: BookOpen,
-    title: 'Zapisuje...',
-    description: 'Zapisuje wygenerowane materialy.',
+    title: 'Zapisuję...',
+    description: 'Zapisuję wygenerowane materiały.',
   },
 };
 
@@ -92,9 +92,9 @@ export function GeneratingState({ chapterTitle, phase = 'searching' }: Generatin
 
       {/* Info message */}
       <p className="text-center text-sm text-muted-foreground">
-        Generowanie materialow dla &quot;{chapterTitle}&quot; moze zajac do 2 minut.
+        Generowanie materiałów dla &quot;{chapterTitle}&quot; może zająć do 2 minut.
         <br />
-        Nie odswiezaj strony.
+        Nie odświeżaj strony.
       </p>
     </div>
   );

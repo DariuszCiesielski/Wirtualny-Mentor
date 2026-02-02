@@ -43,12 +43,12 @@ export default async function CoursePage({ params }: CoursePageProps) {
           <div>
             <h1 className="text-2xl font-bold">{course.title}</h1>
             <p className="text-muted-foreground mt-2">
-              Ten kurs jest w trakcie tworzenia. Curriculum nie zostalo jeszcze wygenerowane.
+              Ten kurs jest w trakcie tworzenia. Curriculum nie zostało jeszcze wygenerowane.
             </p>
           </div>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <Button asChild>
-              <Link href="/courses/new">Utworz nowy kurs</Link>
+              <Link href="/courses/new">Utwórz nowy kurs</Link>
             </Button>
             <form
               action={async () => {
@@ -59,7 +59,7 @@ export default async function CoursePage({ params }: CoursePageProps) {
             >
               <Button type="submit" variant="outline" className="w-full">
                 <Trash2 className="h-4 w-4 mr-2" />
-                Usun szkic
+                Usuń szkic
               </Button>
             </form>
           </div>
@@ -97,20 +97,20 @@ export default async function CoursePage({ params }: CoursePageProps) {
         {/* Meta info */}
         <div className="flex flex-wrap gap-4 mt-4 text-sm text-muted-foreground">
           {course.total_estimated_hours && (
-            <span>~{course.total_estimated_hours}h calkowicie</span>
+            <span>~{course.total_estimated_hours}h całkowicie</span>
           )}
           <span>
-            {stats.completedChapters}/{stats.totalChapters} rozdzialow
+            {stats.completedChapters}/{stats.totalChapters} rozdziałów
           </span>
           <span className="font-medium text-foreground">
-            {stats.percentage}% ukonczone
+            {stats.percentage}% ukończone
           </span>
         </div>
 
         {/* Prerequisites */}
         {course.prerequisites && course.prerequisites.length > 0 && (
           <div className="mt-4">
-            <h3 className="text-sm font-medium mb-1">Wymagania wstepne:</h3>
+            <h3 className="text-sm font-medium mb-1">Wymagania wstępne:</h3>
             <ul className="text-sm text-muted-foreground list-disc list-inside">
               {course.prerequisites.map((prereq, index) => (
                 <li key={index}>{prereq}</li>
@@ -127,7 +127,7 @@ export default async function CoursePage({ params }: CoursePageProps) {
             <Link
               href={`/courses/${courseId}/${currentLevelId}/${currentChapterId}`}
             >
-              {stats.percentage === 0 ? "Rozpocznij nauke" : "Kontynuuj nauke"}
+              {stats.percentage === 0 ? "Rozpocznij naukę" : "Kontynuuj naukę"}
             </Link>
           </Button>
         )}
@@ -143,7 +143,7 @@ export default async function CoursePage({ params }: CoursePageProps) {
       {stats.isComplete && (
         <div className="mb-8 p-4 rounded-lg bg-green-50 border border-green-200 dark:bg-green-950/20 dark:border-green-800">
           <p className="text-green-700 dark:text-green-300 font-medium">
-            Gratulacje! Ukonczyles ten kurs.
+            Gratulacje! Ukończyłeś ten kurs.
           </p>
         </div>
       )}

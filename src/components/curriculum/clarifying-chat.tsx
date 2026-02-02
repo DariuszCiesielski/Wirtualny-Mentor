@@ -59,8 +59,8 @@ export function ClarifyingChat({
   }, [onComplete]);
 
   const initialMessage = sourceUrl
-    ? `Chce sie nauczyc na podstawie tego zrodla: ${sourceUrl}. Temat: ${topic}`
-    : `Chce sie nauczyc: ${topic}`;
+    ? `Chcę się nauczyć na podstawie tego źródła: ${sourceUrl}. Temat: ${topic}`
+    : `Chcę się nauczyć: ${topic}`;
 
   const transport = useMemo(
     () => new DefaultChatTransport({ api: "/api/curriculum/clarify" }),
@@ -154,9 +154,9 @@ export function ClarifyingChat({
             <MessageCircle className="h-5 w-5 text-primary" />
           </div>
           <div>
-            <CardTitle>Pytania doprecyzowujace</CardTitle>
+            <CardTitle>Pytania doprecyzowujące</CardTitle>
             <CardDescription>
-              AI zada kilka pytan, aby lepiej dopasowac program do Ciebie
+              AI zada kilka pytań, aby lepiej dopasować program do Ciebie
             </CardDescription>
           </div>
         </div>
@@ -234,7 +234,7 @@ export function ClarifyingChat({
           <Input
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            placeholder="Wpisz odpowiedz..."
+            placeholder="Wpisz odpowiedź..."
             disabled={isLoading}
             className="flex-1"
           />
@@ -252,7 +252,7 @@ export function ClarifyingChat({
               className="w-full"
             >
               <ArrowRight className="h-4 w-4 mr-2" />
-              Przejdz dalej z zebranymi informacjami
+              Przejdź dalej z zebranymi informacjami
             </Button>
           </div>
         )}

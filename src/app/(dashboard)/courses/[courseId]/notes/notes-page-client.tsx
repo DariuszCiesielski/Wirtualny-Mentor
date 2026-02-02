@@ -49,7 +49,7 @@ export function NotesPageClient({
           className="text-sm text-muted-foreground hover:text-foreground flex items-center gap-1 mb-4"
         >
           <ChevronRight className="h-4 w-4 rotate-180" />
-          Powrot do kursu
+          Powrót do kursu
         </Link>
 
         <h1 className="text-3xl font-bold flex items-center gap-3">
@@ -149,13 +149,13 @@ function EmptyState({ courseId }: EmptyStateProps) {
         <FileText className="h-12 w-12 text-muted-foreground mb-4" />
         <h3 className="text-lg font-semibold mb-2">Brak notatek</h3>
         <p className="text-muted-foreground mb-4">
-          Nie masz jeszcze zadnych notatek w tym kursie.
+          Nie masz jeszcze żadnych notatek w tym kursie.
           <br />
-          Dodawaj notatki podczas nauki w rozdzialach.
+          Dodawaj notatki podczas nauki w rozdziałach.
         </p>
         <Button asChild variant="outline">
           <Link href={`/courses/${courseId}`}>
-            Przejdz do kursu
+            Przejdź do kursu
           </Link>
         </Button>
       </CardContent>

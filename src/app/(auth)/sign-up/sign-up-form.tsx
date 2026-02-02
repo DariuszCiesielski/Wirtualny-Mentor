@@ -31,9 +31,9 @@ export function SignUpForm() {
   return (
     <Card className="w-full max-w-md">
       <CardHeader className="text-center">
-        <CardTitle className="text-2xl">Utworz konto</CardTitle>
+        <CardTitle className="text-2xl">Utwórz konto</CardTitle>
         <CardDescription>
-          Wprowadz swoje dane, aby rozpoczac nauke
+          Wprowadź swoje dane, aby rozpocząć naukę
         </CardDescription>
       </CardHeader>
 
@@ -65,12 +65,12 @@ export function SignUpForm() {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="password">Haslo</Label>
+            <Label htmlFor="password">Hasło</Label>
             <Input
               id="password"
               name="password"
               type="password"
-              placeholder="Minimum 8 znakow"
+              placeholder="Minimum 8 znaków"
               required
               autoComplete="new-password"
               aria-invalid={!!state?.fieldErrors?.password}
@@ -83,12 +83,12 @@ export function SignUpForm() {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="confirmPassword">Potwierdz haslo</Label>
+            <Label htmlFor="confirmPassword">Potwierdź hasło</Label>
             <Input
               id="confirmPassword"
               name="confirmPassword"
               type="password"
-              placeholder="Powtorz haslo"
+              placeholder="Powtórz hasło"
               required
               autoComplete="new-password"
               aria-invalid={!!state?.fieldErrors?.confirmPassword}
@@ -102,16 +102,16 @@ export function SignUpForm() {
 
           <Button type="submit" className="w-full" disabled={isPending}>
             {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            Zarejestruj sie
+            Zarejestruj się
           </Button>
         </form>
       </CardContent>
 
       <CardFooter className="justify-center">
         <p className="text-sm text-muted-foreground">
-          Masz juz konto?{" "}
+          Masz już konto?{" "}
           <Link href="/login" className="text-primary hover:underline">
-            Zaloguj sie
+            Zaloguj się
           </Link>
         </p>
       </CardFooter>

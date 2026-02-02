@@ -8,6 +8,10 @@ Wirtualny Mentor - personalizowana platforma edukacyjna z AI generująca komplek
 
 **Status:** Projekt zakończony (7 faz, 33 plany)
 
+## Stack
+
+Next.js 16 (App Router, Turbopack) | React 19 | TypeScript strict | Tailwind CSS v4 | shadcn/ui (New York, Zinc) | Supabase (PostgreSQL + pgvector + RLS) | Vercel AI SDK v6 | Zod 4
+
 ## Komendy
 
 ```bash
@@ -16,6 +20,12 @@ npm run build            # Build produkcyjny
 npm run lint             # ESLint
 ANALYZE=true npm run build  # Bundle analyzer
 ```
+
+## Konwencje
+
+- **Kod:** angielski (zmienne, funkcje, komentarze)
+- **UI/UX:** polski (wszystkie teksty użytkownika)
+- **Git:** Conventional commits (feat, fix, docs, chore, perf)
 
 ## Architektura
 
@@ -76,6 +86,31 @@ Server-side scoring - `correct_option` nigdy nie trafia do klienta. Weryfikacja 
 const MentorChat = dynamic(() => import('./MentorChat'), { ssr: false })
 ```
 
+### Server Actions
+
+```typescript
+'use server'
+const supabase = await createClient()
+const { data: { user } } = await supabase.auth.getUser()
+if (!user) return { error: 'Unauthorized' }
+```
+
+### RLS z nested tables
+
+```sql
+-- Używaj EXISTS z course_id join
+CREATE POLICY "..." ON chapters USING (
+  EXISTS (SELECT 1 FROM courses WHERE courses.id = chapters.course_id AND courses.user_id = auth.uid())
+);
+```
+
+### Zod v4
+
+```typescript
+z.record(z.string(), z.number())           // Record syntax
+result.error.flatten().fieldErrors          // Form errors
+```
+
 ## Zmienne środowiskowe
 
 Wymagane (min. jeden AI provider):
@@ -100,9 +135,9 @@ Patrz: `.env.example`
 
 Typ: `LevelName` w `src/types/database.ts`
 
-## Cursor Rules
+## Styling
 
-Szczegółowe wzorce i konwencje są w `.cursor/rules/`:
-- `project.mdc` - Stack, struktura
-- `architecture.mdc` - Auth, AI SDK, RLS patterns
-- `conventions.mdc` - Język, styling, TypeScript
+- Tailwind CSS v4 z dark mode
+- shadcn/ui: New York style, Zinc palette
+- Breakpoint `lg` (1024px) dla sidebar visibility
+- **Fonty:** Geist Sans/Mono z `latin-ext` (polskie znaki ą, ę, ć, ł, ń, ó, ś, ź, ż)

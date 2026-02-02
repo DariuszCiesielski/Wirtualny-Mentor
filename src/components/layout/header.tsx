@@ -29,7 +29,7 @@ function getInitials(name: string | undefined, email: string): string {
 export function Header({ user }: HeaderProps) {
   const fullName = user.user_metadata?.full_name as string | undefined;
   const avatarUrl = user.user_metadata?.avatar_url as string | undefined;
-  const displayName = fullName || user.email || "Uzytkownik";
+  const displayName = fullName || user.email || "Użytkownik";
   const initials = getInitials(fullName, user.email || "U");
 
   return (

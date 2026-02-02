@@ -54,7 +54,7 @@ export function CourseCard({ course }: CourseCardProps) {
     draft: { label: "Szkic", variant: "secondary" as const },
     generating: { label: "Generowanie...", variant: "outline" as const },
     active: { label: "W trakcie", variant: "default" as const },
-    completed: { label: "Ukonczony", variant: "secondary" as const },
+    completed: { label: "Ukończony", variant: "secondary" as const },
     archived: { label: "Archiwum", variant: "secondary" as const },
   }[course.status];
 
@@ -82,7 +82,7 @@ export function CourseCard({ course }: CourseCardProps) {
           <div className="mb-4">
             <div className="flex justify-between text-xs text-muted-foreground mb-1">
               <span>
-                {completedChapters} z {totalChapters} rozdzialow
+                {completedChapters} z {totalChapters} rozdziałów
               </span>
               <span>{percentage}%</span>
             </div>
@@ -111,7 +111,7 @@ export function CourseCard({ course }: CourseCardProps) {
 
         {lastActivity && (
           <p className="text-xs text-muted-foreground mt-2">
-            Ostatnia aktywnosc: {lastActivity}
+            Ostatnia aktywność: {lastActivity}
           </p>
         )}
       </CardContent>
@@ -119,7 +119,7 @@ export function CourseCard({ course }: CourseCardProps) {
       <CardFooter className="pt-0 gap-2">
         <Button asChild className="flex-1">
           <Link href={`/courses/${course.id}`}>
-            {course.status === "active" ? "Kontynuuj nauke" : "Zobacz kurs"}
+            {course.status === "active" ? "Kontynuuj naukę" : "Zobacz kurs"}
             <ArrowRight className="h-4 w-4 ml-2" />
           </Link>
         </Button>

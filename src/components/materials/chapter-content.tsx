@@ -93,7 +93,7 @@ export function ChapterContent({ chapter, courseContext, initialContent }: Chapt
         setPhase('complete');
       } catch (err) {
         console.error('Content generation error:', err);
-        setError(err instanceof Error ? err.message : 'Nieznany blad');
+        setError(err instanceof Error ? err.message : 'Nieznany błąd');
         setPhase('error');
       }
     };
@@ -106,9 +106,9 @@ export function ChapterContent({ chapter, courseContext, initialContent }: Chapt
     return (
       <Alert variant="destructive">
         <AlertCircle className="h-4 w-4" />
-        <AlertTitle>Blad generowania</AlertTitle>
+        <AlertTitle>Błąd generowania</AlertTitle>
         <AlertDescription>
-          {error || 'Nie udalo sie wygenerowac materialow. Sprobuj ponownie pozniej.'}
+          {error || 'Nie udało się wygenerować materiałów. Spróbuj ponownie później.'}
         </AlertDescription>
       </Alert>
     );
@@ -135,7 +135,7 @@ export function ChapterContent({ chapter, courseContext, initialContent }: Chapt
         </Badge>
         <Badge variant="outline" className="flex items-center gap-1">
           <BookOpen className="h-3 w-3" />
-          {content.wordCount} slow
+          {content.wordCount} słów
         </Badge>
         {chapter.topics.map((topic) => (
           <Badge key={topic} variant="secondary">
@@ -150,7 +150,7 @@ export function ChapterContent({ chapter, courseContext, initialContent }: Chapt
       {/* Tools section */}
       {content.tools && content.tools.length > 0 && (
         <section className="space-y-4">
-          <h2 className="text-2xl font-semibold">Narzedzia</h2>
+          <h2 className="text-2xl font-semibold">Narzędzia</h2>
           <div className="grid gap-4 md:grid-cols-2">
             {content.tools.map((tool) => (
               <ToolCard key={tool.name} tool={tool} />

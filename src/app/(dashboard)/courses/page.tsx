@@ -22,7 +22,7 @@ export default async function CoursesPage() {
         <div>
           <h1 className="text-3xl font-bold">Moje kursy</h1>
           <p className="text-muted-foreground mt-1">
-            Zarzadzaj swoimi kursami i sledz postepy
+            Zarządzaj swoimi kursami i śledź postępy
           </p>
         </div>
         <Button asChild>
@@ -36,14 +36,14 @@ export default async function CoursesPage() {
       {courses.length === 0 ? (
         <div className="text-center py-16 border-2 border-dashed rounded-lg">
           <BookOpen className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-          <h2 className="text-xl font-medium mb-2">Brak kursow</h2>
+          <h2 className="text-xl font-medium mb-2">Brak kursów</h2>
           <p className="text-muted-foreground mb-4">
-            Rozpocznij nauke tworzac swoj pierwszy kurs
+            Rozpocznij naukę tworząc swój pierwszy kurs
           </p>
           <Button asChild>
             <Link href="/courses/new">
               <Plus className="h-4 w-4 mr-2" />
-              Utworz pierwszy kurs
+              Utwórz pierwszy kurs
             </Link>
           </Button>
         </div>

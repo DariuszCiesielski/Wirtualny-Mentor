@@ -103,14 +103,14 @@ export function QuizResults({
 
         <div className="flex justify-center gap-4">
           <Badge variant={results.passed ? 'default' : 'secondary'}>
-            Prog zaliczenia: {Math.round(passThreshold * 100)}%
+            Próg zaliczenia: {Math.round(passThreshold * 100)}%
           </Badge>
           <Badge variant={results.passed ? 'default' : 'destructive'}>
             {results.passed ? 'ZALICZONE' : 'NIEZALICZONE'}
           </Badge>
         </div>
 
-        {/* Szczegoly odpowiedzi */}
+        {/* Szczegóły odpowiedzi */}
         <div className="space-y-2">
           <h4 className="font-medium">Podsumowanie odpowiedzi:</h4>
           {results.questionResults.map((qr, index) => (
@@ -127,7 +127,7 @@ export function QuizResults({
                 </Badge>
               ) : (
                 <Badge variant="outline" className="bg-red-100 dark:bg-red-900">
-                  Bledne
+                  Błędne
                 </Badge>
               )}
             </div>
@@ -143,20 +143,20 @@ export function QuizResults({
             className="w-full"
             onClick={() => setShowRemediation(true)}
           >
-            Przejrzyj material uzupelniajacy
+            Przejrzyj materiał uzupełniający
           </Button>
         )}
         {!results.passed && loadingRemediation && (
           <div className="flex items-center gap-2 text-muted-foreground">
             <Loader2 className="h-4 w-4 animate-spin" />
-            Przygotowywanie materialu uzupelniajacego...
+            Przygotowywanie materiału uzupełniającego...
           </div>
         )}
 
         <div className="flex gap-4 justify-center">
           <Button variant="outline" onClick={onRetry}>
             <RotateCcw className="mr-2 h-4 w-4" />
-            Sprobuj ponownie
+            Spróbuj ponownie
           </Button>
           {results.passed && onContinue && (
             <Button onClick={onContinue}>

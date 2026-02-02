@@ -123,7 +123,7 @@ export function QuizContainer({
         const data = await res.json();
         dispatch({ type: 'LOADED', quiz: data.quiz });
       } catch {
-        dispatch({ type: 'ERROR', message: 'Nie udalo sie zaladowac quizu' });
+        dispatch({ type: 'ERROR', message: 'Nie udało się załadować quizu' });
       }
     }
     loadQuiz();
@@ -148,7 +148,7 @@ export function QuizContainer({
       dispatch({ type: 'RESULTS', results: data.results, attemptId: data.attempt?.id });
       onComplete?.(data.results.passed, data.attempt?.id);
     } catch {
-      dispatch({ type: 'ERROR', message: 'Nie udalo sie wyslac odpowiedzi' });
+      dispatch({ type: 'ERROR', message: 'Nie udało się wysłać odpowiedzi' });
     }
   }
 
@@ -158,7 +158,7 @@ export function QuizContainer({
       <Card>
         <CardContent className="flex flex-col items-center justify-center py-12">
           <Loader2 className="h-8 w-8 animate-spin mb-4" />
-          <p>Ladowanie quizu...</p>
+          <p>Ładowanie quizu...</p>
         </CardContent>
       </Card>
     );
@@ -170,7 +170,7 @@ export function QuizContainer({
         <CardContent className="py-8 text-center">
           <p className="text-destructive">{state.message}</p>
           <Button onClick={() => window.location.reload()} className="mt-4">
-            Sprobuj ponownie
+            Spróbuj ponownie
           </Button>
         </CardContent>
       </Card>
@@ -183,7 +183,7 @@ export function QuizContainer({
         <CardContent className="py-8 text-center space-y-4">
           <h3 className="text-lg font-medium">Quiz gotowy</h3>
           <p className="text-muted-foreground">
-            {state.quiz.questionCount} pytan, prog zaliczenia: {Math.round(state.quiz.passThreshold * 100)}%
+            {state.quiz.questionCount} pytań, próg zaliczenia: {Math.round(state.quiz.passThreshold * 100)}%
           </p>
           <Button onClick={() => dispatch({ type: 'START' })}>
             Rozpocznij quiz
@@ -198,7 +198,7 @@ export function QuizContainer({
       <Card>
         <CardContent className="flex flex-col items-center justify-center py-12">
           <Loader2 className="h-8 w-8 animate-spin mb-4" />
-          <p>Wysylanie odpowiedzi...</p>
+          <p>Wysyłanie odpowiedzi...</p>
         </CardContent>
       </Card>
     );
@@ -246,16 +246,16 @@ export function QuizContainer({
             onClick={() => dispatch({ type: 'SHOW_FEEDBACK' })}
             disabled={!state.answers[currentQuestion.id]}
           >
-            Sprawdz odpowiedz
+            Sprawdź odpowiedź
           </Button>
         ) : state.currentIndex < quiz.questions.length - 1 ? (
           <Button onClick={() => dispatch({ type: 'NEXT' })}>
-            Nastepne pytanie <ArrowRight className="ml-2 h-4 w-4" />
+            Następne pytanie <ArrowRight className="ml-2 h-4 w-4" />
           </Button>
         ) : (
           <Button onClick={handleSubmit}>
             <CheckSquare className="mr-2 h-4 w-4" />
-            Zakoncz quiz
+            Zakończ quiz
           </Button>
         )}
       </div>

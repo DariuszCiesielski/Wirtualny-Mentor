@@ -4,11 +4,13 @@
  * Curriculum Generator Component
  *
  * Streams curriculum generation from AI and displays partial results.
- * Shows real-time progress as the curriculum structure is being created.
+ * Uses experimental_useObject for real-time streaming with progress.
  */
 
-import { useState, useEffect, useCallback } from "react";
+import { useEffect, useRef } from "react";
+import { experimental_useObject as useObject } from "@ai-sdk/react";
 import type { Curriculum } from "@/lib/ai/curriculum/schemas";
+import { curriculumSchema } from "@/lib/ai/curriculum/schemas";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Loader2, BookOpen, CheckCircle2, AlertCircle } from "lucide-react";
@@ -33,146 +35,72 @@ export function CurriculumGenerator({
   courseId,
   onComplete,
 }: CurriculumGeneratorProps) {
-  const [curriculum, setCurriculum] = useState<Partial<Curriculum>>();
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string>();
-  const [retryCount, setRetryCount] = useState(0);
+  const { object, submit, isLoading, error, stop } = useObject({
+    api: "/api/curriculum/generate",
+    schema: curriculumSchema,
+  });
 
-  const generate = useCallback(async () => {
-    setIsLoading(true);
-    setError(undefined);
+  // Track if we've already started generation
+  const hasStarted = useRef(false);
 
-    try {
-      const response = await fetch("/api/curriculum/generate", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userInfo, courseId }),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => null);
-        throw new Error(
-          errorData?.error || `Blad generowania (${response.status})`
-        );
-      }
-
-      // Read streaming response
-      const reader = response.body?.getReader();
-      if (!reader) throw new Error("No response body");
-
-      const decoder = new TextDecoder();
-      let buffer = "";
-      let lastValidCurriculum: Partial<Curriculum> | null = null;
-
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-
-        buffer += decoder.decode(value, { stream: true });
-
-        // Try to parse partial JSON from streamObject response
-        // The stream contains the object being built incrementally
-        try {
-          // Look for complete or partial JSON object in buffer
-          // streamObject sends incremental JSON updates
-          const trimmed = buffer.trim();
-
-          // Try to parse as complete JSON first
-          const parsed = JSON.parse(trimmed);
-          if (parsed && typeof parsed === "object") {
-            lastValidCurriculum = parsed;
-            setCurriculum(parsed);
-          }
-        } catch {
-          // Try to extract partial valid JSON
-          // This handles incomplete streaming data
-          const match = buffer.match(/\{[\s\S]*$/);
-          if (match) {
-            try {
-              // Add closing braces to make it valid JSON for preview
-              let partial = match[0];
-              const openBraces =
-                (partial.match(/\{/g) || []).length -
-                (partial.match(/\}/g) || []).length;
-              const openBrackets =
-                (partial.match(/\[/g) || []).length -
-                (partial.match(/\]/g) || []).length;
-
-              // Close any open strings
-              if ((partial.match(/"/g) || []).length % 2 !== 0) {
-                partial += '"';
-              }
-
-              // Close brackets and braces
-              for (let i = 0; i < openBrackets; i++) partial += "]";
-              for (let i = 0; i < openBraces; i++) partial += "}";
-
-              const parsed = JSON.parse(partial);
-              if (parsed && typeof parsed === "object") {
-                setCurriculum(parsed);
-              }
-            } catch {
-              // Ignore parse errors during streaming
-            }
-          }
-        }
-      }
-
-      // Final parse after stream completes
-      if (buffer.trim()) {
-        try {
-          const finalCurriculum = JSON.parse(buffer.trim());
-          if (
-            finalCurriculum &&
-            finalCurriculum.title &&
-            finalCurriculum.levels?.length === 5
-          ) {
-            setCurriculum(finalCurriculum);
-            lastValidCurriculum = finalCurriculum;
-          }
-        } catch {
-          // Use last valid curriculum if final parse fails
-        }
-      }
-
-      // Complete if we have a valid curriculum
-      if (
-        lastValidCurriculum &&
-        lastValidCurriculum.title &&
-        lastValidCurriculum.levels?.length === 5
-      ) {
-        onComplete(lastValidCurriculum as Curriculum);
-      } else {
-        throw new Error(
-          "Nie udalo sie wygenerowac pelnego curriculum. Sprobuj ponownie."
-        );
-      }
-    } catch (e) {
-      console.error("Generation error:", e);
-      setError(e instanceof Error ? e.message : "Blad generowania curriculum");
-    } finally {
-      setIsLoading(false);
-    }
-  }, [userInfo, courseId, onComplete]);
-
+  // Start generation on mount (only once)
   useEffect(() => {
-    generate();
-  }, [generate, retryCount]);
+    if (!hasStarted.current) {
+      hasStarted.current = true;
+      submit({ userInfo, courseId });
+    }
+  }, [submit, userInfo, courseId]);
+
+  // Track if we've already called onComplete
+  const hasCompleted = useRef(false);
+
+  // Call onComplete when curriculum is fully generated (only once)
+  useEffect(() => {
+    if (hasCompleted.current) return;
+
+    if (!isLoading && object?.title && object?.levels?.length === 5) {
+      // Verify all levels have required data
+      const isComplete = object.levels.every(
+        (level) =>
+          level?.id &&
+          level?.name &&
+          level?.chapters?.length >= 3 &&
+          level?.learningOutcomes?.length >= 3
+      );
+      if (isComplete) {
+        hasCompleted.current = true;
+        onComplete(object as Curriculum);
+      }
+    }
+  }, [isLoading, object, onComplete]);
 
   const handleRetry = () => {
-    setRetryCount((c) => c + 1);
+    hasCompleted.current = false;
+    submit({ userInfo, courseId });
   };
 
   // Progress indicators
   const levelNames = [
-    "Poczatkujacy",
-    "Srednio zaawansowany",
+    "Początkujący",
+    "Średnio zaawansowany",
     "Zaawansowany",
     "Master",
     "Guru",
   ];
 
-  const completedLevels = curriculum?.levels?.length || 0;
+  // Count completed levels (with all required fields)
+  const completedLevels =
+    object?.levels?.filter(
+      (level) =>
+        level?.id &&
+        level?.name &&
+        level?.description &&
+        level?.chapters?.length >= 1 &&
+        level?.learningOutcomes?.length >= 1
+    ).length || 0;
+
+  // Calculate overall progress percentage
+  const progressPercent = Math.round((completedLevels / 5) * 100);
 
   if (error) {
     return (
@@ -180,12 +108,14 @@ export function CurriculumGenerator({
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-destructive">
             <AlertCircle className="h-5 w-5" />
-            Blad generowania
+            Błąd generowania
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-muted-foreground mb-4">{error}</p>
-          <Button onClick={handleRetry}>Sprobuj ponownie</Button>
+          <p className="text-muted-foreground mb-4">
+            {error.message || "Wystąpił błąd podczas generowania curriculum"}
+          </p>
+          <Button onClick={handleRetry}>Spróbuj ponownie</Button>
         </CardContent>
       </Card>
     );
@@ -210,19 +140,35 @@ export function CurriculumGenerator({
       </CardHeader>
       <CardContent>
         {/* Course title */}
-        {curriculum?.title && (
+        {object?.title && (
           <div className="mb-6">
-            <h3 className="text-lg font-semibold">{curriculum.title}</h3>
-            {curriculum.description && (
+            <h3 className="text-lg font-semibold">{object.title}</h3>
+            {object.description && (
               <p className="text-sm text-muted-foreground mt-1">
-                {curriculum.description}
+                {object.description}
               </p>
             )}
-            {curriculum.totalEstimatedHours && (
+            {object.totalEstimatedHours && (
               <p className="text-sm text-muted-foreground mt-2">
-                Szacowany czas: {curriculum.totalEstimatedHours} godzin
+                Szacowany czas: {object.totalEstimatedHours} godzin
               </p>
             )}
+          </div>
+        )}
+
+        {/* Progress bar */}
+        {isLoading && (
+          <div className="mb-6">
+            <div className="flex justify-between text-sm text-muted-foreground mb-2">
+              <span>Postęp generowania</span>
+              <span>{progressPercent}%</span>
+            </div>
+            <div className="h-2 bg-muted rounded-full overflow-hidden">
+              <div
+                className="h-full bg-primary transition-all duration-500 ease-out"
+                style={{ width: `${Math.max(progressPercent, 5)}%` }}
+              />
+            </div>
           </div>
         )}
 
@@ -236,10 +182,14 @@ export function CurriculumGenerator({
           {/* Level progress */}
           <div className="space-y-3">
             {levelNames.map((name, index) => {
-              const level = curriculum?.levels?.[index];
-              const isComplete = !!level;
-              const isGenerating =
-                isLoading && !isComplete && index === completedLevels;
+              const level = object?.levels?.[index];
+              const hasBasicData = level?.id && level?.name;
+              const isComplete =
+                hasBasicData &&
+                level?.chapters?.length >= 1 &&
+                level?.learningOutcomes?.length >= 1;
+              const isGenerating = isLoading && hasBasicData && !isComplete;
+              const isWaiting = isLoading && !hasBasicData && index === completedLevels;
 
               return (
                 <div
@@ -247,25 +197,25 @@ export function CurriculumGenerator({
                   className={cn(
                     "flex items-center gap-3 p-3 rounded-lg transition-colors",
                     isComplete && "bg-primary/5 border border-primary/20",
-                    isGenerating && "bg-muted animate-pulse",
-                    !isComplete && !isGenerating && "bg-muted/30"
+                    (isGenerating || isWaiting) && "bg-muted animate-pulse",
+                    !isComplete && !isGenerating && !isWaiting && "bg-muted/30"
                   )}
                 >
                   <div
                     className={cn(
                       "flex h-8 w-8 items-center justify-center rounded-full text-sm font-medium",
-                      isComplete &&
-                        "bg-primary text-primary-foreground",
-                      isGenerating &&
+                      isComplete && "bg-primary text-primary-foreground",
+                      (isGenerating || isWaiting) &&
                         "border-2 border-primary bg-primary/10 text-primary",
                       !isComplete &&
                         !isGenerating &&
+                        !isWaiting &&
                         "border border-muted-foreground/30 text-muted-foreground"
                     )}
                   >
                     {isComplete ? (
                       <CheckCircle2 className="h-4 w-4" />
-                    ) : isGenerating ? (
+                    ) : isGenerating || isWaiting ? (
                       <Loader2 className="h-4 w-4 animate-spin" />
                     ) : (
                       index + 1
@@ -275,7 +225,10 @@ export function CurriculumGenerator({
                     <p
                       className={cn(
                         "font-medium",
-                        !isComplete && !isGenerating && "text-muted-foreground"
+                        !isComplete &&
+                          !isGenerating &&
+                          !isWaiting &&
+                          "text-muted-foreground"
                       )}
                     >
                       {level?.name || name}
@@ -286,9 +239,9 @@ export function CurriculumGenerator({
                       </p>
                     )}
                   </div>
-                  {level && (
+                  {level?.chapters && level.chapters.length > 0 && (
                     <div className="text-sm text-muted-foreground whitespace-nowrap">
-                      {level.chapters?.length || 0} rozdz.
+                      {level.chapters.length} rozdz.
                     </div>
                   )}
                 </div>
@@ -296,6 +249,15 @@ export function CurriculumGenerator({
             })}
           </div>
         </div>
+
+        {/* Stop button during generation */}
+        {isLoading && (
+          <div className="mt-6 flex justify-center">
+            <Button variant="outline" size="sm" onClick={() => stop()}>
+              Anuluj generowanie
+            </Button>
+          </div>
+        )}
       </CardContent>
     </Card>
   );

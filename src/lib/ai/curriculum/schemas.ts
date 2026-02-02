@@ -66,14 +66,18 @@ export const levelSchema = z.object({
 export type Level = z.infer<typeof levelSchema>;
 
 // Schema dla resource
+// Note: Using z.string() instead of z.string().url() for url
+// because OpenAI structured output doesn't support 'uri' format
 export const resourceSchema = z.object({
   title: z.string(),
-  url: z.string().url(),
+  url: z.string(),
   type: z.enum(['article', 'video', 'documentation', 'course', 'book']),
 });
 export type Resource = z.infer<typeof resourceSchema>;
 
 // Schema dla pelnego curriculum
+// Note: OpenAI structured output requires all properties to be required,
+// so resources is not optional (AI returns empty array if no resources)
 export const curriculumSchema = z.object({
   title: z.string(),
   description: z.string(),
@@ -81,7 +85,7 @@ export const curriculumSchema = z.object({
   totalEstimatedHours: z.number().positive(),
   levels: z.array(levelSchema).length(5), // Dokladnie 5 poziomow
   prerequisites: z.array(z.string()),
-  resources: z.array(resourceSchema).optional(),
+  resources: z.array(resourceSchema),
 });
 export type Curriculum = z.infer<typeof curriculumSchema>;
 

@@ -98,10 +98,15 @@ ${standardsSearch.results.map((r) => `- ${r.title}: ${r.content.slice(0, 200)}`)
 ${searchResults}
 ${sourceContent}
 
-Wygeneruj curriculum z DOKLADNIE 5 poziomami. Kazdy poziom musi miec unikalne ID (uzyj formatu "level-1", "level-2" itd.), 3-7 learning outcomes i 3-10 rozdzialow.`
+Wygeneruj curriculum z DOKLADNIE 5 poziomami. Kazdy poziom musi miec unikalne ID (uzyj formatu "level-1", "level-2" itd.), 3-7 learning outcomes i 3-10 rozdzialow.`,
     });
 
-    return result.toTextStreamResponse();
+    // Return stream compatible with experimental_useObject
+    return result.toTextStreamResponse({
+      headers: {
+        "X-Content-Type-Options": "nosniff",
+      },
+    });
   } catch (error) {
     if (error instanceof z.ZodError) {
       return new Response(

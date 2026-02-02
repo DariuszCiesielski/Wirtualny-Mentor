@@ -10,7 +10,7 @@
  * 4. Preview - Review and confirm curriculum
  */
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useRef } from "react";
 import { TopicInput } from "@/components/curriculum/topic-input";
 import { ClarifyingChat } from "@/components/curriculum/clarifying-chat";
 import { CurriculumGenerator } from "@/components/curriculum/curriculum-generator";
@@ -105,6 +105,7 @@ export default function NewCoursePage() {
   const [curriculum, setCurriculum] = useState<Curriculum | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const courseCreationStarted = useRef(false);
 
   const handleTopicSubmit = (submittedTopic: string, submittedUrl?: string) => {
     setTopic(submittedTopic);
@@ -112,7 +113,13 @@ export default function NewCoursePage() {
     setCurrentStep("clarify");
   };
 
-  const handleClarifyComplete = async (info: CollectedInfo) => {
+  const handleClarifyComplete = useCallback(async (info: CollectedInfo) => {
+    // Prevent duplicate course creation
+    if (courseCreationStarted.current) {
+      return;
+    }
+    courseCreationStarted.current = true;
+
     // Convert CollectedInfo to UserInfo with proper types
     const experience = (['beginner', 'intermediate', 'advanced'].includes(info.experience)
       ? info.experience
@@ -142,11 +149,12 @@ export default function NewCoursePage() {
       setCurrentStep("generate");
     } catch (error) {
       console.error("Failed to create course:", error);
-      // Stay on clarify step and show error
+      // Reset flag on error to allow retry
+      courseCreationStarted.current = false;
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [topic, sourceUrl]);
 
   const handleGenerationComplete = useCallback((generatedCurriculum: Curriculum) => {
     setCurriculum(generatedCurriculum);

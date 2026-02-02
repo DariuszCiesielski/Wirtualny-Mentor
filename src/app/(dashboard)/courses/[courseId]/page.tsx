@@ -1,11 +1,14 @@
+// Force dynamic rendering to prevent caching issues with draft courses
+export const dynamic = "force-dynamic";
+
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { requireAuth } from "@/lib/dal/auth";
-import { getCourse } from "@/lib/dal/courses";
+import { getCourse, deleteCourse } from "@/lib/dal/courses";
 import { getProgress, getProgressStats } from "@/lib/dal/progress";
 import { Button } from "@/components/ui/button";
 import { CurriculumTOC } from "@/components/curriculum/curriculum-toc";
-import { MessageCircle } from "lucide-react";
+import { MessageCircle, FileEdit, Trash2 } from "lucide-react";
 
 interface CoursePageProps {
   params: Promise<{ courseId: string }>;
@@ -17,8 +20,10 @@ export default async function CoursePage({ params }: CoursePageProps) {
 
   // Fetch course with all details
   const course = await getCourse(courseId);
+  console.log("[CoursePage] courseId:", courseId, "course:", course?.id, "status:", course?.status);
 
   if (!course) {
+    console.log("[CoursePage] Course not found, returning 404");
     notFound();
   }
 
@@ -27,7 +32,43 @@ export default async function CoursePage({ params }: CoursePageProps) {
     notFound();
   }
 
-  // Fetch user's progress
+  // Handle draft courses - show different UI
+  if (course.status === "draft") {
+    return (
+      <div className="container max-w-2xl py-16">
+        <div className="text-center space-y-6">
+          <div className="flex h-16 w-16 items-center justify-center rounded-full bg-muted mx-auto">
+            <FileEdit className="h-8 w-8 text-muted-foreground" />
+          </div>
+          <div>
+            <h1 className="text-2xl font-bold">{course.title}</h1>
+            <p className="text-muted-foreground mt-2">
+              Ten kurs jest w trakcie tworzenia. Curriculum nie zostalo jeszcze wygenerowane.
+            </p>
+          </div>
+          <div className="flex flex-col sm:flex-row gap-3 justify-center">
+            <Button asChild>
+              <Link href="/courses/new">Utworz nowy kurs</Link>
+            </Button>
+            <form
+              action={async () => {
+                "use server";
+                await deleteCourse(courseId);
+                redirect("/courses");
+              }}
+            >
+              <Button type="submit" variant="outline" className="w-full">
+                <Trash2 className="h-4 w-4 mr-2" />
+                Usun szkic
+              </Button>
+            </form>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Fetch user's progress (only for active courses)
   const progress = await getProgress(user.id, courseId);
 
   if (!progress) {

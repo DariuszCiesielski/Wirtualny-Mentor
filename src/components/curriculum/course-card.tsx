@@ -7,6 +7,7 @@
  * Shows status badge, progress bar, estimated time, and last activity.
  */
 
+import { useState } from "react";
 import Link from "next/link";
 import {
   Card,
@@ -17,8 +18,9 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Clock, BookOpen, ArrowRight } from "lucide-react";
+import { Clock, BookOpen, ArrowRight, Trash2, Loader2 } from "lucide-react";
 import { formatDistanceToNow } from "@/lib/utils";
+import { deleteCourseAction } from "@/app/(dashboard)/courses/actions";
 import type { CourseWithProgress } from "@/types/database";
 
 interface CourseCardProps {
@@ -26,6 +28,23 @@ interface CourseCardProps {
 }
 
 export function CourseCard({ course }: CourseCardProps) {
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  const handleDelete = async () => {
+    if (!confirm(`Czy na pewno chcesz usunąć kurs "${course.title}"? Ta operacja jest nieodwracalna.`)) {
+      return;
+    }
+
+    setIsDeleting(true);
+    const result = await deleteCourseAction(course.id);
+
+    if (!result.success) {
+      alert(result.error || "Nie udało się usunąć kursu");
+      setIsDeleting(false);
+    }
+    // On success, revalidatePath will refresh the page
+  };
+
   const completedChapters = course.user_progress?.completed_chapters.length || 0;
   const totalChapters = course.total_chapters || 0;
   const percentage =
@@ -97,12 +116,25 @@ export function CourseCard({ course }: CourseCardProps) {
         )}
       </CardContent>
 
-      <CardFooter className="pt-0">
-        <Button asChild className="w-full">
+      <CardFooter className="pt-0 gap-2">
+        <Button asChild className="flex-1">
           <Link href={`/courses/${course.id}`}>
             {course.status === "active" ? "Kontynuuj nauke" : "Zobacz kurs"}
             <ArrowRight className="h-4 w-4 ml-2" />
           </Link>
+        </Button>
+        <Button
+          variant="outline"
+          size="icon"
+          onClick={handleDelete}
+          disabled={isDeleting}
+          title="Usuń kurs"
+        >
+          {isDeleting ? (
+            <Loader2 className="h-4 w-4 animate-spin" />
+          ) : (
+            <Trash2 className="h-4 w-4 text-destructive" />
+          )}
         </Button>
       </CardFooter>
     </Card>

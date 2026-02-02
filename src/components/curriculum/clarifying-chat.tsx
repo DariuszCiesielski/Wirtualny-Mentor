@@ -7,7 +7,7 @@
  * Uses useChat hook to communicate with /api/curriculum/clarify endpoint.
  */
 
-import { useEffect, useRef, useState, useMemo } from "react";
+import { useEffect, useRef, useState, useMemo, useCallback } from "react";
 import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport } from "ai";
 import { Button } from "@/components/ui/button";
@@ -47,10 +47,16 @@ export function ClarifyingChat({
   sourceUrl,
   onComplete,
 }: ClarifyingChatProps) {
-  const [turnsCount, setTurnsCount] = useState(0);
   const [input, setInput] = useState("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const initialSent = useRef(false);
+  const completionCalled = useRef(false);
+  const onCompleteRef = useRef(onComplete);
+
+  // Keep ref in sync with prop
+  useEffect(() => {
+    onCompleteRef.current = onComplete;
+  }, [onComplete]);
 
   const initialMessage = sourceUrl
     ? `Chce sie nauczyc na podstawie tego zrodla: ${sourceUrl}. Temat: ${topic}`
@@ -67,24 +73,28 @@ export function ClarifyingChat({
 
   const isLoading = status === "streaming" || status === "submitted";
 
+  // Count assistant turns from messages
+  const turnsCount = useMemo(() => {
+    return messages.filter((m) => m.role === "assistant").length;
+  }, [messages]);
+
   // Check for completion in latest AI message
   useEffect(() => {
     const lastMessage = messages[messages.length - 1];
     if (lastMessage?.role === "assistant") {
-      setTurnsCount((prev) => prev + 1);
-
       // Try to parse structured response from message parts
       const content = getMessageText(lastMessage.parts);
       try {
         const parsed = JSON.parse(content) as ClarificationResponse;
-        if (parsed.isComplete && parsed.collectedInfo) {
-          onComplete(parsed.collectedInfo);
+        if (parsed.isComplete && parsed.collectedInfo && !completionCalled.current) {
+          completionCalled.current = true;
+          onCompleteRef.current(parsed.collectedInfo);
         }
       } catch {
         // Not JSON, continue conversation
       }
     }
-  }, [messages, onComplete]);
+  }, [messages]);
 
   // Scroll to bottom on new messages
   useEffect(() => {
@@ -111,7 +121,11 @@ export function ClarifyingChat({
     sendMessage({ text: option });
   };
 
-  const handleForceComplete = () => {
+  const handleForceComplete = useCallback(() => {
+    // Prevent duplicate completion
+    if (completionCalled.current) return;
+    completionCalled.current = true;
+
     // Force completion with whatever info we have
     const collectedInfo: CollectedInfo = {
       topic,
@@ -120,8 +134,8 @@ export function ClarifyingChat({
       weeklyHours: 0,
       sourceUrl: sourceUrl || '',
     };
-    onComplete(collectedInfo);
-  };
+    onCompleteRef.current(collectedInfo);
+  }, [topic, sourceUrl]);
 
   // Parse structured response from AI message
   const parseAIResponse = (content: string): ClarificationResponse | null => {

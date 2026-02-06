@@ -102,11 +102,28 @@ export function ContentRenderer({ content, sources = [], className }: ContentRen
           [rehypeHighlight, { detect: true, ignoreMissing: true }],
         ]}
         components={{
+          // Section headings with visual hierarchy
+          h2({ children }) {
+            return (
+              <h2 className="mt-10 mb-3 pb-2 border-b border-border text-2xl font-bold leading-tight">
+                {children}
+              </h2>
+            );
+          },
+
+          h3({ children }) {
+            return (
+              <h3 className="mt-8 mb-2 text-xl font-semibold leading-snug text-foreground/90">
+                {children}
+              </h3>
+            );
+          },
+
           // Custom code block with copy button
           pre({ children, className: preClassName, ...props }) {
             const code = extractCode(children);
             return (
-              <div className="relative group not-prose">
+              <div className="relative group not-prose my-6">
                 <pre
                   {...props}
                   className={cn(
@@ -142,11 +159,20 @@ export function ContentRenderer({ content, sources = [], className }: ContentRen
             );
           },
 
-          // Custom blockquote for tips/warnings
+          // Custom blockquote with type detection (tip, warning, info)
           blockquote({ children }) {
+            const text = extractCode(children).toLowerCase();
+            const isWarning = text.includes('uwaga') || text.includes('ostrzeżenie') || text.includes('⚠');
+            const isTip = text.includes('wskazówka') || text.includes('💡') || text.includes('tip');
+
             return (
-              <blockquote className="border-l-4 border-primary bg-muted/50 p-4 my-4 not-prose rounded-r-lg">
-                <div className="prose prose-zinc dark:prose-invert prose-sm">
+              <blockquote className={cn(
+                'border-l-4 p-4 my-6 not-prose rounded-r-lg',
+                isWarning && 'border-amber-500 bg-amber-50 dark:bg-amber-950/30',
+                isTip && 'border-emerald-500 bg-emerald-50 dark:bg-emerald-950/30',
+                !isWarning && !isTip && 'border-primary bg-muted/50'
+              )}>
+                <div className="prose prose-zinc dark:prose-invert prose-sm max-w-none">
                   {children}
                 </div>
               </blockquote>
@@ -180,7 +206,7 @@ export function ContentRenderer({ content, sources = [], className }: ContentRen
           // Table styling
           table({ children }) {
             return (
-              <div className="overflow-x-auto my-4">
+              <div className="overflow-x-auto my-6 rounded-lg border border-border">
                 <table className="min-w-full divide-y divide-border">
                   {children}
                 </table>
@@ -191,7 +217,7 @@ export function ContentRenderer({ content, sources = [], className }: ContentRen
           // Table header
           th({ children }) {
             return (
-              <th className="px-4 py-2 text-left text-sm font-semibold bg-muted">
+              <th className="px-4 py-2.5 text-left text-sm font-semibold bg-muted">
                 {children}
               </th>
             );
@@ -200,7 +226,7 @@ export function ContentRenderer({ content, sources = [], className }: ContentRen
           // Table cell
           td({ children }) {
             return (
-              <td className="px-4 py-2 text-sm border-t">
+              <td className="px-4 py-2.5 text-sm border-t">
                 {children}
               </td>
             );

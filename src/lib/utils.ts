@@ -5,6 +5,20 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
+/** Map database level names (ASCII) to Polish display names with diacritics */
+export const LEVEL_DISPLAY_NAMES: Record<string, string> = {
+  "Poczatkujacy": "Początkujący",
+  "Srednio zaawansowany": "Średnio zaawansowany",
+  "Zaawansowany": "Zaawansowany",
+  "Master": "Master",
+  "Guru": "Guru",
+};
+
+/** Get display name for a level (with Polish diacritics) */
+export function getLevelDisplayName(name: string): string {
+  return LEVEL_DISPLAY_NAMES[name] ?? name;
+}
+
 /**
  * Format date relative to now in Polish
  * @param date - Date to format

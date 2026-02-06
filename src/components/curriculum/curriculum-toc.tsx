@@ -51,7 +51,7 @@ export function CurriculumTOC({
 
   return (
     <section>
-      <h2 className="text-xl font-semibold mb-4">Spis tresci</h2>
+      <h2 className="text-xl font-semibold mb-4">Spis treści</h2>
       <div className="space-y-0">
         {levels.map((level, index) => (
           <LevelCard

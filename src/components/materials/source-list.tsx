@@ -17,7 +17,7 @@ interface SourceListProps {
 
 const typeLabels: Record<Source['type'], string> = {
   documentation: 'Dokumentacja',
-  article: 'Artykul',
+  article: 'Artykuł',
   video: 'Wideo',
   course: 'Kurs',
   official: 'Oficjalne',
@@ -29,7 +29,7 @@ export function SourceList({ sources }: SourceListProps) {
   return (
     <div className="bg-muted/50 rounded-lg p-4 mt-8">
       <h3 className="font-semibold mb-3 text-sm uppercase tracking-wide text-muted-foreground">
-        Zrodla
+        Źródła
       </h3>
       <ol className="space-y-2 text-sm">
         {sources.map((source, index) => (

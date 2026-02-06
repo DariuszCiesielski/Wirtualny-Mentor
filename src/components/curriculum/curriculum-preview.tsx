@@ -33,7 +33,7 @@ import {
   Save,
   Target,
 } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn, getLevelDisplayName } from "@/lib/utils";
 
 interface CurriculumPreviewProps {
   curriculum: Curriculum;
@@ -91,19 +91,19 @@ export function CurriculumPreview({
             <div className="flex items-center gap-2">
               <BookOpen className="h-4 w-4 text-muted-foreground" />
               <span className="text-sm">
-                <strong>{totalChapters}</strong> rozdzialow
+                <strong>{totalChapters}</strong> rozdziałów
               </span>
             </div>
             <div className="flex items-center gap-2">
               <Target className="h-4 w-4 text-muted-foreground" />
               <span className="text-sm">
-                <strong>{totalOutcomes}</strong> celow
+                <strong>{totalOutcomes}</strong> celów
               </span>
             </div>
             <div className="flex items-center gap-2">
               <GraduationCap className="h-4 w-4 text-muted-foreground" />
               <span className="text-sm">
-                <strong>5</strong> poziomow
+                <strong>5</strong> poziomów
               </span>
             </div>
           </div>
@@ -119,7 +119,7 @@ export function CurriculumPreview({
           {/* Prerequisites */}
           {curriculum.prerequisites && curriculum.prerequisites.length > 0 && (
             <div>
-              <h4 className="text-sm font-medium mb-2">Wymagania wstepne:</h4>
+              <h4 className="text-sm font-medium mb-2">Wymagania wstępne:</h4>
               <ul className="text-sm text-muted-foreground space-y-1">
                 {curriculum.prerequisites.map((prereq, index) => (
                   <li key={index} className="flex items-start gap-2">
@@ -141,7 +141,7 @@ export function CurriculumPreview({
             Program nauczania
           </CardTitle>
           <CardDescription>
-            Kliknij na poziom, aby zobaczyc szczegoly
+            Kliknij na poziom, aby zobaczyć szczegóły
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -159,7 +159,7 @@ export function CurriculumPreview({
                     </span>
                     <div className="flex-1">
                       <div className="flex items-center gap-2">
-                        <span className="font-semibold">{level.name}</span>
+                        <span className="font-semibold">{getLevelDisplayName(level.name)}</span>
                         <Badge
                           variant="outline"
                           className={cn(
@@ -203,7 +203,7 @@ export function CurriculumPreview({
                     <div>
                       <h4 className="text-sm font-medium mb-2 flex items-center gap-2">
                         <BookOpen className="h-4 w-4" />
-                        Rozdzialy ({level.chapters.length})
+                        Rozdziały ({level.chapters.length})
                       </h4>
                       <div className="space-y-2">
                         {level.chapters.map((chapter, chapterIndex) => (
@@ -267,7 +267,7 @@ export function CurriculumPreview({
             ) : (
               <>
                 <Save className="h-4 w-4" />
-                Zapisz i rozpocznij nauke
+                Zapisz i rozpocznij naukę
               </>
             )}
           </Button>

@@ -24,10 +24,12 @@ import { ChapterNavigation } from "@/components/curriculum/chapter-navigation";
 import { ChapterContent } from "@/components/materials/chapter-content";
 import { GeneratingState } from "@/components/materials/generating-state";
 import { NotesList } from "@/components/notes/notes-list";
+import { ChapterPageWrapper } from "@/components/materials/chapter-page-wrapper";
 import { Button } from "@/components/ui/button";
 import { markComplete } from "./actions";
 import { CheckCircle2, ArrowLeft, ClipboardList } from "lucide-react";
 import Link from "next/link";
+import { getLevelDisplayName } from "@/lib/utils";
 
 interface ChapterPageProps {
   params: Promise<{ courseId: string; levelId: string; chapterId: string }>;
@@ -102,31 +104,31 @@ export default async function ChapterPage({ params }: ChapterPageProps) {
   const courseContext = `
 Kurs: ${course.title}
 Poziom: ${level.name} - ${level.description}
-Grupa docelowa: ${course.target_audience || "Nie okreslono"}
+Grupa docelowa: ${course.target_audience || "Nie określono"}
 `.trim();
 
   return (
-    <div className="container max-w-4xl py-8">
+    <ChapterPageWrapper>
       {/* Progress Bar */}
       <ProgressBar
         percentage={percentage}
         completedChapters={progress.completed_chapters.length}
         totalChapters={totalChapters}
-        currentLevel={level.name}
+        currentLevel={getLevelDisplayName(level.name)}
       />
 
       {/* Back navigation */}
       <Button variant="ghost" asChild className="mb-6">
         <Link href={`/courses/${courseId}`}>
           <ArrowLeft className="mr-2 h-4 w-4" />
-          Wroc do kursu
+          Wróć do kursu
         </Link>
       </Button>
 
       {/* Chapter header */}
       <header className="mb-8">
         <div className="text-sm text-muted-foreground mb-2">
-          {level.name} &bull; Rozdzial {chapter.order_index}
+          {getLevelDisplayName(level.name)} &bull; Rozdział {chapter.order_index}
           {isCompleted && (
             <CheckCircle2 className="inline ml-2 h-4 w-4 text-green-500" />
           )}
@@ -161,7 +163,7 @@ Grupa docelowa: ${course.target_audience || "Nie okreslono"}
           className="mt-8"
         >
           <Button type="submit" size="lg" className="w-full">
-            Ukoncz rozdzial i przejdz dalej
+            Ukończ rozdział i przejdź dalej
           </Button>
         </form>
       )}
@@ -172,7 +174,7 @@ Grupa docelowa: ${course.target_audience || "Nie okreslono"}
           <Button asChild variant="outline" size="lg" className="w-full">
             <Link href={`/courses/${courseId}/${levelId}/${chapterId}/quiz`}>
               <ClipboardList className="mr-2 h-5 w-5" />
-              Sprawdz wiedze - Quiz
+              Sprawdź wiedzę - Quiz
             </Link>
           </Button>
         </div>
@@ -196,6 +198,6 @@ Grupa docelowa: ${course.target_audience || "Nie okreslono"}
           isCompleted={isCompleted}
         />
       </div>
-    </div>
+    </ChapterPageWrapper>
   );
 }

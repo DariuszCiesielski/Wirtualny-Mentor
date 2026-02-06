@@ -3,7 +3,7 @@
 import { ChevronDown, CheckCircle, Lock, Unlock, SkipForward } from "lucide-react";
 import Link from "next/link";
 import type { UnlockType } from "@/types/quiz";
-import { cn } from "@/lib/utils";
+import { cn, getLevelDisplayName } from "@/lib/utils";
 import {
   Card,
   CardContent,
@@ -78,7 +78,7 @@ export function LevelCard({
                   </Badge>
                   {isCompleted && (
                     <Badge variant="outline" className="text-green-600 border-green-600">
-                      Ukonczony
+                      Ukończony
                     </Badge>
                   )}
                   {wasSkipped && !isCompleted && (
@@ -94,7 +94,7 @@ export function LevelCard({
                     </Badge>
                   )}
                 </div>
-                <CardTitle className="text-lg">{level.name}</CardTitle>
+                <CardTitle className="text-lg">{getLevelDisplayName(level.name)}</CardTitle>
                 {level.description && (
                   <p className="text-sm text-muted-foreground mt-1">
                     {level.description}
@@ -128,7 +128,7 @@ export function LevelCard({
             {learningOutcomes.length > 0 && (
               <div className="mb-6">
                 <h4 className="font-medium mb-3 text-sm">
-                  Po ukonczeniu tego poziomu bedziesz umial:
+                  Po ukończeniu tego poziomu będziesz umiał:
                 </h4>
                 <ul className="space-y-2">
                   {learningOutcomes.map((outcome) => (
@@ -150,7 +150,7 @@ export function LevelCard({
             {level.chapters && level.chapters.length > 0 && (
               <div>
                 <h4 className="font-medium mb-3 text-sm">
-                  Rozdzialy ({level.chapters.length}):
+                  Rozdziały ({level.chapters.length}):
                 </h4>
                 <ChapterList
                   chapters={level.chapters}
@@ -169,7 +169,7 @@ export function LevelCard({
                   className="inline-flex items-center gap-2 text-sm font-medium text-primary hover:underline"
                 >
                   <Unlock className="h-4 w-4" />
-                  Przejdz do testu koncowego poziomu
+                  Przejdź do testu końcowego poziomu
                 </Link>
               </div>
             )}

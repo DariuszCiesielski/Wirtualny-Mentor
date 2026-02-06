@@ -32,7 +32,7 @@ export function ChapterNavigation({
             href={`/courses/${courseId}/${prevChapter.levelId}/${prevChapter.chapterId}`}
           >
             <ChevronLeft className="h-4 w-4 mr-2" />
-            Poprzedni rozdzial
+            Poprzedni rozdział
           </Link>
         </Button>
       ) : (
@@ -42,7 +42,7 @@ export function ChapterNavigation({
       <Button variant="outline" asChild>
         <Link href={`/courses/${courseId}`}>
           <BookOpen className="h-4 w-4 mr-2" />
-          Spis tresci
+          Spis treści
         </Link>
       </Button>
 
@@ -51,13 +51,13 @@ export function ChapterNavigation({
           <Link
             href={`/courses/${courseId}/${nextChapter.levelId}/${nextChapter.chapterId}`}
           >
-            Nastepny rozdzial
+            Następny rozdział
             <ChevronRight className="h-4 w-4 ml-2" />
           </Link>
         </Button>
       ) : (
         <Button variant="default" asChild>
-          <Link href={`/courses/${courseId}`}>Zakoncz kurs</Link>
+          <Link href={`/courses/${courseId}`}>Zakończ kurs</Link>
         </Button>
       )}
     </div>

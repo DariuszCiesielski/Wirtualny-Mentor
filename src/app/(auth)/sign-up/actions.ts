@@ -14,12 +14,12 @@ import { z } from "zod";
 
 const signUpSchema = z
   .object({
-    email: z.email("Nieprawidlowy adres email"),
-    password: z.string().min(8, "Haslo musi miec minimum 8 znakow"),
-    confirmPassword: z.string().min(1, "Potwierdzenie hasla jest wymagane"),
+    email: z.email("Nieprawidłowy adres email"),
+    password: z.string().min(8, "Hasło musi mieć minimum 8 znaków"),
+    confirmPassword: z.string().min(1, "Potwierdzenie hasła jest wymagane"),
   })
   .refine((data) => data.password === data.confirmPassword, {
-    message: "Hasla nie sa takie same",
+    message: "Hasła nie są takie same",
     path: ["confirmPassword"],
   });
 
@@ -98,11 +98,11 @@ export async function signUp(
     // Handle specific error cases
     if (error.message.includes("already registered")) {
       return {
-        error: "Ten adres email jest juz zarejestrowany",
+        error: "Ten adres email jest już zarejestrowany",
       };
     }
     return {
-      error: "Wystapil blad podczas rejestracji. Sprobuj ponownie.",
+      error: "Wystąpił błąd podczas rejestracji. Spróbuj ponownie.",
     };
   }
 

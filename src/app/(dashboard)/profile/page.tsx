@@ -35,18 +35,18 @@ export default async function ProfilePage() {
   return (
     <div className="space-y-6 max-w-2xl">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">Twoj profil</h1>
+        <h1 className="text-3xl font-bold tracking-tight">Twój profil</h1>
         <p className="text-muted-foreground mt-2">
-          Zarzadzaj swoimi danymi osobowymi
+          Zarządzaj swoimi danymi osobowymi
         </p>
       </div>
 
       {/* Avatar section */}
       <Card>
         <CardHeader>
-          <CardTitle>Zdjecie profilowe</CardTitle>
+          <CardTitle>Zdjęcie profilowe</CardTitle>
           <CardDescription>
-            Wybierz zdjecie, ktore bedzie widoczne w aplikacji
+            Wybierz zdjęcie, które będzie widoczne w aplikacji
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -58,7 +58,7 @@ export default async function ProfilePage() {
       <Card>
         <CardHeader>
           <CardTitle>Dane osobowe</CardTitle>
-          <CardDescription>Zaktualizuj swoje imie wyswietlane w aplikacji</CardDescription>
+          <CardDescription>Zaktualizuj swoje imię wyświetlane w aplikacji</CardDescription>
         </CardHeader>
         <CardContent>
           <ProfileForm initialName={fullName || ""} />
@@ -70,7 +70,7 @@ export default async function ProfilePage() {
         <CardHeader>
           <CardTitle>Adres email</CardTitle>
           <CardDescription>
-            Adres email uzywany do logowania (nie mozna zmienic)
+            Adres email używany do logowania (nie można zmienić)
           </CardDescription>
         </CardHeader>
         <CardContent>

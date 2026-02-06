@@ -24,21 +24,21 @@ export default async function Home() {
             Spersonalizowana platforma nauki z AI
           </p>
           <p className="text-sm text-muted-foreground/70 mt-2">
-            Naucz sie czegokolwiek z pomoca AI
+            Naucz się czegokolwiek z pomocą AI
           </p>
         </div>
 
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <Button asChild size="lg">
-            <Link href="/login">Zaloguj sie</Link>
+            <Link href="/login">Zaloguj się</Link>
           </Button>
           <Button asChild variant="outline" size="lg">
-            <Link href="/sign-up">Zarejestruj sie</Link>
+            <Link href="/sign-up">Zarejestruj się</Link>
           </Button>
         </div>
 
         <div className="mt-16 text-center">
-          <h2 className="text-2xl font-semibold mb-6">Jak to dziala?</h2>
+          <h2 className="text-2xl font-semibold mb-6">Jak to działa?</h2>
           <div className="grid gap-6 text-left max-w-md mx-auto">
             <div className="flex gap-4">
               <div className="flex-shrink-0 w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold">
@@ -47,7 +47,7 @@ export default async function Home() {
               <div>
                 <h3 className="font-medium">Podaj temat</h3>
                 <p className="text-sm text-muted-foreground">
-                  Wpisz czego chcesz sie nauczyc lub podaj link do zrodla
+                  Wpisz czego chcesz się nauczyć lub podaj link do źródła
                 </p>
               </div>
             </div>
@@ -58,7 +58,7 @@ export default async function Home() {
               <div>
                 <h3 className="font-medium">AI tworzy program</h3>
                 <p className="text-sm text-muted-foreground">
-                  Spersonalizowany kurs z 5 poziomami: od poczatkujacego do guru
+                  Spersonalizowany kurs z 5 poziomami: od początkującego do guru
                 </p>
               </div>
             </div>
@@ -67,9 +67,9 @@ export default async function Home() {
                 3
               </div>
               <div>
-                <h3 className="font-medium">Ucz sie z mentorem</h3>
+                <h3 className="font-medium">Ucz się z mentorem</h3>
                 <p className="text-sm text-muted-foreground">
-                  Materialy, quizy i chatbot-mentor do pomocy
+                  Materiały, quizy i chatbot-mentor do pomocy
                 </p>
               </div>
             </div>

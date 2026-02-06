@@ -35,14 +35,14 @@ const STEPS: StepConfig[] = [
   { id: "topic", name: "Temat", number: 1 },
   { id: "clarify", name: "Pytania", number: 2 },
   { id: "generate", name: "Generowanie", number: 3 },
-  { id: "preview", name: "Podglad", number: 4 },
+  { id: "preview", name: "Podgląd", number: 4 },
 ];
 
 function Stepper({ currentStep }: { currentStep: Step }) {
   const currentIndex = STEPS.findIndex((s) => s.id === currentStep);
 
   return (
-    <nav aria-label="Postep tworzenia kursu" className="mb-8">
+    <nav aria-label="Postęp tworzenia kursu" className="mb-8">
       <ol className="flex items-center justify-center gap-2 md:gap-4">
         {STEPS.map((step, index) => {
           const isCompleted = index < currentIndex;
@@ -179,7 +179,7 @@ export default function NewCoursePage() {
       <div className="mb-6">
         <h1 className="text-2xl font-bold tracking-tight">Nowy kurs</h1>
         <p className="text-muted-foreground">
-          Stworz spersonalizowany program nauki z pomoca AI
+          Stwórz spersonalizowany program nauki z pomocą AI
         </p>
       </div>
 

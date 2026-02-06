@@ -12,11 +12,11 @@ import { z } from "zod";
 
 const updatePasswordSchema = z
   .object({
-    password: z.string().min(8, "Haslo musi miec minimum 8 znakow"),
-    confirmPassword: z.string().min(1, "Potwierdzenie hasla jest wymagane"),
+    password: z.string().min(8, "Hasło musi mieć minimum 8 znaków"),
+    confirmPassword: z.string().min(1, "Potwierdzenie hasła jest wymagane"),
   })
   .refine((data) => data.password === data.confirmPassword, {
-    message: "Hasla nie sa takie same",
+    message: "Hasła nie są takie same",
     path: ["confirmPassword"],
   });
 
@@ -56,9 +56,9 @@ export async function updatePassword(
 
   if (error) {
     return {
-      error: "Wystapil blad podczas zmiany hasla. Sprobuj ponownie.",
+      error: "Wystąpił błąd podczas zmiany hasła. Spróbuj ponownie.",
     };
   }
 
-  redirect("/login?message=Haslo zostalo zmienione pomyslnie");
+  redirect("/login?message=Hasło zostało zmienione pomyślnie");
 }

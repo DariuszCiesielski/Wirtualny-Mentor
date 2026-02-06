@@ -34,7 +34,7 @@ export function NoteCard({
   const [isPending, startTransition] = useTransition();
 
   const handleDelete = () => {
-    if (!confirm("Czy na pewno chcesz usunac te notatke?")) {
+    if (!confirm("Czy na pewno chcesz usunąć tę notatkę?")) {
       return;
     }
 
@@ -107,7 +107,7 @@ export function NoteCard({
             ) : (
               <Trash2 className="h-4 w-4" />
             )}
-            <span className="sr-only">Usun</span>
+            <span className="sr-only">Usuń</span>
           </Button>
         </div>
       </CardFooter>

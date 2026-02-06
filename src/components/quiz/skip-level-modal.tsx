@@ -65,16 +65,16 @@ export function SkipLevelModal({
             Przeskocz poziom: {levelName}
           </DialogTitle>
           <DialogDescription>
-            Czy na pewno chcesz przeskoczyc ten poziom?
+            Czy na pewno chcesz przeskoczyć ten poziom?
           </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4 py-4">
           <div className="bg-yellow-50 dark:bg-yellow-950 p-4 rounded-lg">
             <p className="text-sm text-yellow-800 dark:text-yellow-200">
-              <strong>Uwaga:</strong> Przeskakujac poziom mozesz miec trudnosci
-              z bardziej zaawansowanym materialem. Zalecamy to tylko dla osob,
-              ktore juz znaja ten material.
+              <strong>Uwaga:</strong> Przeskakując poziom możesz mieć trudności
+              z bardziej zaawansowanym materiałem. Zalecamy to tylko dla osób,
+              które już znają ten materiał.
             </p>
           </div>
 
@@ -85,7 +85,7 @@ export function SkipLevelModal({
               onCheckedChange={(checked) => setConfirmed(checked === true)}
             />
             <Label htmlFor="confirm" className="text-sm">
-              Rozumiem i chce przeskoczyc ten poziom
+              Rozumiem i chcę przeskoczyć ten poziom
             </Label>
           </div>
         </div>
@@ -99,7 +99,7 @@ export function SkipLevelModal({
             disabled={!confirmed || isSkipping}
             variant="destructive"
           >
-            {isSkipping ? "Przeskakuje..." : "Przeskocz"}
+            {isSkipping ? "Przeskakuję..." : "Przeskocz"}
           </Button>
         </DialogFooter>
       </DialogContent>

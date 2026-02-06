@@ -67,7 +67,7 @@ export function NotesList({ courseId, chapterId, initialNotes }: NotesListProps)
 
       {notes.length === 0 && (
         <p className="text-sm text-muted-foreground text-center py-4">
-          Brak notatek. Dodaj pierwsza notatke powyzej.
+          Brak notatek. Dodaj pierwszą notatkę powyżej.
         </p>
       )}
     </section>

@@ -49,7 +49,7 @@ export default async function QuizPage({ params }: QuizPageProps) {
       <Button variant="ghost" asChild className="mb-6">
         <Link href={`/courses/${courseId}/${levelId}/${chapterId}`}>
           <ArrowLeft className="mr-2 h-4 w-4" />
-          Wroc do rozdzialu
+          Wróć do rozdziału
         </Link>
       </Button>
 
@@ -59,7 +59,7 @@ export default async function QuizPage({ params }: QuizPageProps) {
         </div>
         <h1 className="text-2xl font-bold">Quiz: {chapter.title}</h1>
         <p className="text-muted-foreground">
-          Sprawdz swoje zrozumienie materialu
+          Sprawdź swoje zrozumienie materiału
         </p>
       </div>
 

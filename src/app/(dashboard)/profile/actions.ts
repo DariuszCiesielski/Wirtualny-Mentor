@@ -21,8 +21,8 @@ function isMockAuth(): boolean {
 const profileSchema = z.object({
   name: z
     .string()
-    .min(1, "Imie jest wymagane")
-    .max(100, "Imie moze miec maksymalnie 100 znakow"),
+    .min(1, "Imię jest wymagane")
+    .max(100, "Imię może mieć maksymalnie 100 znaków"),
 });
 
 export type ProfileFormState = {
@@ -85,14 +85,14 @@ export async function updateProfile(
     });
 
     if (error) {
-      return { error: "Nie udalo sie zaktualizowac profilu" };
+      return { error: "Nie udało się zaktualizować profilu" };
     }
 
     revalidatePath("/profile");
     revalidatePath("/dashboard");
     return { success: true };
   } catch {
-    return { error: "Wystapil blad podczas aktualizacji profilu" };
+    return { error: "Wystąpił błąd podczas aktualizacji profilu" };
   }
 }
 
@@ -117,12 +117,12 @@ export async function uploadAvatar(
     const file = formData.get("avatar") as File | null;
 
     if (!file || file.size === 0) {
-      return { error: "Wybierz plik do przeslania" };
+      return { error: "Wybierz plik do przesłania" };
     }
 
     // Validate file size
     if (file.size > MAX_FILE_SIZE) {
-      return { error: "Plik moze miec maksymalnie 2MB" };
+      return { error: "Plik może mieć maksymalnie 2MB" };
     }
 
     // Validate file type
@@ -175,7 +175,7 @@ export async function uploadAvatar(
 
     if (uploadError) {
       console.error("Avatar upload error:", uploadError);
-      return { error: "Nie udalo sie przeslac pliku" };
+      return { error: "Nie udało się przesłać pliku" };
     }
 
     // Get public URL
@@ -189,13 +189,13 @@ export async function uploadAvatar(
     });
 
     if (updateError) {
-      return { error: "Nie udalo sie zaktualizowac avatara" };
+      return { error: "Nie udało się zaktualizować avatara" };
     }
 
     revalidatePath("/profile");
     revalidatePath("/dashboard");
     return { success: true, url: publicUrl };
   } catch {
-    return { error: "Wystapil blad podczas przesylania avatara" };
+    return { error: "Wystąpił błąd podczas przesyłania avatara" };
   }
 }

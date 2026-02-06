@@ -29,9 +29,9 @@ export function UpdatePasswordForm() {
   return (
     <Card className="w-full max-w-md">
       <CardHeader className="text-center">
-        <CardTitle className="text-2xl">Ustaw nowe haslo</CardTitle>
+        <CardTitle className="text-2xl">Ustaw nowe hasło</CardTitle>
         <CardDescription>
-          Wprowadz swoje nowe haslo ponizej
+          Wprowadź swoje nowe hasło poniżej
         </CardDescription>
       </CardHeader>
 
@@ -45,12 +45,12 @@ export function UpdatePasswordForm() {
 
         <form action={formAction} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="password">Nowe haslo</Label>
+            <Label htmlFor="password">Nowe hasło</Label>
             <Input
               id="password"
               name="password"
               type="password"
-              placeholder="Minimum 8 znakow"
+              placeholder="Minimum 8 znaków"
               required
               autoComplete="new-password"
               aria-invalid={!!state?.fieldErrors?.password}
@@ -63,12 +63,12 @@ export function UpdatePasswordForm() {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="confirmPassword">Potwierdz nowe haslo</Label>
+            <Label htmlFor="confirmPassword">Potwierdź nowe hasło</Label>
             <Input
               id="confirmPassword"
               name="confirmPassword"
               type="password"
-              placeholder="Powtorz haslo"
+              placeholder="Powtórz hasło"
               required
               autoComplete="new-password"
               aria-invalid={!!state?.fieldErrors?.confirmPassword}
@@ -82,7 +82,7 @@ export function UpdatePasswordForm() {
 
           <Button type="submit" className="w-full" disabled={isPending}>
             {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            Ustaw nowe haslo
+            Ustaw nowe hasło
           </Button>
         </form>
       </CardContent>

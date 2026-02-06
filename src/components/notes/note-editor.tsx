@@ -47,7 +47,7 @@ export function NoteEditor({
     setError(null);
 
     if (!content.trim()) {
-      setError("Notatka nie moze byc pusta");
+      setError("Notatka nie może być pusta");
       return;
     }
 
@@ -84,7 +84,7 @@ export function NoteEditor({
       <form onSubmit={handleSubmit}>
         <CardContent className="pt-4">
           <Textarea
-            placeholder="Dodaj notatke do tego rozdzialu..."
+            placeholder="Dodaj notatkę do tego rozdziału..."
             value={content}
             onChange={(e) => setContent(e.target.value)}
             rows={4}
@@ -112,7 +112,7 @@ export function NoteEditor({
             ) : (
               <Save className="h-4 w-4 mr-1" />
             )}
-            {isEditMode ? "Zapisz zmiany" : "Zapisz notatke"}
+            {isEditMode ? "Zapisz zmiany" : "Zapisz notatkę"}
           </Button>
         </CardFooter>
       </form>

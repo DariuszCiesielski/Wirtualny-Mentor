@@ -23,9 +23,9 @@ export function ProgressBar({
   return (
     <div className="mb-8 p-4 bg-muted/50 rounded-lg">
       <div className="flex justify-between items-center mb-2">
-        <span className="text-sm font-medium">Postep kursu</span>
+        <span className="text-sm font-medium">Postęp kursu</span>
         <span className="text-sm text-muted-foreground">
-          {completedChapters} z {totalChapters} rozdzialow
+          {completedChapters} z {totalChapters} rozdziałów
         </span>
       </div>
 

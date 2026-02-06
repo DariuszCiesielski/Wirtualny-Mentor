@@ -22,7 +22,7 @@ interface ErrorPageProps {
 
 export default async function ErrorPage({ searchParams }: ErrorPageProps) {
   const params = await searchParams;
-  const message = params.message || "Wystapil nieoczekiwany blad";
+  const message = params.message || "Wystąpił nieoczekiwany błąd";
 
   return (
     <Card className="w-full max-w-md text-center">
@@ -30,20 +30,20 @@ export default async function ErrorPage({ searchParams }: ErrorPageProps) {
         <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-destructive/10">
           <AlertCircle className="h-8 w-8 text-destructive" />
         </div>
-        <CardTitle className="text-2xl">Blad</CardTitle>
+        <CardTitle className="text-2xl">Błąd</CardTitle>
         <CardDescription>{message}</CardDescription>
       </CardHeader>
 
       <CardContent className="space-y-4">
         <p className="text-sm text-muted-foreground">
-          Jezeli problem sie powtarza, sprobuj ponownie lub skontaktuj sie z
+          Jeżeli problem się powtarza, spróbuj ponownie lub skontaktuj się z
           nami.
         </p>
       </CardContent>
 
       <CardFooter className="flex-col gap-4">
         <Button asChild className="w-full">
-          <Link href="/login">Wrocic do logowania</Link>
+          <Link href="/login">Wrócić do logowania</Link>
         </Button>
       </CardFooter>
     </Card>

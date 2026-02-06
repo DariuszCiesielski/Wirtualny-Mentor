@@ -97,7 +97,7 @@ export function AvatarUpload({ currentAvatarUrl, initials }: AvatarUploadProps) 
                 onClick={handleSubmit}
                 disabled={pending}
               >
-                {pending ? "Przesylanie..." : "Zapisz avatar"}
+                {pending ? "Przesyłanie..." : "Zapisz avatar"}
               </Button>
             )}
           </div>

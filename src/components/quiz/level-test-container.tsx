@@ -74,10 +74,10 @@ export function LevelTestContainer({
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Trophy className="h-6 w-6 text-yellow-500" />
-              Test koncowy: {levelName}
+              Test końcowy: {levelName}
             </CardTitle>
             <CardDescription>
-              Sprawdz czy opanowales material z tego poziomu
+              Sprawdź czy opanowałeś materiał z tego poziomu
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
@@ -96,7 +96,7 @@ export function LevelTestContainer({
             {levelOutcomes.length > 0 && (
               <div>
                 <h4 className="font-medium mb-2">
-                  Po tym poziomie powinienes umiec:
+                  Po tym poziomie powinieneś umieć:
                 </h4>
                 <ul className="list-disc list-inside space-y-1 text-muted-foreground">
                   {levelOutcomes.map((outcome, i) => (

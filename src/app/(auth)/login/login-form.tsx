@@ -35,9 +35,9 @@ export function LoginForm({ message }: LoginFormProps) {
   return (
     <Card className="w-full max-w-md">
       <CardHeader className="text-center">
-        <CardTitle className="text-2xl">Zaloguj sie</CardTitle>
+        <CardTitle className="text-2xl">Zaloguj się</CardTitle>
         <CardDescription>
-          Wprowadz swoje dane, aby uzyskac dostep do platformy
+          Wprowadź swoje dane, aby uzyskać dostęp do platformy
         </CardDescription>
       </CardHeader>
 
@@ -77,12 +77,12 @@ export function LoginForm({ message }: LoginFormProps) {
 
           <div className="space-y-2">
             <div className="flex items-center justify-between">
-              <Label htmlFor="password">Haslo</Label>
+              <Label htmlFor="password">Hasło</Label>
               <Link
                 href="/forgot-password"
                 className="text-sm text-muted-foreground hover:text-primary"
               >
-                Nie pamietasz hasla?
+                Nie pamiętasz hasła?
               </Link>
             </div>
             <Input
@@ -102,7 +102,7 @@ export function LoginForm({ message }: LoginFormProps) {
 
           <Button type="submit" className="w-full" disabled={isPending}>
             {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            Zaloguj sie
+            Zaloguj się
           </Button>
         </form>
       </CardContent>
@@ -111,7 +111,7 @@ export function LoginForm({ message }: LoginFormProps) {
         <p className="text-sm text-muted-foreground">
           Nie masz konta?{" "}
           <Link href="/sign-up" className="text-primary hover:underline">
-            Zarejestruj sie
+            Zarejestruj się
           </Link>
         </p>
       </CardFooter>

@@ -31,9 +31,9 @@ export function ForgotPasswordForm() {
   return (
     <Card className="w-full max-w-md">
       <CardHeader className="text-center">
-        <CardTitle className="text-2xl">Resetuj haslo</CardTitle>
+        <CardTitle className="text-2xl">Resetuj hasło</CardTitle>
         <CardDescription>
-          Podaj swoj adres email, a wyslemy Ci link do zmiany hasla
+          Podaj swój adres email, a wyślemy Ci link do zmiany hasła
         </CardDescription>
       </CardHeader>
 
@@ -66,16 +66,16 @@ export function ForgotPasswordForm() {
 
           <Button type="submit" className="w-full" disabled={isPending}>
             {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            Wyslij link resetujacy
+            Wyślij link resetujący
           </Button>
         </form>
       </CardContent>
 
       <CardFooter className="justify-center">
         <p className="text-sm text-muted-foreground">
-          Wrociles?{" "}
+          Wróciłeś?{" "}
           <Link href="/login" className="text-primary hover:underline">
-            Zaloguj sie
+            Zaloguj się
           </Link>
         </p>
       </CardFooter>

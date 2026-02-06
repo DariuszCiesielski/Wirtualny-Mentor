@@ -141,7 +141,7 @@ O czym chcesz porozmawiać?`,
         {/* Error display */}
         {error && (
           <div className="text-destructive text-sm text-center">
-            Wystapil blad. Sprobuj ponownie.
+            Wystąpił błąd. Spróbuj ponownie.
           </div>
         )}
 

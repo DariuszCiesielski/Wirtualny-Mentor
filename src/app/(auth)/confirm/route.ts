@@ -36,6 +36,6 @@ export async function GET(request: NextRequest) {
 
   // Verification failed - redirect to error page
   return NextResponse.redirect(
-    new URL("/error?message=Blad weryfikacji. Link mogl wygasnac.", origin)
+    new URL("/error?message=Błąd weryfikacji. Link mógł wygasnąć.", origin)
   );
 }

@@ -11,7 +11,7 @@ import { redirect } from "next/navigation";
 import { z } from "zod";
 
 const resetPasswordSchema = z.object({
-  email: z.email("Nieprawidlowy adres email"),
+  email: z.email("Nieprawidłowy adres email"),
 });
 
 export type ResetPasswordState = {
@@ -51,7 +51,7 @@ export async function resetPassword(
 
   if (error) {
     return {
-      error: "Wystapil blad podczas wysylania emaila. Sprobuj ponownie.",
+      error: "Wystąpił błąd podczas wysyłania emaila. Spróbuj ponownie.",
     };
   }
 

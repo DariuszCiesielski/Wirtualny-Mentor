@@ -91,7 +91,7 @@ export function RemediationContent({
           {onRetry && (
             <Button onClick={onRetry} variant="default">
               <RefreshCw className="mr-2 h-4 w-4" />
-              Sprobuj ponownie
+              Spróbuj ponownie
             </Button>
           )}
           {onComplete && (

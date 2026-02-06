@@ -27,7 +27,7 @@ export function ToolCard({ tool }: ToolCardProps) {
             {tool.isFree ? (
               <><Check className="h-3 w-3 mr-1" /> Darmowe</>
             ) : (
-              <><X className="h-3 w-3 mr-1" /> Platne</>
+              <><X className="h-3 w-3 mr-1" /> Płatne</>
             )}
           </Badge>
         </div>
@@ -48,7 +48,7 @@ export function ToolCard({ tool }: ToolCardProps) {
             target="_blank"
             rel="noopener noreferrer"
           >
-            Przejdz do strony
+            Przejdź do strony
             <ExternalLink className="ml-2 h-4 w-4" />
           </a>
         </Button>

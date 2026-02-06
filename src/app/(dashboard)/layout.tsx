@@ -18,6 +18,19 @@ export default async function DashboardLayout({
   // This will redirect to /login if not authenticated
   const user = await requireAuth();
 
+  const fullName = user.user_metadata?.full_name as string | undefined;
+  const avatarUrl = user.user_metadata?.avatar_url as string | undefined;
+  const email = user.email || "";
+  const displayName = fullName || email.split("@")[0] || "Użytkownik";
+  const initials = fullName
+    ? fullName
+        .split(" ")
+        .map((n: string) => n[0])
+        .join("")
+        .toUpperCase()
+        .slice(0, 2)
+    : email[0]?.toUpperCase() || "U";
+
   return (
     <div className="min-h-screen bg-background">
       {/* Sidebar - fixed on left */}
@@ -31,7 +44,12 @@ export default async function DashboardLayout({
         </div>
 
         {/* Header - sticky at top */}
-        <Header user={user} />
+        <Header
+          email={email}
+          displayName={displayName}
+          avatarUrl={avatarUrl}
+          initials={initials}
+        />
 
         {/* Page content */}
         <main className="p-4 lg:p-6">{children}</main>

@@ -42,7 +42,7 @@ export async function mockSignUp(email: string, password: string): Promise<{ use
 
   // Simple validation
   if (password.length < 8) {
-    return { user: null, error: "Haslo musi miec minimum 8 znakow" };
+    return { user: null, error: "Hasło musi mieć minimum 8 znaków" };
   }
 
   const user: MockUser = {
@@ -64,7 +64,7 @@ export async function mockSignIn(email: string, password: string): Promise<{ use
   await new Promise(resolve => setTimeout(resolve, 500));
 
   if (!email || !password) {
-    return { user: null, error: "Email i haslo sa wymagane" };
+    return { user: null, error: "Email i hasło są wymagane" };
   }
 
   // In mock mode, create user if doesn't exist, or return existing

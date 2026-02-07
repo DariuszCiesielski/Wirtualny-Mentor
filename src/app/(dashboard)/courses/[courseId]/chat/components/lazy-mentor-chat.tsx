@@ -9,6 +9,7 @@
 
 import dynamic from 'next/dynamic';
 import { Skeleton } from '@/components/ui/skeleton';
+import type { UIMessage } from 'ai';
 
 // Lazy load MentorChat - heavy client component with AI SDK
 const MentorChat = dynamic(
@@ -35,8 +36,22 @@ const MentorChat = dynamic(
 interface LazyMentorChatProps {
   courseId: string;
   courseTitle: string;
+  sessionId: string;
+  initialMessages?: UIMessage[];
 }
 
-export function LazyMentorChat({ courseId, courseTitle }: LazyMentorChatProps) {
-  return <MentorChat courseId={courseId} courseTitle={courseTitle} />;
+export function LazyMentorChat({
+  courseId,
+  courseTitle,
+  sessionId,
+  initialMessages,
+}: LazyMentorChatProps) {
+  return (
+    <MentorChat
+      courseId={courseId}
+      courseTitle={courseTitle}
+      sessionId={sessionId}
+      initialMessages={initialMessages}
+    />
+  );
 }

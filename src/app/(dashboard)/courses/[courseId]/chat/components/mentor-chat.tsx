@@ -6,6 +6,7 @@
  * Chat interface for Socratic mentor chatbot.
  * Supports text messages and file attachments (images, PDFs).
  * Uses useChat hook with streaming for real-time AI responses.
+ * Messages are persisted to database via session-based storage.
  */
 
 import { useChat } from '@ai-sdk/react';
@@ -24,18 +25,46 @@ import {
   Paperclip,
   X,
   FileText,
+  AlertCircle,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import type { ChatMessageFile } from '@/types/chat';
 
 interface MentorChatProps {
   courseId: string;
   courseTitle: string;
+  sessionId: string;
+  initialMessages?: UIMessage[];
 }
 
 const MAX_FILES = 5;
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 const ACCEPTED_TYPES =
   'image/png,image/jpeg,image/gif,image/webp,application/pdf';
+
+/**
+ * Upload a file to Supabase Storage via the upload API
+ */
+async function uploadFile(
+  file: File,
+  sessionId: string
+): Promise<ChatMessageFile & { signedUrl: string }> {
+  const formData = new FormData();
+  formData.append('file', file);
+  formData.append('sessionId', sessionId);
+
+  const res = await fetch('/api/chat/files/upload', {
+    method: 'POST',
+    body: formData,
+  });
+
+  if (!res.ok) {
+    const data = await res.json().catch(() => ({}));
+    throw new Error(data.error || 'Upload failed');
+  }
+
+  return res.json();
+}
 
 /**
  * Extract text content from UIMessage parts
@@ -135,46 +164,48 @@ function MessageFile({ file }: { file: FileUIPart }) {
   );
 }
 
-export function MentorChat({ courseId, courseTitle }: MentorChatProps) {
+export function MentorChat({
+  courseId,
+  courseTitle,
+  sessionId,
+  initialMessages: initialMessagesProp,
+}: MentorChatProps) {
   const [input, setInput] = useState('');
   const [attachedFiles, setAttachedFiles] = useState<File[]>([]);
+  const [isUploading, setIsUploading] = useState(false);
+  const [uploadError, setUploadError] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Mutable body object - DefaultChatTransport holds a reference and
+  // serializes at send time, so mutations before sendMessage are reflected.
+  // Component is keyed by sessionId so useState initializer is fresh per session.
+  const [body] = useState(() => ({
+    courseId,
+    sessionId,
+    userFiles: [] as ChatMessageFile[],
+  }));
 
   const transport = useMemo(
     () =>
       new DefaultChatTransport({
         api: '/api/chat/mentor',
-        body: { courseId },
+        body,
       }),
-    [courseId]
+    [body]
   );
 
-  const initialMessages: UIMessage[] = useMemo(
-    () => [
-      {
-        id: 'welcome',
-        role: 'assistant' as const,
-        parts: [
-          {
-            type: 'text' as const,
-            text: `Czesc! Jestem Twoim mentorem dla kursu "${courseTitle}".
-
-Jestem tutaj, zeby pomoc Ci sie uczyc - ale nie przez dawanie gotowych odpowiedzi! Zamiast tego bede zadawal pytania, ktore naprowadza Cie na rozwiazanie.
-
-Mozesz tez wyslac mi zrzuty ekranu lub dokumenty PDF - przeanalizuje je i pomoge Ci zrozumiec material.
-
-O czym chcesz porozmawiać?`,
-          },
-        ],
-      },
-    ],
-    [courseTitle]
+  const defaultMessages: UIMessage[] = useMemo(
+    () =>
+      initialMessagesProp && initialMessagesProp.length > 0
+        ? initialMessagesProp
+        : [],
+    [initialMessagesProp]
   );
 
   const { messages, sendMessage, status, error, stop } = useChat({
     transport,
-    messages: initialMessages,
+    messages: defaultMessages,
   });
 
   const isLoading = status === 'streaming' || status === 'submitted';
@@ -207,7 +238,6 @@ O czym chcesz porozmawiać?`,
         return combined;
       });
 
-      // Reset so the same file can be re-selected
       e.target.value = '';
     },
     []
@@ -222,8 +252,37 @@ O czym chcesz porozmawiać?`,
     const hasText = input.trim().length > 0;
     const hasFiles = attachedFiles.length > 0;
 
-    if ((!hasText && !hasFiles) || isLoading) return;
+    if ((!hasText && !hasFiles) || isLoading || isUploading) return;
 
+    setUploadError(null);
+
+    // Upload files to Storage first (if any)
+    let uploadedFiles: ChatMessageFile[] = [];
+    if (hasFiles) {
+      setIsUploading(true);
+      try {
+        const results = await Promise.all(
+          attachedFiles.map((f) => uploadFile(f, sessionId))
+        );
+        uploadedFiles = results.map(({ path, filename, mediaType }) => ({
+          path,
+          filename,
+          mediaType,
+        }));
+      } catch (err) {
+        setIsUploading(false);
+        setUploadError(
+          err instanceof Error ? err.message : 'Nie udało się przesłać plików'
+        );
+        return;
+      }
+      setIsUploading(false);
+    }
+
+    // Set file metadata on mutable body before sending
+    body.userFiles = uploadedFiles;
+
+    // Send message via AI SDK (files still sent as File objects for AI vision)
     if (hasFiles) {
       const dt = new DataTransfer();
       attachedFiles.forEach((f) => dt.items.add(f));
@@ -237,6 +296,9 @@ O czym chcesz porozmawiać?`,
       await sendMessage({ text: input.trim() });
     }
 
+    // Clear file metadata after send
+    body.userFiles = [];
+
     setInput('');
     setAttachedFiles([]);
   };
@@ -249,7 +311,9 @@ O czym chcesz porozmawiać?`,
   };
 
   const canSend =
-    !isLoading && (input.trim().length > 0 || attachedFiles.length > 0);
+    !isLoading &&
+    !isUploading &&
+    (input.trim().length > 0 || attachedFiles.length > 0);
 
   return (
     <div className="flex flex-col h-full">
@@ -301,7 +365,7 @@ O czym chcesz porozmawiać?`,
           );
         })}
 
-        {isLoading && (
+        {(isLoading || isUploading) && (
           <div className="flex gap-3 justify-start">
             <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary/10">
               <Bot className="h-4 w-4 text-primary" />
@@ -312,9 +376,10 @@ O czym chcesz porozmawiać?`,
           </div>
         )}
 
-        {error && (
-          <div className="text-destructive text-sm text-center">
-            Wystąpił błąd. Spróbuj ponownie.
+        {(error || uploadError) && (
+          <div className="flex items-center gap-2 text-destructive text-sm justify-center">
+            <AlertCircle className="h-4 w-4" />
+            {uploadError || 'Wystąpił błąd. Spróbuj ponownie.'}
           </div>
         )}
 
@@ -353,7 +418,7 @@ O czym chcesz porozmawiać?`,
             variant="outline"
             size="icon"
             onClick={() => fileInputRef.current?.click()}
-            disabled={isLoading || attachedFiles.length >= MAX_FILES}
+            disabled={isLoading || isUploading || attachedFiles.length >= MAX_FILES}
             title="Dodaj pliki (obrazy, PDF)"
             className="shrink-0"
           >
@@ -365,7 +430,7 @@ O czym chcesz porozmawiać?`,
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
             placeholder="Zadaj pytanie mentorowi..."
-            disabled={isLoading}
+            disabled={isLoading || isUploading}
             className="min-h-[60px] resize-none"
             rows={2}
           />
@@ -376,7 +441,7 @@ O czym chcesz porozmawiać?`,
             size="icon"
             className="shrink-0"
           >
-            {isLoading ? (
+            {isLoading || isUploading ? (
               <Loader2 className="h-4 w-4 animate-spin" />
             ) : (
               <Send className="h-4 w-4" />

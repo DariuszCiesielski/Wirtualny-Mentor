@@ -42,8 +42,8 @@ const googleProvider = createGoogleGenerativeAI({
 // Model routing configuration - rozne modele do roznych zadan
 // Koszty optymalizowane: drogi model tylko tam gdzie potrzeba jakosci
 export const MODEL_CONFIG = {
-  // Claude Sonnet 4 - mentoring, long context, empathy, Polish language
-  mentor: anthropicProvider('claude-sonnet-4-20250514'),
+  // GPT-5.2 - mentoring with vision (images/documents support)
+  mentor: openaiProvider('gpt-5.2'),
 
   // GPT-5.2 - structured curriculum generation, reliable JSON
   curriculum: openaiProvider('gpt-5.2'),

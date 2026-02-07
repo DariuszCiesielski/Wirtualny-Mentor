@@ -240,6 +240,49 @@ export async function searchNotesSemantic(
 }
 
 /**
+ * Get all notes for a user across all courses (for global notes page)
+ */
+export async function getAllUserNotes(
+  userId: string,
+  limit = 50
+): Promise<NoteWithContext[]> {
+  const supabase = await createClient();
+
+  const { data, error } = await supabase
+    .from("notes")
+    .select(
+      `
+      *,
+      chapters!chapter_id (
+        title,
+        course_levels!level_id (
+          name
+        )
+      ),
+      courses!course_id (
+        title
+      )
+    `
+    )
+    .eq("user_id", userId)
+    .order("created_at", { ascending: false })
+    .limit(limit);
+
+  if (error) {
+    throw new Error(`Failed to get all user notes: ${error.message}`);
+  }
+
+  return (data ?? []).map((note) => ({
+    ...note,
+    chapter_title: note.chapters?.title ?? null,
+    level_name: note.chapters?.course_levels?.name ?? null,
+    course_title: note.courses?.title ?? null,
+    chapters: undefined,
+    courses: undefined,
+  })) as NoteWithContext[];
+}
+
+/**
  * Get single note by ID
  */
 export async function getNote(

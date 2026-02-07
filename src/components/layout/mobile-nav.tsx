@@ -39,7 +39,7 @@ const navItems = [
     label: 'Notatki',
     href: '/notes',
     icon: FileText,
-    disabled: true,
+    disabled: false,
   },
   {
     label: 'Profil',

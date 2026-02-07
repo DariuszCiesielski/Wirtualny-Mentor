@@ -92,8 +92,11 @@ sendMessage({ text: 'Wyjaśnij ten diagram', files: dt.files });
 ```typescript
 // Sesja inline: 1 per user/course/chapter (UNIQUE partial index)
 // ChapterLayoutWithChat otwiera panel czatu obok treści
+// Desktop: sticky side panel (w-96, h-[calc(100vh-4rem)]), Mobile: Sheet (useMediaQuery)
 // ChatContext (React Context) łączy layout z ContentRenderer.onAskMentor
 // Floating button + TextSelectionPopover + SectionAskButton (pod h2)
+// useChat({ initialMessages }) - tryb niekontrolowany (NIE messages:)
+// Scroll: min-h-0 + container.scrollTop (NIE scrollIntoView - scrolluje stronę)
 ```
 
 ### Notatki sekcyjne

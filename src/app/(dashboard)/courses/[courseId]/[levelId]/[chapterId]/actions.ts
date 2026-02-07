@@ -15,6 +15,12 @@ import {
 } from "@/lib/dal/progress";
 import { getCourse } from "@/lib/dal/courses";
 import { createNote, updateNote, deleteNote } from "@/lib/dal/notes";
+import {
+  getChapterSession,
+  createChapterSession,
+  saveMessage,
+  getMessages,
+} from "@/lib/dal/chat";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import type { CreateNoteInput } from "@/types/notes";
@@ -107,6 +113,69 @@ export async function navigateToChapter(
 }
 
 // ============================================================================
+// INLINE CHAT ACTIONS
+// ============================================================================
+
+/**
+ * Get or create an inline chat session for a chapter.
+ * Returns the session ID and initial messages.
+ */
+export async function getOrCreateInlineSession(
+  courseId: string,
+  chapterId: string,
+  chapterTitle: string
+): Promise<{ sessionId: string; isNew: boolean }> {
+  const user = await requireAuth();
+
+  let session = await getChapterSession(user.id, courseId, chapterId);
+
+  if (session) {
+    return { sessionId: session.id, isNew: false };
+  }
+
+  session = await createChapterSession(
+    user.id,
+    courseId,
+    chapterId,
+    chapterTitle
+  );
+
+  // Save welcome message
+  await saveMessage({
+    session_id: session.id,
+    role: "assistant",
+    content: `Cześć! Czytasz właśnie "${chapterTitle}". Mogę pomóc Ci zrozumieć materiał - pytaj o wszystko!`,
+  });
+
+  return { sessionId: session.id, isNew: true };
+}
+
+/**
+ * Load messages for a chat session.
+ * Returns UIMessage-compatible format.
+ */
+export async function loadSessionMessagesAction(
+  sessionId: string
+): Promise<
+  Array<{
+    id: string;
+    role: "user" | "assistant";
+    content: string;
+    createdAt: string;
+  }>
+> {
+  await requireAuth();
+
+  const messages = await getMessages(sessionId);
+  return messages.map((m) => ({
+    id: m.id,
+    role: m.role,
+    content: m.content,
+    createdAt: m.created_at,
+  }));
+}
+
+// ============================================================================
 // NOTES ACTIONS
 // ============================================================================
 
@@ -121,6 +190,7 @@ export async function createNoteAction(formData: FormData) {
   const content = formData.get("content") as string;
   const courseId = formData.get("courseId") as string;
   const chapterId = formData.get("chapterId") as string | null;
+  const sectionHeading = formData.get("sectionHeading") as string | null;
 
   if (!content || content.trim().length === 0) {
     return { error: "Content is required" };
@@ -134,6 +204,7 @@ export async function createNoteAction(formData: FormData) {
     const input: CreateNoteInput = {
       course_id: courseId,
       chapter_id: chapterId || null,
+      section_heading: sectionHeading || null,
       content: content.trim(),
     };
 

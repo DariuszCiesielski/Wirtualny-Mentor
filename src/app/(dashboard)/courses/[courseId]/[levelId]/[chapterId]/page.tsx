@@ -1,35 +1,17 @@
 /**
  * Chapter Detail Page
  *
- * Server component that displays chapter content with learning materials.
- *
- * WIRING PATTERN (Server -> Client):
- * 1. Server calls getSectionContent(chapterId) to check if content exists
- * 2. Passes result as initialContent prop to ChapterContent client component
- * 3. If initialContent is null, ChapterContent will trigger generation via API
- * 4. If initialContent exists, ChapterContent renders immediately
- *
- * This ensures content is generated only on first visit, not on every page load.
+ * Server component that loads chapter data and delegates rendering
+ * to ChapterPageClient which handles inline chat and section notes.
  */
 
-import { Suspense } from "react";
 import { requireAuth } from "@/lib/dal/auth";
 import { getCourse } from "@/lib/dal/courses";
 import { getSectionContent } from "@/lib/dal/materials";
 import { getProgress, calculateProgressPercentage } from "@/lib/dal/progress";
 import { getNotes } from "@/lib/dal/notes";
 import { notFound } from "next/navigation";
-import { ProgressBar } from "@/components/curriculum/progress-bar";
-import { ChapterNavigation } from "@/components/curriculum/chapter-navigation";
-import { ChapterContent } from "@/components/materials/chapter-content";
-import { GeneratingState } from "@/components/materials/generating-state";
-import { NotesList } from "@/components/notes/notes-list";
-import { ChapterPageWrapper } from "@/components/materials/chapter-page-wrapper";
-import { Button } from "@/components/ui/button";
-import { markComplete } from "./actions";
-import { CheckCircle2, ArrowLeft, ClipboardList } from "lucide-react";
-import Link from "next/link";
-import { getLevelDisplayName } from "@/lib/utils";
+import { ChapterPageClient } from "./components/chapter-page-client";
 
 interface ChapterPageProps {
   params: Promise<{ courseId: string; levelId: string; chapterId: string }>;
@@ -94,7 +76,6 @@ export default async function ChapterPage({ params }: ChapterPageProps) {
   }
 
   // Get existing content (may be null - triggers lazy generation in client)
-  // This is the SERVER-SIDE check - client will handle generation if null
   const existingContent = await getSectionContent(chapterId);
 
   // Get user's notes for this chapter
@@ -108,96 +89,29 @@ Grupa docelowa: ${course.target_audience || "Nie określono"}
 `.trim();
 
   return (
-    <ChapterPageWrapper>
-      {/* Progress Bar */}
-      <ProgressBar
-        percentage={percentage}
-        completedChapters={progress.completed_chapters.length}
-        totalChapters={totalChapters}
-        currentLevel={getLevelDisplayName(level.name)}
-      />
-
-      {/* Back navigation */}
-      <Button variant="ghost" asChild className="mb-6">
-        <Link href={`/courses/${courseId}`}>
-          <ArrowLeft className="mr-2 h-4 w-4" />
-          Wróć do kursu
-        </Link>
-      </Button>
-
-      {/* Chapter header */}
-      <header className="mb-8">
-        <div className="text-sm text-muted-foreground mb-2">
-          {getLevelDisplayName(level.name)} &bull; Rozdział {chapter.order_index}
-          {isCompleted && (
-            <CheckCircle2 className="inline ml-2 h-4 w-4 text-green-500" />
-          )}
-        </div>
-        <h1 className="text-3xl font-bold">{chapter.title}</h1>
-        <p className="text-muted-foreground mt-2">{chapter.description}</p>
-      </header>
-
-      {/* Chapter content with Suspense */}
-      <Suspense
-        fallback={
-          <GeneratingState chapterTitle={chapter.title} phase="searching" />
-        }
-      >
-        <ChapterContent
-          chapter={{
-            id: chapter.id,
-            title: chapter.title,
-            description: chapter.description || "",
-            topics: chapter.topics || [],
-            estimatedMinutes: chapter.estimated_minutes || 15,
-          }}
-          courseContext={courseContext}
-          initialContent={existingContent}
-        />
-      </Suspense>
-
-      {/* Complete Button */}
-      {!isCompleted && (
-        <form
-          action={markComplete.bind(null, courseId, levelId, chapterId)}
-          className="mt-8"
-        >
-          <Button type="submit" size="lg" className="w-full">
-            Ukończ rozdział i przejdź dalej
-          </Button>
-        </form>
-      )}
-
-      {/* Quiz Link - after completing chapter */}
-      {isCompleted && (
-        <div className="mt-8">
-          <Button asChild variant="outline" size="lg" className="w-full">
-            <Link href={`/courses/${courseId}/${levelId}/${chapterId}/quiz`}>
-              <ClipboardList className="mr-2 h-5 w-5" />
-              Sprawdź wiedzę - Quiz
-            </Link>
-          </Button>
-        </div>
-      )}
-
-      {/* Notes Section */}
-      <div className="mt-12">
-        <NotesList
-          courseId={courseId}
-          chapterId={chapterId}
-          initialNotes={notes}
-        />
-      </div>
-
-      {/* Navigation */}
-      <div className="mt-12">
-        <ChapterNavigation
-          courseId={courseId}
-          prevChapter={prevChapter}
-          nextChapter={nextChapter}
-          isCompleted={isCompleted}
-        />
-      </div>
-    </ChapterPageWrapper>
+    <ChapterPageClient
+      courseId={courseId}
+      courseTitle={course.title}
+      levelId={levelId}
+      levelName={level.name}
+      levelDescription={level.description || ""}
+      chapter={{
+        id: chapter.id,
+        title: chapter.title,
+        description: chapter.description || "",
+        topics: chapter.topics || [],
+        estimated_minutes: chapter.estimated_minutes || 15,
+        order_index: chapter.order_index,
+      }}
+      courseContext={courseContext}
+      existingContent={existingContent}
+      notes={notes}
+      percentage={percentage}
+      completedChaptersCount={progress.completed_chapters.length}
+      totalChapters={totalChapters}
+      isCompleted={isCompleted}
+      prevChapter={prevChapter}
+      nextChapter={nextChapter}
+    />
   );
 }

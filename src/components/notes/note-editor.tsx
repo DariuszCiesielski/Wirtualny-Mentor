@@ -23,6 +23,10 @@ interface NoteEditorProps {
   chapterId: string;
   /** If provided, edit mode instead of create */
   note?: Note;
+  /** Optional section heading to associate note with a specific section */
+  sectionHeading?: string;
+  /** Use compact styling for inline display */
+  compact?: boolean;
   /** Callback after successful save */
   onSave?: (note: Note) => void;
   /** Callback to cancel edit mode */
@@ -33,6 +37,8 @@ export function NoteEditor({
   courseId,
   chapterId,
   note,
+  sectionHeading,
+  compact,
   onSave,
   onCancel,
 }: NoteEditorProps) {
@@ -55,6 +61,10 @@ export function NoteEditor({
     formData.set("content", content);
     formData.set("courseId", courseId);
     formData.set("chapterId", chapterId);
+
+    if (sectionHeading) {
+      formData.set("sectionHeading", sectionHeading);
+    }
 
     if (isEditMode && note) {
       formData.set("noteId", note.id);
@@ -80,20 +90,20 @@ export function NoteEditor({
   };
 
   return (
-    <Card>
+    <Card className={compact ? "border-dashed" : undefined}>
       <form onSubmit={handleSubmit}>
-        <CardContent className="pt-4">
+        <CardContent className={compact ? "pt-3 pb-2 px-3" : "pt-4"}>
           <Textarea
-            placeholder="Dodaj notatkę do tego rozdziału..."
+            placeholder={compact ? "Dodaj notatkę do tej sekcji..." : "Dodaj notatkę do tego rozdziału..."}
             value={content}
             onChange={(e) => setContent(e.target.value)}
-            rows={4}
+            rows={compact ? 2 : 4}
             disabled={isPending}
-            className="resize-none"
+            className={compact ? "resize-none text-sm" : "resize-none"}
           />
           {error && <p className="text-sm text-destructive mt-2">{error}</p>}
         </CardContent>
-        <CardFooter className="flex justify-end gap-2">
+        <CardFooter className={compact ? "flex justify-end gap-2 px-3 pb-3" : "flex justify-end gap-2"}>
           {isEditMode && onCancel && (
             <Button
               type="button"

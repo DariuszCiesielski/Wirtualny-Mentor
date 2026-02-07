@@ -87,6 +87,32 @@ sendMessage({ text: 'Wyjaśnij ten diagram', files: dt.files });
 // Obsługiwane: PNG, JPEG, GIF, WebP, PDF (max 5 plików, 10MB/plik)
 ```
 
+### Inline Mentor Chat (przy lekcji)
+
+```typescript
+// Sesja inline: 1 per user/course/chapter (UNIQUE partial index)
+// ChapterLayoutWithChat otwiera panel czatu obok treści
+// ChatContext (React Context) łączy layout z ContentRenderer.onAskMentor
+// Floating button + TextSelectionPopover + SectionAskButton (pod h2)
+```
+
+### Notatki sekcyjne
+
+```typescript
+// Notatki przypisane do sekcji (h2 heading) w treści lekcji
+// notes.section_heading (TEXT, nullable) - identyfikuje sekcję
+// SectionNoteIndicator (badge przy h2) + SectionNotesInline (panel pod h2)
+// NoteEditor: props sectionHeading + compact mode
+```
+
+### Shared Chat Utilities
+
+```typescript
+// src/components/chat/chat-utils.tsx
+// uploadFile, AttachmentPreview, MessageFile, getMessageText, getMessageFiles
+// Reused by MentorChat (full page) and InlineMentorChat (chapter panel)
+```
+
 ### Lazy Loading
 
 ```typescript

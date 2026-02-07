@@ -36,6 +36,7 @@ export async function createNote(
       user_id: userId,
       course_id: input.course_id,
       chapter_id: input.chapter_id ?? null,
+      section_heading: input.section_heading ?? null,
       content: input.content,
       embedding: JSON.stringify(embedding),
       embedding_model: EMBEDDING_MODEL_ID,

@@ -16,6 +16,7 @@ export interface Note {
   user_id: string;
   course_id: string;
   chapter_id: string | null;
+  section_heading: string | null;
   content: string;
   embedding: number[] | null;
   embedding_model: string;
@@ -46,6 +47,7 @@ export interface NoteWithContext extends Note {
 export interface CreateNoteInput {
   course_id: string;
   chapter_id?: string | null;
+  section_heading?: string | null;
   content: string;
 }
 

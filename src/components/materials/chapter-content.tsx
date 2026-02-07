@@ -18,7 +18,7 @@
  * - Loading state only shown during generation
  */
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { ContentRenderer } from './content-renderer';
 import { SourceList } from './source-list';
 import { ToolCard } from './tool-card';
@@ -27,6 +27,7 @@ import { Badge } from '@/components/ui/badge';
 import { Clock, BookOpen, AlertCircle } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import type { SectionContent } from '@/types/materials';
+import type { Note } from '@/types/notes';
 
 interface ChapterData {
   id: string;
@@ -41,6 +42,12 @@ interface ChapterContentProps {
   courseContext?: string;
   /** Content from server - null means needs generation */
   initialContent?: SectionContent | null;
+  /** Initial notes for this chapter (for section-level display) */
+  initialNotes?: Note[];
+  /** Course ID for note creation */
+  courseId?: string;
+  /** Callback when user wants to ask mentor about a section */
+  onAskMentor?: (context: string) => void;
 }
 
 type GenerationPhase = 'idle' | 'searching' | 'generating' | 'saving' | 'complete' | 'error';
@@ -51,12 +58,59 @@ interface GenerationProgress {
   message?: string;
 }
 
-export function ChapterContent({ chapter, courseContext, initialContent }: ChapterContentProps) {
+export function ChapterContent({
+  chapter,
+  courseContext,
+  initialContent,
+  initialNotes = [],
+  courseId,
+  onAskMentor,
+}: ChapterContentProps) {
   const [content, setContent] = useState<SectionContent | null>(initialContent || null);
   const [progress, setProgress] = useState<GenerationProgress>({
     phase: initialContent ? 'complete' : 'idle',
   });
   const [error, setError] = useState<string | null>(null);
+
+  // Section notes state
+  const [notes, setNotes] = useState<Note[]>(initialNotes);
+  const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set());
+
+  const sectionNotesMap = useMemo(() => {
+    const map: Record<string, Note[]> = {};
+    for (const note of notes) {
+      const key = note.section_heading || '__general__';
+      if (!map[key]) map[key] = [];
+      map[key].push(note);
+    }
+    return map;
+  }, [notes]);
+
+  const handleToggleSection = useCallback((heading: string) => {
+    setExpandedSections((prev) => {
+      const next = new Set(prev);
+      if (next.has(heading)) {
+        next.delete(heading);
+      } else {
+        next.add(heading);
+      }
+      return next;
+    });
+  }, []);
+
+  const handleAddNote = useCallback((note: Note) => {
+    setNotes((prev) => [note, ...prev]);
+  }, []);
+
+  const handleUpdateNote = useCallback((updatedNote: Note) => {
+    setNotes((prev) =>
+      prev.map((n) => (n.id === updatedNote.id ? updatedNote : n))
+    );
+  }, []);
+
+  const handleDeleteNote = useCallback((noteId: string) => {
+    setNotes((prev) => prev.filter((n) => n.id !== noteId));
+  }, []);
 
   useEffect(() => {
     // CRITICAL: If we already have content (from server), skip generation
@@ -208,7 +262,19 @@ export function ChapterContent({ chapter, courseContext, initialContent }: Chapt
       </div>
 
       {/* Main content */}
-      <ContentRenderer content={content.content} sources={content.sources} />
+      <ContentRenderer
+        content={content.content}
+        sources={content.sources}
+        sectionNotes={courseId ? sectionNotesMap : undefined}
+        expandedSections={courseId ? expandedSections : undefined}
+        onToggleSection={courseId ? handleToggleSection : undefined}
+        onAddNote={courseId ? handleAddNote : undefined}
+        onUpdateNote={courseId ? handleUpdateNote : undefined}
+        onDeleteNote={courseId ? handleDeleteNote : undefined}
+        onAskMentor={onAskMentor}
+        courseId={courseId}
+        chapterId={chapter.id}
+      />
 
       {/* Tools section */}
       {content.tools && content.tools.length > 0 && (

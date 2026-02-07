@@ -15,6 +15,7 @@ export interface ChatSession {
   id: string;
   user_id: string;
   course_id: string;
+  chapter_id: string | null;
   title: string;
   message_count: number;
   created_at: string;
@@ -51,6 +52,7 @@ export interface ChatMessageFile {
  */
 export interface CreateSessionInput {
   course_id: string;
+  chapter_id?: string | null;
   title?: string;
 }
 

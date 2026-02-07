@@ -33,6 +33,7 @@ export async function createSession(
     .insert({
       user_id: userId,
       course_id: input.course_id,
+      chapter_id: input.chapter_id ?? null,
       title: input.title ?? "Nowa rozmowa",
     })
     .select()
@@ -43,6 +44,51 @@ export async function createSession(
   }
 
   return data as ChatSession;
+}
+
+/**
+ * Get the inline chat session for a specific chapter.
+ * Returns null if no session exists yet.
+ */
+export async function getChapterSession(
+  userId: string,
+  courseId: string,
+  chapterId: string
+): Promise<ChatSession | null> {
+  const supabase = await createClient();
+
+  const { data, error } = await supabase
+    .from("chat_sessions")
+    .select("*")
+    .eq("user_id", userId)
+    .eq("course_id", courseId)
+    .eq("chapter_id", chapterId)
+    .single();
+
+  if (error) {
+    if (error.code === "PGRST116") {
+      return null;
+    }
+    throw new Error(`Failed to get chapter session: ${error.message}`);
+  }
+
+  return data as ChatSession;
+}
+
+/**
+ * Create a chat session tied to a specific chapter (for inline chat).
+ */
+export async function createChapterSession(
+  userId: string,
+  courseId: string,
+  chapterId: string,
+  chapterTitle: string
+): Promise<ChatSession> {
+  return createSession(userId, {
+    course_id: courseId,
+    chapter_id: chapterId,
+    title: `Czat: ${chapterTitle}`,
+  });
 }
 
 /**

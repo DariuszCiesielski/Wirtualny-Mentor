@@ -32,6 +32,7 @@ const requestSchema = z.object({
   courseId: z.string().uuid(),
   sessionId: z.string().uuid(),
   userFiles: z.array(fileSchema).optional().default([]),
+  chapterContext: z.string().optional(),
 });
 
 export async function POST(req: Request) {
@@ -43,7 +44,8 @@ export async function POST(req: Request) {
     return new Response("Invalid request body", { status: 400 });
   }
 
-  const { messages, courseId, sessionId, userFiles } = parseResult.data;
+  const { messages, courseId, sessionId, userFiles, chapterContext } =
+    parseResult.data;
 
   // Auth check
   const supabase = await createClient();
@@ -127,10 +129,15 @@ export async function POST(req: Request) {
     courseId,
   });
 
+  // Build system prompt with optional chapter context
+  const systemPrompt = chapterContext
+    ? `${MENTOR_SYSTEM_PROMPT}\n\n## Kontekst bieżącej lekcji\nUczeń czyta właśnie: ${chapterContext}\nJeśli uczeń pyta o zaznaczony fragment, odniesie się do niego w wiadomości.`
+    : MENTOR_SYSTEM_PROMPT;
+
   // Stream response with persistence
   const result = streamText({
     model: getModel("mentor"),
-    system: MENTOR_SYSTEM_PROMPT,
+    system: systemPrompt,
     messages: await convertToModelMessages(messages),
     tools: { searchNotes },
     stopWhen: stepCountIs(3),

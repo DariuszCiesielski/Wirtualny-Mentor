@@ -1,12 +1,11 @@
 'use client';
 
 /**
- * Mentor Chat Component
+ * Inline Mentor Chat Component
  *
- * Chat interface for Socratic mentor chatbot.
- * Supports text messages and file attachments (images, PDFs).
- * Uses useChat hook with streaming for real-time AI responses.
- * Messages are persisted to database via session-based storage.
+ * Compact version of MentorChat for display alongside lesson content.
+ * Auto-creates session per chapter, supports file uploads,
+ * and accepts prefilled text from text selection.
  */
 
 import { useChat } from '@ai-sdk/react';
@@ -22,6 +21,7 @@ import {
   User,
   Square,
   Paperclip,
+  X,
   AlertCircle,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -37,20 +37,31 @@ import {
   ACCEPTED_TYPES,
 } from '@/components/chat/chat-utils';
 
-interface MentorChatProps {
+interface InlineMentorChatProps {
   courseId: string;
   courseTitle: string;
   sessionId: string;
+  chapterTitle: string;
+  chapterContext: string;
   initialMessages?: UIMessage[];
+  /** Pre-fill text from text selection or section ask */
+  prefillText?: string | null;
+  /** Clear prefill after it's been consumed */
+  onPrefillConsumed?: () => void;
+  onClose: () => void;
 }
 
-
-export function MentorChat({
+export function InlineMentorChat({
   courseId,
   courseTitle,
   sessionId,
+  chapterTitle,
+  chapterContext,
   initialMessages: initialMessagesProp,
-}: MentorChatProps) {
+  prefillText,
+  onPrefillConsumed,
+  onClose,
+}: InlineMentorChatProps) {
   const [input, setInput] = useState('');
   const [attachedFiles, setAttachedFiles] = useState<File[]>([]);
   const [isUploading, setIsUploading] = useState(false);
@@ -58,12 +69,19 @@ export function MentorChat({
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Mutable body object - DefaultChatTransport holds a reference and
-  // serializes at send time, so mutations before sendMessage are reflected.
-  // Component is keyed by sessionId so useState initializer is fresh per session.
+  // Consume prefill text
+  useEffect(() => {
+    if (prefillText) {
+      setInput(prefillText);
+      onPrefillConsumed?.();
+    }
+  }, [prefillText, onPrefillConsumed]);
+
+  // Mutable body - DefaultChatTransport holds reference
   const [body] = useState(() => ({
     courseId,
     sessionId,
+    chapterContext,
     userFiles: [] as ChatMessageFile[],
   }));
 
@@ -163,7 +181,7 @@ export function MentorChat({
     // Set file metadata on mutable body before sending
     body.userFiles = uploadedFiles;
 
-    // Send message via AI SDK (files still sent as File objects for AI vision)
+    // Send message via AI SDK
     if (hasFiles) {
       const dt = new DataTransfer();
       attachedFiles.forEach((f) => dt.items.add(f));
@@ -198,8 +216,26 @@ export function MentorChat({
 
   return (
     <div className="flex flex-col h-full">
+      {/* Compact header */}
+      <div className="flex items-center justify-between px-3 py-2 border-b bg-muted/30">
+        <div className="flex items-center gap-2 min-w-0">
+          <Bot className="h-4 w-4 text-primary shrink-0" />
+          <span className="text-sm font-medium truncate">
+            Mentor
+          </span>
+        </div>
+        <Button
+          variant="ghost"
+          size="icon"
+          className="h-7 w-7 shrink-0"
+          onClick={onClose}
+        >
+          <X className="h-4 w-4" />
+        </Button>
+      </div>
+
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-4">
+      <div className="flex-1 overflow-y-auto p-3 space-y-3">
         {messages.map((message) => {
           const isUser = message.role === 'user';
           const content = getMessageText(message.parts);
@@ -209,28 +245,30 @@ export function MentorChat({
             <div
               key={message.id}
               className={cn(
-                'flex gap-3',
+                'flex gap-2',
                 isUser ? 'justify-end' : 'justify-start'
               )}
             >
               {!isUser && (
-                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary/10">
-                  <Bot className="h-4 w-4 text-primary" />
+                <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/10">
+                  <Bot className="h-3 w-3 text-primary" />
                 </div>
               )}
               <Card
                 className={cn(
-                  'px-4 py-3 max-w-[80%]',
+                  'px-3 py-2 max-w-[85%]',
                   isUser
                     ? 'bg-primary text-primary-foreground'
                     : 'bg-muted'
                 )}
               >
                 {content && (
-                  <p className="text-sm whitespace-pre-wrap">{content}</p>
+                  <p className="text-xs whitespace-pre-wrap leading-relaxed">
+                    {content}
+                  </p>
                 )}
                 {files.length > 0 && (
-                  <div className="space-y-2">
+                  <div className="space-y-1">
                     {files.map((file, i) => (
                       <MessageFile key={i} file={file} />
                     ))}
@@ -238,8 +276,8 @@ export function MentorChat({
                 )}
               </Card>
               {isUser && (
-                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-muted">
-                  <User className="h-4 w-4" />
+                <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-muted">
+                  <User className="h-3 w-3" />
                 </div>
               )}
             </div>
@@ -247,19 +285,19 @@ export function MentorChat({
         })}
 
         {(isLoading || isUploading) && (
-          <div className="flex gap-3 justify-start">
-            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary/10">
-              <Bot className="h-4 w-4 text-primary" />
+          <div className="flex gap-2 justify-start">
+            <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/10">
+              <Bot className="h-3 w-3 text-primary" />
             </div>
-            <Card className="px-4 py-3 bg-muted">
-              <Loader2 className="h-4 w-4 animate-spin" />
+            <Card className="px-3 py-2 bg-muted">
+              <Loader2 className="h-3 w-3 animate-spin" />
             </Card>
           </div>
         )}
 
         {(error || uploadError) && (
-          <div className="flex items-center gap-2 text-destructive text-sm justify-center">
-            <AlertCircle className="h-4 w-4" />
+          <div className="flex items-center gap-1 text-destructive text-xs justify-center">
+            <AlertCircle className="h-3 w-3" />
             {uploadError || 'Wystąpił błąd. Spróbuj ponownie.'}
           </div>
         )}
@@ -268,10 +306,10 @@ export function MentorChat({
       </div>
 
       {/* Input area */}
-      <form onSubmit={handleSubmit} className="p-4 border-t">
+      <form onSubmit={handleSubmit} className="p-3 border-t">
         {/* Attachment previews */}
         {attachedFiles.length > 0 && (
-          <div className="flex flex-wrap gap-2 mb-3">
+          <div className="flex flex-wrap gap-1.5 mb-2">
             {attachedFiles.map((file, index) => (
               <AttachmentPreview
                 key={`${file.name}-${index}`}
@@ -282,7 +320,7 @@ export function MentorChat({
           </div>
         )}
 
-        <div className="flex gap-2">
+        <div className="flex gap-1.5">
           {/* Hidden file input */}
           <input
             ref={fileInputRef}
@@ -298,34 +336,34 @@ export function MentorChat({
             type="button"
             variant="outline"
             size="icon"
+            className="h-8 w-8 shrink-0"
             onClick={() => fileInputRef.current?.click()}
             disabled={isLoading || isUploading || attachedFiles.length >= MAX_FILES}
             title="Dodaj pliki (obrazy, PDF)"
-            className="shrink-0"
           >
-            <Paperclip className="h-4 w-4" />
+            <Paperclip className="h-3.5 w-3.5" />
           </Button>
 
           <Textarea
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
-            placeholder="Zadaj pytanie mentorowi..."
+            placeholder="Zapytaj o lekcję..."
             disabled={isLoading || isUploading}
-            className="min-h-[60px] resize-none"
-            rows={2}
+            className="min-h-[36px] resize-none text-sm"
+            rows={1}
           />
 
           <Button
             type="submit"
             disabled={!canSend}
             size="icon"
-            className="shrink-0"
+            className="h-8 w-8 shrink-0"
           >
             {isLoading || isUploading ? (
-              <Loader2 className="h-4 w-4 animate-spin" />
+              <Loader2 className="h-3.5 w-3.5 animate-spin" />
             ) : (
-              <Send className="h-4 w-4" />
+              <Send className="h-3.5 w-3.5" />
             )}
           </Button>
         </div>
@@ -336,9 +374,9 @@ export function MentorChat({
             variant="ghost"
             size="sm"
             onClick={stop}
-            className="mt-2 w-full"
+            className="mt-1.5 w-full h-7 text-xs"
           >
-            <Square className="h-3 w-3 mr-2" />
+            <Square className="h-2.5 w-2.5 mr-1.5" />
             Zatrzymaj
           </Button>
         )}

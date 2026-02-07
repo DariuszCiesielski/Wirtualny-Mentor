@@ -9,6 +9,8 @@
  * - GFM support (tables, checkboxes, strikethrough)
  * - External link indicators
  * - Copy button for code blocks
+ * - Section-level notes (inline note indicator + panel at h2 headings)
+ * - "Ask mentor" button per section
  */
 
 import { useState } from 'react';
@@ -17,10 +19,13 @@ import remarkGfm from 'remark-gfm';
 import rehypeHighlight from 'rehype-highlight';
 import rehypeRaw from 'rehype-raw';
 import rehypeSanitize from 'rehype-sanitize';
-import { Copy, Check, ExternalLink } from 'lucide-react';
+import { Copy, Check, ExternalLink, MessageCircle } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
+import { SectionNoteIndicator } from '@/components/notes/section-note-indicator';
+import { SectionNotesInline } from '@/components/notes/section-notes-inline';
 import type { Source } from '@/types/materials';
+import type { Note } from '@/types/notes';
 
 // Import highlight.js theme (github-dark matches our dark mode)
 import 'highlight.js/styles/github-dark.css';
@@ -29,6 +34,23 @@ interface ContentRendererProps {
   content: string;
   sources?: Source[];
   className?: string;
+  /** Notes grouped by section heading */
+  sectionNotes?: Record<string, Note[]>;
+  /** Which sections have notes panel expanded */
+  expandedSections?: Set<string>;
+  /** Toggle section notes visibility */
+  onToggleSection?: (heading: string) => void;
+  /** Add note to section */
+  onAddNote?: (note: Note) => void;
+  /** Update a note */
+  onUpdateNote?: (note: Note) => void;
+  /** Delete a note */
+  onDeleteNote?: (noteId: string) => void;
+  /** Ask mentor about a section */
+  onAskMentor?: (sectionHeading: string) => void;
+  /** Course and chapter IDs for note creation */
+  courseId?: string;
+  chapterId?: string;
 }
 
 /**
@@ -60,24 +82,37 @@ function CopyButton({ code }: { code: string }) {
 }
 
 /**
- * Extract code text from pre children
+ * Extract text from React children (for code blocks, headings, etc.)
  */
-function extractCode(children: React.ReactNode): string {
+function extractText(children: React.ReactNode): string {
   if (typeof children === 'string') return children;
 
   if (Array.isArray(children)) {
-    return children.map(extractCode).join('');
+    return children.map(extractText).join('');
   }
 
   if (children && typeof children === 'object' && 'props' in children) {
     const element = children as { props: { children?: React.ReactNode } };
-    return extractCode(element.props.children);
+    return extractText(element.props.children);
   }
 
   return '';
 }
 
-export function ContentRenderer({ content, sources = [], className }: ContentRendererProps) {
+export function ContentRenderer({
+  content,
+  sources = [],
+  className,
+  sectionNotes,
+  expandedSections,
+  onToggleSection,
+  onAddNote,
+  onUpdateNote,
+  onDeleteNote,
+  onAskMentor,
+  courseId,
+  chapterId,
+}: ContentRendererProps) {
   // Replace citation markers [1] with markdown links to sources
   const contentWithLinks = content.replace(
     /\[(\d+)\]/g,
@@ -92,6 +127,8 @@ export function ContentRenderer({ content, sources = [], className }: ContentRen
     }
   );
 
+  const hasSectionFeatures = !!(sectionNotes && onToggleSection && courseId && chapterId);
+
   return (
     <div className={cn('prose prose-zinc dark:prose-invert max-w-none', className)}>
       <ReactMarkdown
@@ -102,12 +139,55 @@ export function ContentRenderer({ content, sources = [], className }: ContentRen
           [rehypeHighlight, { detect: true, ignoreMissing: true }],
         ]}
         components={{
-          // Section headings with visual hierarchy
+          // Section headings with notes indicator and mentor button
           h2({ children }) {
+            if (!hasSectionFeatures) {
+              return (
+                <h2 className="mt-10 mb-3 pb-2 border-b border-border text-2xl font-bold leading-tight">
+                  {children}
+                </h2>
+              );
+            }
+
+            const headingText = extractText(children);
+            const notes = sectionNotes[headingText] || [];
+            const isExpanded = expandedSections?.has(headingText) ?? false;
+
             return (
-              <h2 className="mt-10 mb-3 pb-2 border-b border-border text-2xl font-bold leading-tight">
-                {children}
-              </h2>
+              <>
+                <div className="not-prose flex items-center justify-between mt-10 mb-3 pb-2 border-b border-border">
+                  <h2 className="text-2xl font-bold leading-tight">{children}</h2>
+                  <div className="flex items-center gap-1 shrink-0 ml-4">
+                    {onAskMentor && (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-7 gap-1 text-xs text-muted-foreground"
+                        onClick={() => onAskMentor(headingText)}
+                        title="Zapytaj mentora o tę sekcję"
+                      >
+                        <MessageCircle className="h-3.5 w-3.5" />
+                      </Button>
+                    )}
+                    <SectionNoteIndicator
+                      count={notes.length}
+                      isExpanded={isExpanded}
+                      onClick={() => onToggleSection(headingText)}
+                    />
+                  </div>
+                </div>
+                {isExpanded && (
+                  <SectionNotesInline
+                    notes={notes}
+                    sectionHeading={headingText}
+                    courseId={courseId}
+                    chapterId={chapterId}
+                    onAdd={onAddNote}
+                    onUpdate={onUpdateNote}
+                    onDelete={onDeleteNote}
+                  />
+                )}
+              </>
             );
           },
 
@@ -121,7 +201,7 @@ export function ContentRenderer({ content, sources = [], className }: ContentRen
 
           // Custom code block with copy button
           pre({ children, className: preClassName, ...props }) {
-            const code = extractCode(children);
+            const code = extractText(children);
             return (
               <div className="relative group not-prose my-6">
                 <pre
@@ -161,7 +241,7 @@ export function ContentRenderer({ content, sources = [], className }: ContentRen
 
           // Custom blockquote with type detection (tip, warning, info)
           blockquote({ children }) {
-            const text = extractCode(children).toLowerCase();
+            const text = extractText(children).toLowerCase();
             const isWarning = text.includes('uwaga') || text.includes('ostrzeżenie') || text.includes('⚠');
             const isTip = text.includes('wskazówka') || text.includes('💡') || text.includes('tip');
 

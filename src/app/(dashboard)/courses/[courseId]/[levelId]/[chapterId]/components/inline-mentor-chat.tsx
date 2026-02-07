@@ -104,7 +104,7 @@ export function InlineMentorChat({
 
   const { messages, sendMessage, status, error, stop } = useChat({
     transport,
-    initialMessages: defaultMessages,
+    messages: defaultMessages,
   });
 
   const isLoading = status === 'streaming' || status === 'submitted';

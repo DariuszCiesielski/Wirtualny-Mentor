@@ -33,8 +33,7 @@ ANALYZE=true npm run build  # Bundle analyzer
 
 | Model | Zastosowanie | Powód |
 |-------|--------------|-------|
-| GPT-4.1 | Curriculum + Materials | Strukturalny JSON, grounding |
-| Claude Sonnet 4 | Mentor chatbot | Długi kontekst, empatia |
+| GPT-5.2 | Curriculum + Mentor chatbot | Strukturalny JSON, vision (obrazy/PDF) |
 | Gemini 2.0 Flash | Quiz generation | Szybki, tani |
 | text-embedding-3-small | RAG embeddings | pgvector similarity |
 
@@ -80,6 +79,14 @@ const { data: { user } } = await supabase.auth.getUser()
 
 Server-side scoring - `correct_option` nigdy nie trafia do klienta. Weryfikacja w `/api/quiz/submit`.
 
+### Mentor Chat - upload plików
+
+```typescript
+// sendMessage z plikami (AI SDK v6)
+sendMessage({ text: 'Wyjaśnij ten diagram', files: dt.files });
+// Obsługiwane: PNG, JPEG, GIF, WebP, PDF (max 5 plików, 10MB/plik)
+```
+
 ### Lazy Loading
 
 ```typescript
@@ -113,9 +120,10 @@ result.error.flatten().fieldErrors          // Form errors
 
 ## Zmienne środowiskowe
 
-Wymagane (min. jeden AI provider):
+Wymagane:
 - `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`
-- `ANTHROPIC_API_KEY` / `OPENAI_API_KEY` / `GOOGLE_GENERATIVE_AI_API_KEY`
+- `OPENAI_API_KEY` (curriculum + mentor)
+- `GOOGLE_GENERATIVE_AI_API_KEY` (quizy, opcjonalnie)
 - `TAVILY_API_KEY` (web search)
 
 Opcjonalne:

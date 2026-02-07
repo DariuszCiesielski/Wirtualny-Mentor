@@ -7,6 +7,9 @@ const withBundleAnalyzer = bundleAnalyzer({
 });
 
 const nextConfig: NextConfig = {
+  turbopack: {
+    root: '.',
+  },
   experimental: {
     // Tree-shaking for icon libraries
     optimizePackageImports: ['lucide-react', '@radix-ui/react-icons'],

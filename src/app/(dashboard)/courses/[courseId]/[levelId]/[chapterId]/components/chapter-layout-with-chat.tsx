@@ -27,6 +27,7 @@ import {
   getOrCreateInlineSession,
   loadSessionMessagesAction,
 } from '../actions';
+import { useMediaQuery } from '@/hooks/use-media-query';
 import type { UIMessage } from 'ai';
 
 interface ChapterLayoutWithChatProps {
@@ -52,6 +53,7 @@ export function ChapterLayoutWithChat({
   existingSessionId,
   existingMessages,
 }: ChapterLayoutWithChatProps) {
+  const isDesktop = useMediaQuery('(min-width: 1024px)');
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [sessionId, setSessionId] = useState<string | null>(
     existingSessionId ?? null
@@ -181,23 +183,27 @@ export function ChapterLayoutWithChat({
 
       {/* Right column: chat panel (desktop only) */}
       {isChatOpen && (
-        <div className="hidden lg:flex w-96 border-l flex-col shrink-0 bg-background">
-          {chatPanel}
+        <div className="hidden lg:block w-96 shrink-0">
+          <div className="sticky top-16 h-[calc(100vh-4rem)] border-l bg-background flex flex-col">
+            {chatPanel}
+          </div>
         </div>
       )}
 
-      {/* Mobile: Sheet */}
-      <Sheet
-        open={isChatOpen}
-        onOpenChange={(open) => {
-          if (!open) handleCloseChat();
-        }}
-      >
-        <SheetContent side="right" className="w-full sm:max-w-md p-0 lg:hidden">
-          <SheetTitle className="sr-only">Czat z mentorem</SheetTitle>
-          {chatPanel}
-        </SheetContent>
-      </Sheet>
+      {/* Mobile: Sheet (only on screens < lg) */}
+      {!isDesktop && (
+        <Sheet
+          open={isChatOpen}
+          onOpenChange={(open) => {
+            if (!open) handleCloseChat();
+          }}
+        >
+          <SheetContent side="right" className="w-full sm:max-w-md p-0">
+            <SheetTitle className="sr-only">Czat z mentorem</SheetTitle>
+            {chatPanel}
+          </SheetContent>
+        </Sheet>
+      )}
 
       {/* Floating toggle button */}
       <Button

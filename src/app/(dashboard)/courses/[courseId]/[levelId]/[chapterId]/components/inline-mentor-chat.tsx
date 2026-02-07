@@ -66,7 +66,7 @@ export function InlineMentorChat({
   const [attachedFiles, setAttachedFiles] = useState<File[]>([]);
   const [isUploading, setIsUploading] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
-  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const messagesContainerRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Consume prefill text
@@ -104,13 +104,16 @@ export function InlineMentorChat({
 
   const { messages, sendMessage, status, error, stop } = useChat({
     transport,
-    messages: defaultMessages,
+    initialMessages: defaultMessages,
   });
 
   const isLoading = status === 'streaming' || status === 'submitted';
 
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    const container = messagesContainerRef.current;
+    if (container) {
+      container.scrollTop = container.scrollHeight;
+    }
   }, [messages]);
 
   const handleFileSelect = useCallback(
@@ -235,7 +238,7 @@ export function InlineMentorChat({
       </div>
 
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto p-3 space-y-3">
+      <div ref={messagesContainerRef} className="flex-1 min-h-0 overflow-y-auto p-3 space-y-3">
         {messages.map((message) => {
           const isUser = message.role === 'user';
           const content = getMessageText(message.parts);
@@ -302,7 +305,6 @@ export function InlineMentorChat({
           </div>
         )}
 
-        <div ref={messagesEndRef} />
       </div>
 
       {/* Input area */}

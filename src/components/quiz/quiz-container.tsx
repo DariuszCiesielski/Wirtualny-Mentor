@@ -222,7 +222,12 @@ export function QuizContainer({
 
   return (
     <div className="space-y-4">
-      <Progress value={progress} className="h-2" />
+      <div className="flex items-center gap-3">
+        <Progress value={progress} className="h-2 flex-1" />
+        <span className="text-sm text-muted-foreground tabular-nums shrink-0">
+          {state.currentIndex + 1}/{quiz.questions.length}
+        </span>
+      </div>
 
       <QuizQuestion
         question={currentQuestion}
@@ -243,17 +248,18 @@ export function QuizContainer({
       <div className="flex justify-end">
         {!state.showFeedback ? (
           <Button
+            className="w-full sm:w-auto"
             onClick={() => dispatch({ type: 'SHOW_FEEDBACK' })}
             disabled={!state.answers[currentQuestion.id]}
           >
             Sprawdź odpowiedź
           </Button>
         ) : state.currentIndex < quiz.questions.length - 1 ? (
-          <Button onClick={() => dispatch({ type: 'NEXT' })}>
+          <Button className="w-full sm:w-auto" onClick={() => dispatch({ type: 'NEXT' })}>
             Następne pytanie <ArrowRight className="ml-2 h-4 w-4" />
           </Button>
         ) : (
-          <Button onClick={handleSubmit}>
+          <Button className="w-full sm:w-auto" onClick={handleSubmit}>
             <CheckSquare className="mr-2 h-4 w-4" />
             Zakończ quiz
           </Button>

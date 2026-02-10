@@ -6,7 +6,20 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { CheckCircle, XCircle } from 'lucide-react';
 import { QuizFeedback } from './quiz-feedback';
-import type { QuizQuestion as QuizQuestionType } from '@/types/quiz';
+import type { QuizQuestion as QuizQuestionType, Difficulty, BloomLevel } from '@/types/quiz';
+
+const difficultyLabels: Record<Difficulty, string> = {
+  easy: 'Łatwe',
+  medium: 'Średnie',
+  hard: 'Trudne',
+};
+
+const bloomLabels: Record<BloomLevel, string> = {
+  remembering: 'Zapamiętywanie',
+  understanding: 'Rozumienie',
+  applying: 'Stosowanie',
+  analyzing: 'Analiza',
+};
 
 interface QuizQuestionProps {
   question: QuizQuestionType;
@@ -31,23 +44,25 @@ export function QuizQuestion({
 
   return (
     <Card>
-      <CardHeader className="flex flex-row items-center justify-between">
-        <CardTitle className="text-lg">
-          Pytanie {questionNumber} z {totalQuestions}
-        </CardTitle>
-        <div className="flex gap-2">
-          <Badge variant="outline">{question.difficulty}</Badge>
-          <Badge variant="secondary">{question.bloomLevel}</Badge>
+      <CardHeader className="pb-3 sm:pb-6">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+          <CardTitle className="text-base sm:text-lg">
+            Pytanie {questionNumber} z {totalQuestions}
+          </CardTitle>
+          <div className="flex gap-2">
+            <Badge variant="outline" className="text-xs">{difficultyLabels[question.difficulty]}</Badge>
+            <Badge variant="secondary" className="text-xs">{bloomLabels[question.bloomLevel]}</Badge>
+          </div>
         </div>
       </CardHeader>
-      <CardContent className="space-y-4">
-        <p className="text-lg font-medium">{question.question}</p>
+      <CardContent className="space-y-4 pt-0">
+        <p className="text-base sm:text-lg font-medium">{question.question}</p>
 
         <RadioGroup
           value={selectedOption ?? undefined}
           onValueChange={onSelect}
           disabled={disabled}
-          className="space-y-3"
+          className="space-y-2 sm:space-y-3"
         >
           {question.options.map((option) => {
             const isSelected = selectedOption === option.id;
@@ -66,16 +81,16 @@ export function QuizQuestion({
 
             return (
               <div key={option.id} className={optionClass}>
-                <div className="flex items-center space-x-3">
-                  <RadioGroupItem value={option.id} id={option.id} />
-                  <Label htmlFor={option.id} className="flex-1 cursor-pointer">
+                <div className="flex items-center gap-3">
+                  <RadioGroupItem value={option.id} id={`${question.id}-${option.id}`} />
+                  <Label htmlFor={`${question.id}-${option.id}`} className="flex-1 cursor-pointer text-sm sm:text-base">
                     <span className="font-medium mr-2">{option.id.toUpperCase()}.</span>
                     {option.text}
                   </Label>
                   {showFeedback && isSelected && (
                     isCorrectOption
-                      ? <CheckCircle className="h-5 w-5 text-green-600" />
-                      : <XCircle className="h-5 w-5 text-red-600" />
+                      ? <CheckCircle className="h-5 w-5 text-green-600 shrink-0" />
+                      : <XCircle className="h-5 w-5 text-red-600 shrink-0" />
                   )}
                 </div>
               </div>
@@ -89,7 +104,7 @@ export function QuizQuestion({
             isCorrect={isCorrect}
             explanation={question.explanation}
             wrongExplanation={
-              !isCorrect ? question.wrongExplanations[selectedOption] : undefined
+              !isCorrect ? question.wrongExplanations.find(e => e.optionId === selectedOption)?.explanation : undefined
             }
           />
         )}

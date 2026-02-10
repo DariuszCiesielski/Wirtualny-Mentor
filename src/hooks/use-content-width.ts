@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 
-export type ContentWidth = 'narrow' | 'default' | 'wide';
+export type ContentWidth = 'narrow' | 'default' | 'wide' | 'full';
 
 const STORAGE_KEY = 'wm-content-width';
 
@@ -10,6 +10,7 @@ const WIDTH_CLASSES: Record<ContentWidth, string> = {
   narrow: 'max-w-2xl',
   default: 'max-w-4xl',
   wide: 'max-w-6xl',
+  full: 'max-w-full',
 };
 
 export function useContentWidth() {

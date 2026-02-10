@@ -15,6 +15,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { ContentContainer } from "@/components/layout/content-container";
 import { FileText, BookOpen, ArrowRight } from "lucide-react";
 import type { NoteWithContext } from "@/types/notes";
 
@@ -55,7 +56,7 @@ export default async function NotesPage() {
   const courseGroups = groupByCourse(notes);
 
   return (
-    <div className="container max-w-4xl py-8">
+    <ContentContainer className="py-8">
       <header className="mb-8">
         <h1 className="text-3xl font-bold flex items-center gap-3">
           <FileText className="h-8 w-8" />
@@ -137,6 +138,6 @@ export default async function NotesPage() {
           ))}
         </div>
       )}
-    </div>
+    </ContentContainer>
   );
 }

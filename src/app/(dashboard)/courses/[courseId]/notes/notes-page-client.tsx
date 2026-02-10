@@ -13,6 +13,7 @@ import { NotesSearch } from "@/components/notes/notes-search";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { ContentContainer } from "@/components/layout/content-container";
 import { FileText, ChevronRight, BookOpen } from "lucide-react";
 import type { NoteWithContext } from "@/types/notes";
 
@@ -41,7 +42,7 @@ export function NotesPageClient({
   };
 
   return (
-    <div className="container max-w-4xl py-8">
+    <ContentContainer className="py-8">
       {/* Header */}
       <header className="mb-8">
         <Link
@@ -82,7 +83,7 @@ export function NotesPageClient({
           </div>
         )}
       </section>
-    </div>
+    </ContentContainer>
   );
 }
 

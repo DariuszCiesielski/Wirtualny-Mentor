@@ -9,6 +9,7 @@ import { requireAuth } from "@/lib/dal/auth";
 import { getUserCourses } from "@/lib/dal/courses";
 import { CourseCard } from "@/components/curriculum/course-card";
 import { Button } from "@/components/ui/button";
+import { ContentContainer } from "@/components/layout/content-container";
 import Link from "next/link";
 import { Plus, BookOpen } from "lucide-react";
 
@@ -17,7 +18,7 @@ export default async function CoursesPage() {
   const courses = await getUserCourses(user.id);
 
   return (
-    <div className="container max-w-6xl py-8">
+    <ContentContainer className="py-8">
       <div className="flex justify-between items-center mb-8">
         <div>
           <h1 className="text-3xl font-bold">Moje kursy</h1>
@@ -54,6 +55,6 @@ export default async function CoursesPage() {
           ))}
         </div>
       )}
-    </div>
+    </ContentContainer>
   );
 }

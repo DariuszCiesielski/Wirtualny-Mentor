@@ -8,6 +8,7 @@ import { getCourse, deleteCourse } from "@/lib/dal/courses";
 import { getProgress, getProgressStats } from "@/lib/dal/progress";
 import { Button } from "@/components/ui/button";
 import { CurriculumTOC } from "@/components/curriculum/curriculum-toc";
+import { ContentContainer } from "@/components/layout/content-container";
 import { MessageCircle, FileEdit, Trash2 } from "lucide-react";
 
 interface CoursePageProps {
@@ -86,7 +87,7 @@ export default async function CoursePage({ params }: CoursePageProps) {
   const hasContinueLink = currentLevelId && currentChapterId;
 
   return (
-    <div className="container max-w-4xl py-8">
+    <ContentContainer className="py-8">
       {/* Header */}
       <header className="mb-8">
         <h1 className="text-3xl font-bold">{course.title}</h1>
@@ -154,6 +155,6 @@ export default async function CoursePage({ params }: CoursePageProps) {
         progress={progress}
         courseId={courseId}
       />
-    </div>
+    </ContentContainer>
   );
 }

@@ -9,6 +9,7 @@ import { notFound } from "next/navigation";
 import { getCourse } from "@/lib/dal/courses";
 import { requireAuth } from "@/lib/dal/auth";
 import { LevelTestContainer } from "@/components/quiz/level-test-container";
+import { ContentContainer } from "@/components/layout/content-container";
 
 interface LevelTestPageProps {
   params: Promise<{
@@ -37,7 +38,7 @@ export default async function LevelTestPage({ params }: LevelTestPageProps) {
   const outcomes = level.level_outcomes?.map((o) => o.description) ?? [];
 
   return (
-    <div className="container max-w-3xl py-8">
+    <ContentContainer className="py-8">
       <LevelTestContainer
         levelId={levelId}
         courseId={courseId}
@@ -47,6 +48,6 @@ export default async function LevelTestPage({ params }: LevelTestPageProps) {
         estimatedMinutes={15}
         isLastLevel={isLastLevel}
       />
-    </div>
+    </ContentContainer>
   );
 }

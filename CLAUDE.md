@@ -84,7 +84,7 @@ Server-side scoring - `correct_option` nigdy nie trafia do klienta. Weryfikacja 
 ```typescript
 // Unikaj z.discriminatedUnion, z.record, z.union w generateObject
 // wrongExplanations: WrongExplanation[] (NIE Record<string,string>)
-// QuizPageContent: regulowana szerokość kontenera (localStorage: quiz-width)
+// ContentContainer: globalny toggle szerokości (localStorage: wm-content-width)
 ```
 
 ### Mentor Chat - upload plików
@@ -186,3 +186,4 @@ Typ: `LevelName` w `src/types/database.ts`
 - shadcn/ui: New York style, Zinc palette
 - Breakpoint `lg` (1024px) dla sidebar visibility
 - **Fonty:** Geist Sans/Mono z `latin-ext` (polskie znaki ą, ę, ć, ł, ń, ó, ś, ź, ż)
+- **Szerokość treści:** `ContentContainer` (Wąski/Standard/Szeroki/Pełny) — `useContentWidth` hook + `localStorage: wm-content-width`

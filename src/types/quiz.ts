@@ -51,6 +51,14 @@ export interface QuestionOption {
 }
 
 /**
+ * Explanation for a wrong answer option
+ */
+export interface WrongExplanation {
+  optionId: string;
+  explanation: string;
+}
+
+/**
  * Quiz question - stored in quizzes.questions JSONB
  */
 export interface QuizQuestion {
@@ -60,7 +68,7 @@ export interface QuizQuestion {
   options: QuestionOption[];
   correctOptionId: string;
   explanation: string;
-  wrongExplanations: Record<string, string>; // optionId -> explanation
+  wrongExplanations: WrongExplanation[]; // array of { optionId, explanation }
   bloomLevel: BloomLevel;
   difficulty: Difficulty;
   relatedConcept?: string;

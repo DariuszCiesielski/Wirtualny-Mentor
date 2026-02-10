@@ -48,8 +48,8 @@ export const MODEL_CONFIG = {
   // GPT-5.2 - structured curriculum generation, reliable JSON
   curriculum: openaiProvider('gpt-5.2'),
 
-  // Gemini 2.0 Flash - fast, cheap quizzes
-  quiz: googleProvider('gemini-2.0-flash'),
+  // Quiz generation - OpenAI (fast, cheap)
+  quiz: openaiProvider('gpt-4o-mini'),
 
   // Embeddings for RAG (Phase 5)
   embedding: openaiProvider('text-embedding-3-small'),

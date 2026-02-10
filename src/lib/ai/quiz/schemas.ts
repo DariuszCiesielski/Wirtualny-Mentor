@@ -3,6 +3,9 @@
  *
  * Validation schemas for AI-generated quizzes and assessments.
  * Used for structured output parsing from LLM responses.
+ *
+ * IMPORTANT: Schemas must be compatible with OpenAI/Google structured outputs.
+ * Avoid: z.discriminatedUnion (oneOf), z.record (additionalProperties), z.union.
  */
 
 import { z } from "zod";
@@ -20,27 +23,41 @@ export const optionSchema = z.object({
 });
 
 // ============================================================================
-// QUESTION SCHEMAS
+// WRONG EXPLANATION SCHEMA
 // ============================================================================
 
 /**
- * Multiple choice question schema
+ * Explanation for a wrong answer option
  */
-export const multipleChoiceSchema = z.object({
+export const wrongExplanationSchema = z.object({
+  optionId: z.string().describe("ID opcji (a, b, c lub d)"),
+  explanation: z.string().describe("Wyjasnienie dlaczego ta opcja jest bledna"),
+});
+
+// ============================================================================
+// QUESTION SCHEMA (unified - no discriminatedUnion)
+// ============================================================================
+
+/**
+ * Unified question schema supporting both multiple_choice and true_false.
+ * Uses z.enum instead of z.discriminatedUnion for provider compatibility.
+ */
+export const questionSchema = z.object({
   id: z.string().describe("Unikalny identyfikator pytania, np. 'q-1'"),
-  type: z.literal("multiple_choice"),
+  type: z
+    .enum(["multiple_choice", "true_false"])
+    .describe("Typ pytania: multiple_choice (4 opcje) lub true_false (2 opcje)"),
   question: z.string().describe("Tresc pytania po polsku"),
   options: z
     .array(optionSchema)
-    .length(4)
-    .describe("Dokladnie 4 opcje odpowiedzi"),
+    .describe("Opcje odpowiedzi: 4 dla multiple_choice, 2 dla true_false"),
   correctOptionId: z.string().describe("ID poprawnej opcji (a, b, c lub d)"),
   explanation: z
     .string()
     .describe("Wyjasnienie dlaczego poprawna odpowiedz jest poprawna"),
   wrongExplanations: z
-    .record(z.string(), z.string())
-    .describe("Mapa optionId -> wyjasnienie dlaczego ta opcja jest bledna"),
+    .array(wrongExplanationSchema)
+    .describe("Lista wyjasnien dla kazdej blednej opcji"),
   bloomLevel: z
     .enum(["remembering", "understanding", "applying", "analyzing"])
     .describe("Poziom taksonomii Blooma"),
@@ -49,45 +66,8 @@ export const multipleChoiceSchema = z.object({
     .describe("Poziom trudnosci pytania"),
   relatedConcept: z
     .string()
-    .optional()
-    .describe("Powiazane pojecie z materialu"),
+    .describe("Powiazane pojecie z materialu (pusty string jesli brak)"),
 });
-
-/**
- * True/False question schema
- */
-export const trueFalseSchema = z.object({
-  id: z.string().describe("Unikalny identyfikator pytania, np. 'q-1'"),
-  type: z.literal("true_false"),
-  question: z.string().describe("Stwierdzenie do oceny prawda/falsz po polsku"),
-  options: z
-    .array(optionSchema)
-    .length(2)
-    .describe("Dokladnie 2 opcje: Prawda i Falsz"),
-  correctOptionId: z.string().describe("ID poprawnej opcji (a lub b)"),
-  explanation: z.string().describe("Wyjasnienie poprawnej odpowiedzi"),
-  wrongExplanations: z
-    .record(z.string(), z.string())
-    .describe("Wyjasnienie dlaczego druga opcja jest bledna"),
-  bloomLevel: z
-    .enum(["remembering", "understanding"])
-    .describe("Poziom taksonomii Blooma (tylko remembering/understanding)"),
-  difficulty: z
-    .enum(["easy", "medium"])
-    .describe("Poziom trudnosci (tylko easy/medium)"),
-  relatedConcept: z
-    .string()
-    .optional()
-    .describe("Powiazane pojecie z materialu"),
-});
-
-/**
- * Union of all question types
- */
-export const questionSchema = z.discriminatedUnion("type", [
-  multipleChoiceSchema,
-  trueFalseSchema,
-]);
 
 // ============================================================================
 // QUIZ SCHEMAS
@@ -99,13 +79,10 @@ export const questionSchema = z.discriminatedUnion("type", [
 export const quizSchema = z.object({
   questions: z
     .array(questionSchema)
-    .min(3)
-    .max(10)
     .describe("Lista pytan quizu (3-10 pytan)"),
   estimatedMinutes: z
     .number()
     .int()
-    .positive()
     .describe("Szacowany czas rozwiazywania w minutach"),
   focusAreas: z
     .array(z.string())
@@ -118,13 +95,10 @@ export const quizSchema = z.object({
 export const levelTestSchema = z.object({
   questions: z
     .array(questionSchema)
-    .min(10)
-    .max(20)
     .describe("Lista pytan testu (10-20 pytan)"),
   estimatedMinutes: z
     .number()
     .int()
-    .positive()
     .describe("Szacowany czas rozwiazywania w minutach"),
   levelSummary: z
     .string()
@@ -167,8 +141,7 @@ export const remediationSchema = z.object({
 // ============================================================================
 
 export type OptionSchema = z.infer<typeof optionSchema>;
-export type MultipleChoiceSchema = z.infer<typeof multipleChoiceSchema>;
-export type TrueFalseSchema = z.infer<typeof trueFalseSchema>;
+export type WrongExplanationSchema = z.infer<typeof wrongExplanationSchema>;
 export type QuestionSchema = z.infer<typeof questionSchema>;
 export type QuizSchema = z.infer<typeof quizSchema>;
 export type LevelTestSchema = z.infer<typeof levelTestSchema>;

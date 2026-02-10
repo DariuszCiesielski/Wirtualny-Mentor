@@ -83,7 +83,7 @@ ${wrongQuestions
   .map(
     (q) => `
 Pytanie: ${q.question}
-Bledna odpowiedz: ${q.wrongExplanations[Object.keys(q.wrongExplanations)[0]] || "brak wyjasnienia"}
+Bledna odpowiedz: ${q.wrongExplanations[0]?.explanation || "brak wyjasnienia"}
 Poprawna odpowiedz: ${q.explanation}
 Koncept: ${q.relatedConcept || "nie podano"}
 `

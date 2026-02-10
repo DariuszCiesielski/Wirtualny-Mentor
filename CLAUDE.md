@@ -34,7 +34,7 @@ ANALYZE=true npm run build  # Bundle analyzer
 | Model | Zastosowanie | Powód |
 |-------|--------------|-------|
 | GPT-5.2 | Curriculum + Mentor chatbot | Strukturalny JSON, vision (obrazy/PDF) |
-| Gemini 2.0 Flash | Quiz generation | Szybki, tani |
+| GPT-4o-mini | Quiz generation | Structured outputs, kompatybilny ze schematem Zod |
 | text-embedding-3-small | RAG embeddings | pgvector similarity |
 
 Konfiguracja: `src/lib/ai/providers.ts` (factory + Helicone proxy)
@@ -78,6 +78,14 @@ const { data: { user } } = await supabase.auth.getUser()
 ### Quiz Security
 
 Server-side scoring - `correct_option` nigdy nie trafia do klienta. Weryfikacja w `/api/quiz/submit`.
+
+### Quiz Schema (structured outputs)
+
+```typescript
+// Unikaj z.discriminatedUnion, z.record, z.union w generateObject
+// wrongExplanations: WrongExplanation[] (NIE Record<string,string>)
+// QuizPageContent: regulowana szerokość kontenera (localStorage: quiz-width)
+```
 
 ### Mentor Chat - upload plików
 
@@ -152,7 +160,7 @@ result.error.flatten().fieldErrors          // Form errors
 Wymagane:
 - `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`
 - `OPENAI_API_KEY` (curriculum + mentor)
-- `GOOGLE_GENERATIVE_AI_API_KEY` (quizy, opcjonalnie)
+- `GOOGLE_GENERATIVE_AI_API_KEY` (opcjonalnie, nieużywane - quizy przeniesione na OpenAI)
 - `TAVILY_API_KEY` (web search)
 
 Opcjonalne:

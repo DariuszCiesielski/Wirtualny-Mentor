@@ -132,8 +132,9 @@ sendMessage({ text: 'Wyjaśnij ten diagram', files: dt.files });
 // linkDocumentsToCourse() - UPDATE po initiateCourseCreation
 // Mentor tool: searchCourseMaterials (RAG z chunków materiałów)
 // Checkbox "Uzupełnij danymi z internetu" - warunkowy Tavily search
-// pdf-parse v4: new PDFParse({ data: buffer }), getText() → TextResult
+// pdf-parse v2.4.5: new PDFParse({ data: Uint8Array }), getText() → { text, total, pages[] }
 // mammoth: extractRawText({ buffer }) dla DOCX
+// WAŻNE: serverExternalPackages w next.config.ts (pdf-parse, pdfjs-dist, mammoth)
 ```
 
 ### Shared Chat Utilities

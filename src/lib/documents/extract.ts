@@ -40,16 +40,19 @@ export interface ExtractedText {
 
 /**
  * Extract text from a PDF buffer using pdfjs-dist directly.
- * Worker is disabled — Vercel serverless doesn't include the worker file.
+ * pdfjs-dist is bundled by Turbopack (NOT in serverExternalPackages)
+ * so worker code is inlined and DOMMatrix polyfill above runs first.
  */
 async function extractTextFromPDF(buffer: Buffer): Promise<ExtractedText> {
-  // Import pdfjs-dist and disable worker (worker file not available in serverless)
-  const pdfjs = await import('pdfjs-dist/legacy/build/pdf.mjs');
-  pdfjs.GlobalWorkerOptions.workerSrc = '';
+  const pdfjs = await import('pdfjs-dist');
+
+  // Disable worker — serverless doesn't support Web Workers.
+  // Use a dummy truthy value to satisfy the "workerSrc specified" check,
+  // then pdfjs falls back to main-thread (fake worker) mode.
+  pdfjs.GlobalWorkerOptions.workerSrc = 'blob:disabled';
 
   const loadingTask = pdfjs.getDocument({
     data: new Uint8Array(buffer),
-    useWorkerFetch: false,
     isEvalSupported: false,
     useSystemFonts: true,
   });

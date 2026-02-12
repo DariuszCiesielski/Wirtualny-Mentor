@@ -10,8 +10,10 @@ const nextConfig: NextConfig = {
   turbopack: {
     root: '.',
   },
-  // Exclude native Node.js packages from bundling (PDF/DOCX extraction)
-  serverExternalPackages: ['pdfjs-dist', 'mammoth'],
+  // mammoth uses native Node.js APIs — keep as external
+  // pdfjs-dist is BUNDLED (not external) so worker code is inlined
+  // and DOMMatrix polyfill in extract.ts runs before pdfjs initializes
+  serverExternalPackages: ['mammoth'],
   experimental: {
     // Tree-shaking for icon libraries
     optimizePackageImports: ['lucide-react', '@radix-ui/react-icons'],

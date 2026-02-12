@@ -11,6 +11,7 @@
  */
 
 import { useState, useCallback, useRef } from "react";
+import { useRouter } from "next/navigation";
 import { TopicInput } from "@/components/curriculum/topic-input";
 import { ClarifyingChat } from "@/components/curriculum/clarifying-chat";
 import { CurriculumGenerator } from "@/components/curriculum/curriculum-generator";
@@ -97,6 +98,7 @@ function Stepper({ currentStep }: { currentStep: Step }) {
 }
 
 export default function NewCoursePage() {
+  const router = useRouter();
   const [currentStep, setCurrentStep] = useState<Step>("topic");
   const [topic, setTopic] = useState("");
   const [sourceUrl, setSourceUrl] = useState<string | undefined>();
@@ -167,7 +169,7 @@ export default function NewCoursePage() {
     try {
       setIsSubmitting(true);
       await saveCurriculum(courseId, curriculum);
-      // saveCurriculum redirects to /courses/[id]
+      router.push(`/courses/${courseId}`);
     } catch (error) {
       console.error("Failed to save curriculum:", error);
       setIsSubmitting(false);

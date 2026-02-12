@@ -82,7 +82,7 @@ function transformCurriculumForDB(curriculum: Curriculum): CurriculumData {
 }
 
 /**
- * Save curriculum to database and redirect to course page
+ * Save curriculum to database
  *
  * @param courseId - The course ID
  * @param curriculum - The AI-generated curriculum
@@ -90,7 +90,7 @@ function transformCurriculumForDB(curriculum: Curriculum): CurriculumData {
 export async function saveCurriculum(
   courseId: string,
   curriculum: Curriculum
-): Promise<void> {
+): Promise<{ success: true }> {
   const user = await getUser();
 
   if (!user) {
@@ -103,6 +103,5 @@ export async function saveCurriculum(
   // Save curriculum with all levels, outcomes, and chapters
   await saveCurriculumWithLevels(courseId, user.id, curriculumData);
 
-  // Redirect to course page
-  redirect(`/courses/${courseId}`);
+  return { success: true };
 }

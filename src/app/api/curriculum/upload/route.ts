@@ -92,13 +92,15 @@ export async function POST(req: Request) {
       await processDocument(doc.id, buffer, fileType, courseId);
     } catch (processError) {
       // Processing failed but document record exists - return with failed status
-      console.error('[Upload] Processing failed:', processError);
+      const errorMessage = processError instanceof Error ? processError.message : 'Unknown processing error';
+      console.error('[Upload] Processing failed:', errorMessage, processError);
       const result: UploadedSourceFile = {
         documentId: doc.id,
         filename: file.name,
         fileType,
         fileSize: file.size,
         processingStatus: 'failed',
+        processingError: errorMessage,
       };
       return Response.json(result);
     }

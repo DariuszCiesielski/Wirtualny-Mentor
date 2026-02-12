@@ -82,6 +82,7 @@ export interface UploadedSourceFile {
   fileType: SourceFileType;
   fileSize: number;
   processingStatus: DocumentProcessingStatus;
+  processingError?: string;
   extractedTextPreview?: string;
   wordCount?: number;
 }

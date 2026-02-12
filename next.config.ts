@@ -10,6 +10,8 @@ const nextConfig: NextConfig = {
   turbopack: {
     root: '.',
   },
+  // Exclude native Node.js packages from bundling (PDF/DOCX extraction)
+  serverExternalPackages: ['pdf-parse', 'pdfjs-dist', 'mammoth'],
   experimental: {
     // Tree-shaking for icon libraries
     optimizePackageImports: ['lucide-react', '@radix-ui/react-icons'],

@@ -85,7 +85,7 @@ export function useFileUpload() {
             updateFileStatus(fileIndex, {
               status: "error",
               progress: 100,
-              error: "Nie udało się przetworzyć pliku",
+              error: result.processingError || "Nie udało się przetworzyć pliku",
               documentId: result.documentId,
             });
           } else {

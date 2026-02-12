@@ -18,14 +18,14 @@ export interface ExtractedText {
  */
 async function extractTextFromPDF(buffer: Buffer): Promise<ExtractedText> {
   const { PDFParse } = await import('pdf-parse');
-  const parser = new PDFParse({ data: buffer });
+  const parser = new PDFParse({ data: new Uint8Array(buffer) });
 
   const textResult = await parser.getText();
   const text = textResult.text.trim();
   const pageCount = textResult.total;
 
-  // Clean up parser resources
-  await parser.destroy();
+  // Clean up parser resources (ignore errors)
+  try { await parser.destroy(); } catch { /* noop */ }
 
   return {
     text,

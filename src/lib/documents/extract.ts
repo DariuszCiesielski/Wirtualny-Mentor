@@ -2,7 +2,8 @@
  * Document Text Extraction
  *
  * Extracts text from PDF, DOCX and TXT files.
- * Uses pdf-parse for PDF and mammoth for DOCX.
+ * Uses pdfjs-dist directly (not pdf-parse wrapper) for PDF to control
+ * worker configuration in serverless environments.
  */
 
 import type { SourceFileType } from '@/types/source-documents';
@@ -38,22 +39,39 @@ export interface ExtractedText {
 }
 
 /**
- * Extract text from a PDF buffer
+ * Extract text from a PDF buffer using pdfjs-dist directly.
+ * Worker is disabled — Vercel serverless doesn't include the worker file.
  */
 async function extractTextFromPDF(buffer: Buffer): Promise<ExtractedText> {
-  const { PDFParse } = await import('pdf-parse');
-  const parser = new PDFParse({ data: new Uint8Array(buffer) });
+  // Import pdfjs-dist and disable worker (worker file not available in serverless)
+  const pdfjs = await import('pdfjs-dist/legacy/build/pdf.mjs');
+  pdfjs.GlobalWorkerOptions.workerSrc = '';
 
-  const textResult = await parser.getText();
-  const text = textResult.text.trim();
-  const pageCount = textResult.total;
+  const loadingTask = pdfjs.getDocument({
+    data: new Uint8Array(buffer),
+    useWorkerFetch: false,
+    isEvalSupported: false,
+    useSystemFonts: true,
+  });
 
-  // Clean up parser resources (ignore errors)
-  try { await parser.destroy(); } catch { /* noop */ }
+  const doc = await loadingTask.promise;
+
+  const pages: string[] = [];
+  for (let i = 1; i <= doc.numPages; i++) {
+    const page = await doc.getPage(i);
+    const content = await page.getTextContent();
+    const pageText = content.items
+      .filter((item) => 'str' in item && typeof item.str === 'string')
+      .map((item) => ('str' in item ? (item as { str: string }).str : ''))
+      .join(' ');
+    pages.push(pageText);
+  }
+
+  const text = pages.join('\n\n').trim();
 
   return {
     text,
-    pageCount,
+    pageCount: doc.numPages,
     wordCount: countWords(text),
   };
 }

@@ -27,8 +27,13 @@ export async function createNote(
 ): Promise<Note> {
   const supabase = await createClient();
 
-  // Generate embedding for content
-  const embedding = await generateEmbedding(input.content);
+  // Generate embedding - graceful degradation if API fails
+  let embedding: number[] | null = null;
+  try {
+    embedding = await generateEmbedding(input.content);
+  } catch (err) {
+    console.warn("[Notes] Embedding generation failed, saving note without embedding:", err);
+  }
 
   const { data, error } = await supabase
     .from("notes")
@@ -38,8 +43,10 @@ export async function createNote(
       chapter_id: input.chapter_id ?? null,
       section_heading: input.section_heading ?? null,
       content: input.content,
-      embedding: JSON.stringify(embedding),
-      embedding_model: EMBEDDING_MODEL_ID,
+      ...(embedding && {
+        embedding: JSON.stringify(embedding),
+        embedding_model: EMBEDDING_MODEL_ID,
+      }),
     })
     .select()
     .single();
@@ -61,15 +68,23 @@ export async function updateNote(
 ): Promise<Note> {
   const supabase = await createClient();
 
-  // Re-generate embedding for updated content
-  const embedding = await generateEmbedding(input.content);
+  // Re-generate embedding - graceful degradation if API fails
+  let embeddingFields: Record<string, string> = {};
+  try {
+    const embedding = await generateEmbedding(input.content);
+    embeddingFields = {
+      embedding: JSON.stringify(embedding),
+      embedding_model: EMBEDDING_MODEL_ID,
+    };
+  } catch (err) {
+    console.warn("[Notes] Embedding generation failed, updating note without embedding:", err);
+  }
 
   const { data, error } = await supabase
     .from("notes")
     .update({
       content: input.content,
-      embedding: JSON.stringify(embedding),
-      embedding_model: EMBEDDING_MODEL_ID,
+      ...embeddingFields,
     })
     .eq("id", noteId)
     .eq("user_id", userId)

@@ -6,11 +6,11 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Wirtualny Mentor - personalizowana platforma edukacyjna z AI generująca kompleksowe programy nauczania. Użytkownik podaje temat, AI zadaje pytania doprecyzowujące, następnie tworzy strukturyzowany kurs od poziomu Początkujący do Guru z materiałami, quizami i chatbotem-mentorem.
 
-**Status:** Projekt zakończony (7 faz, 33 plany)
+**Status:** Projekt zakończony (7 faz, 33 plany) + materiały źródłowe (PDF/DOCX/TXT)
 
 ## Stack
 
-Next.js 16 (App Router, Turbopack) | React 19 | TypeScript strict | Tailwind CSS v4 | shadcn/ui (New York, Zinc) | Supabase (PostgreSQL + pgvector + RLS) | Vercel AI SDK v6 | Zod 4
+Next.js 16 (App Router, Turbopack) | React 19 | TypeScript strict | Tailwind CSS v4 | shadcn/ui (New York, Zinc) | Supabase (PostgreSQL + pgvector + RLS) | Vercel AI SDK v6 | Zod 4 | pdf-parse | mammoth
 
 ## Komendy
 
@@ -53,6 +53,7 @@ User Input → API Route → DAL (auth check) → Supabase
 
 - `src/lib/ai/` - Prompty, schematy Zod, orchestracja AI
 - `src/lib/dal/` - Data Access Layer z auth verification
+- `src/lib/documents/` - Ekstrakcja tekstu, chunking (PDF/DOCX/TXT)
 - `src/lib/supabase/` - Client/Server/Middleware
 - `src/app/api/` - Route handlers (streaming)
 
@@ -114,6 +115,25 @@ sendMessage({ text: 'Wyjaśnij ten diagram', files: dt.files });
 // notes.section_heading (TEXT, nullable) - identyfikuje sekcję
 // SectionNoteIndicator (badge przy h2) + SectionNotesInline (panel pod h2)
 // NoteEditor: props sectionHeading + compact mode
+```
+
+### Materiały źródłowe (PDF/DOCX/TXT)
+
+```typescript
+// Upload → extract → chunk → embed → store (pgvector halfvec)
+// POST /api/curriculum/upload (FormData: file, courseId?)
+// POST /api/curriculum/suggest-topic (auto-detekcja tematu z AI)
+// Pipeline: src/lib/documents/ (extract.ts, chunk.ts, process.ts)
+// DAL: src/lib/dal/source-documents.ts (CRUD + semantic search)
+// DB: course_source_documents + course_source_chunks (HNSW index)
+// RPC: search_source_chunks_semantic(course_id, embedding, threshold, count)
+// Storage bucket: course-materials (private, 50MB limit)
+// course_source_documents.course_id nullable (upload przed utworzeniem kursu)
+// linkDocumentsToCourse() - UPDATE po initiateCourseCreation
+// Mentor tool: searchCourseMaterials (RAG z chunków materiałów)
+// Checkbox "Uzupełnij danymi z internetu" - warunkowy Tavily search
+// pdf-parse v4: new PDFParse({ data: buffer }), getText() → TextResult
+// mammoth: extractRawText({ buffer }) dla DOCX
 ```
 
 ### Shared Chat Utilities

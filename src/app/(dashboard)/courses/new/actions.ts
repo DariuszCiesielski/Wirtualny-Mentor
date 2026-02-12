@@ -87,6 +87,23 @@ function transformCurriculumForDB(curriculum: Curriculum): CurriculumData {
  * @param courseId - The course ID
  * @param curriculum - The AI-generated curriculum
  */
+/**
+ * Link uploaded documents to a course (after course creation)
+ */
+export async function linkDocumentsToCourse(
+  documentIds: string[],
+  courseId: string
+): Promise<void> {
+  const user = await getUser();
+
+  if (!user) {
+    redirect("/login");
+  }
+
+  const { linkDocumentsToCourse: linkDocs } = await import("@/lib/dal/source-documents");
+  await linkDocs(documentIds, courseId, user.id);
+}
+
 export async function saveCurriculum(
   courseId: string,
   curriculum: Curriculum

@@ -4,7 +4,7 @@
  * New Course Page
  *
  * Multi-step course creation flow:
- * 1. Topic - Enter learning topic and optional source URL
+ * 1. Topic - Enter learning topic, upload materials, optional source URL
  * 2. Clarify - AI asks clarifying questions
  * 3. Generate - AI generates curriculum
  * 4. Preview - Review and confirm curriculum
@@ -19,10 +19,11 @@ import { CurriculumPreview } from "@/components/curriculum/curriculum-preview";
 import { Check } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { UserInfo, Curriculum, ClarificationResponse } from "@/lib/ai/curriculum/schemas";
+import type { TopicSubmitData } from "@/types/source-documents";
 
 // Type for collected info from AI clarification
 type CollectedInfo = ClarificationResponse['collectedInfo'];
-import { initiateCourseCreation, saveCurriculum } from "./actions";
+import { initiateCourseCreation, saveCurriculum, linkDocumentsToCourse } from "./actions";
 
 type Step = "topic" | "clarify" | "generate" | "preview";
 
@@ -102,6 +103,8 @@ export default function NewCoursePage() {
   const [currentStep, setCurrentStep] = useState<Step>("topic");
   const [topic, setTopic] = useState("");
   const [sourceUrl, setSourceUrl] = useState<string | undefined>();
+  const [uploadedDocumentIds, setUploadedDocumentIds] = useState<string[]>([]);
+  const [useWebSearch, setUseWebSearch] = useState(true);
   const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
   const [courseId, setCourseId] = useState<string | null>(null);
   const [curriculum, setCurriculum] = useState<Curriculum | null>(null);
@@ -109,9 +112,11 @@ export default function NewCoursePage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const courseCreationStarted = useRef(false);
 
-  const handleTopicSubmit = (submittedTopic: string, submittedUrl?: string) => {
-    setTopic(submittedTopic);
-    setSourceUrl(submittedUrl);
+  const handleTopicSubmit = (data: TopicSubmitData) => {
+    setTopic(data.topic);
+    setSourceUrl(data.sourceUrl);
+    setUploadedDocumentIds(data.uploadedDocumentIds);
+    setUseWebSearch(data.useWebSearch);
     setCurrentStep("clarify");
   };
 
@@ -147,6 +152,12 @@ export default function NewCoursePage() {
         userExperience: fullUserInfo.experience,
         weeklyHours: fullUserInfo.weeklyHours,
       });
+
+      // Link uploaded documents to the new course
+      if (uploadedDocumentIds.length > 0) {
+        await linkDocumentsToCourse(uploadedDocumentIds, result.courseId);
+      }
+
       setCourseId(result.courseId);
       setCurrentStep("generate");
     } catch (error) {
@@ -156,7 +167,7 @@ export default function NewCoursePage() {
     } finally {
       setIsLoading(false);
     }
-  }, [topic, sourceUrl]);
+  }, [topic, sourceUrl, uploadedDocumentIds]);
 
   const handleGenerationComplete = useCallback((generatedCurriculum: Curriculum) => {
     setCurriculum(generatedCurriculum);
@@ -196,6 +207,8 @@ export default function NewCoursePage() {
         <ClarifyingChat
           topic={topic}
           sourceUrl={sourceUrl}
+          uploadedDocumentIds={uploadedDocumentIds}
+          useWebSearch={useWebSearch}
           onComplete={handleClarifyComplete}
         />
       )}
@@ -204,6 +217,8 @@ export default function NewCoursePage() {
         <CurriculumGenerator
           userInfo={userInfo}
           courseId={courseId}
+          uploadedDocumentIds={uploadedDocumentIds}
+          useWebSearch={useWebSearch}
           onComplete={handleGenerationComplete}
         />
       )}

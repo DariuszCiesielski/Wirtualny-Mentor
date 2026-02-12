@@ -3,8 +3,12 @@
 /**
  * Topic Input Component
  *
- * Form for entering learning topic and optional source URLs.
- * First step in course creation flow.
+ * Form for entering learning topic, uploading source materials,
+ * and optional source URLs. First step in course creation flow.
+ *
+ * Supports two modes:
+ * 1. Topic only (original) - user enters topic, AI generates from scratch
+ * 2. Materials-based - user uploads files, topic auto-detected or entered manually
  */
 
 import { useState } from "react";
@@ -18,10 +22,13 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { BookOpen, Link as LinkIcon, Plus, X } from "lucide-react";
+import { BookOpen, Link as LinkIcon, Plus, X, Globe, Sparkles, Loader2 } from "lucide-react";
+import { FileUploadZone } from "./file-upload-zone";
+import { useFileUpload } from "@/hooks/useFileUpload";
+import type { TopicSubmitData } from "@/types/source-documents";
 
 interface TopicInputProps {
-  onSubmit: (topic: string, sourceUrl?: string) => void;
+  onSubmit: (data: TopicSubmitData) => void;
   isLoading?: boolean;
 }
 
@@ -29,8 +36,24 @@ export function TopicInput({ onSubmit, isLoading = false }: TopicInputProps) {
   const [topic, setTopic] = useState("");
   const [sourceUrls, setSourceUrls] = useState<string[]>([""]);
   const [urlErrors, setUrlErrors] = useState<(string | null)[]>([null]);
+  const [useWebSearch, setUseWebSearch] = useState(true);
+  const [isSuggestingTopic, setIsSuggestingTopic] = useState(false);
 
+  const {
+    files,
+    uploadFiles,
+    removeFile,
+    isProcessing,
+    completedDocumentIds,
+    hasFiles,
+  } = useFileUpload();
+
+  // Topic valid if >=3 chars OR has completed files (topic will be auto-suggested)
   const isTopicValid = topic.trim().length >= 3;
+  const canSubmit =
+    (isTopicValid || completedDocumentIds.length > 0) &&
+    !isProcessing &&
+    !isLoading;
 
   const validateUrl = (url: string): boolean => {
     if (!url.trim()) return true; // Optional field
@@ -72,14 +95,44 @@ export function TopicInput({ onSubmit, isLoading = false }: TopicInputProps) {
   const hasAnyUrlError = urlErrors.some((error) => error !== null);
   const validUrls = sourceUrls.filter((url) => url.trim() && validateUrl(url));
 
+  const handleSuggestTopic = async () => {
+    if (completedDocumentIds.length === 0) return;
+
+    setIsSuggestingTopic(true);
+    try {
+      const response = await fetch("/api/curriculum/suggest-topic", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ documentIds: completedDocumentIds }),
+      });
+
+      if (response.ok) {
+        const { topic: suggested } = await response.json();
+        if (suggested) {
+          setTopic(suggested);
+        }
+      }
+    } catch (err) {
+      console.error("Failed to suggest topic:", err);
+    } finally {
+      setIsSuggestingTopic(false);
+    }
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!isTopicValid) return;
+    if (!canSubmit) return;
     if (hasAnyUrlError) return;
 
     // Combine valid URLs into single string (separated by newlines)
     const combinedUrls = validUrls.length > 0 ? validUrls.join("\n") : undefined;
-    onSubmit(topic.trim(), combinedUrls);
+
+    onSubmit({
+      topic: topic.trim(),
+      sourceUrl: combinedUrls,
+      uploadedDocumentIds: completedDocumentIds,
+      useWebSearch,
+    });
   };
 
   return (
@@ -92,34 +145,104 @@ export function TopicInput({ onSubmit, isLoading = false }: TopicInputProps) {
           <div>
             <CardTitle>Nowy kurs</CardTitle>
             <CardDescription>
-              Podaj temat, którego chcesz się nauczyć
+              Załaduj materiały szkoleniowe lub podaj temat do nauki
             </CardDescription>
           </div>
         </div>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-6">
+          {/* File upload zone */}
+          <div className="space-y-2">
+            <label className="text-sm font-medium leading-none">
+              Materiały źródłowe
+            </label>
+            <FileUploadZone
+              files={files}
+              onFilesSelected={(fileList) => uploadFiles(fileList)}
+              onFileRemoved={removeFile}
+              isProcessing={isProcessing}
+              disabled={isLoading}
+            />
+          </div>
+
           {/* Topic textarea */}
           <div className="space-y-2">
-            <label
-              htmlFor="topic"
-              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-            >
-              Temat nauki
-            </label>
+            <div className="flex items-center justify-between">
+              <label
+                htmlFor="topic"
+                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+              >
+                Temat nauki
+                {hasFiles && (
+                  <span className="text-muted-foreground font-normal ml-1">
+                    (opcjonalny gdy są pliki)
+                  </span>
+                )}
+              </label>
+              {/* Suggest topic button */}
+              {completedDocumentIds.length > 0 && !topic.trim() && (
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  onClick={handleSuggestTopic}
+                  disabled={isSuggestingTopic || isLoading}
+                  className="text-xs h-7"
+                >
+                  {isSuggestingTopic ? (
+                    <Loader2 className="h-3 w-3 animate-spin mr-1" />
+                  ) : (
+                    <Sparkles className="h-3 w-3 mr-1" />
+                  )}
+                  Zaproponuj temat
+                </Button>
+              )}
+            </div>
             <Textarea
               id="topic"
               value={topic}
               onChange={(e) => setTopic(e.target.value)}
-              placeholder="Czego chcesz się nauczyć? np. 'programowanie w Python' lub 'prawo cywilne w Polsce'"
+              placeholder={
+                hasFiles
+                  ? "Opcjonalnie opisz temat lub kliknij 'Zaproponuj temat'"
+                  : "Czego chcesz się nauczyć? np. 'programowanie w Python' lub 'prawo cywilne w Polsce'"
+              }
               className="min-h-[100px] resize-none"
               disabled={isLoading}
             />
             <p className="text-xs text-muted-foreground">
-              Opisz temat możliwie dokładnie - AI dostosuje program do Twoich
-              potrzeb
+              {hasFiles
+                ? "AI przeanalizuje materiały i dopasuje program kursu do ich treści"
+                : "Opisz temat możliwie dokładnie - AI dostosuje program do Twoich potrzeb"}
             </p>
           </div>
+
+          {/* Web search checkbox - visible when files are uploaded */}
+          {hasFiles && (
+            <div className="flex items-start gap-3 rounded-lg border p-3 bg-muted/30">
+              <input
+                type="checkbox"
+                id="useWebSearch"
+                checked={useWebSearch}
+                onChange={(e) => setUseWebSearch(e.target.checked)}
+                disabled={isLoading}
+                className="mt-0.5 h-4 w-4 rounded border-muted-foreground/30"
+              />
+              <label htmlFor="useWebSearch" className="flex-1 cursor-pointer">
+                <div className="flex items-center gap-2">
+                  <Globe className="h-4 w-4 text-muted-foreground" />
+                  <span className="text-sm font-medium">
+                    Uzupełnij danymi z internetu
+                  </span>
+                </div>
+                <p className="text-xs text-muted-foreground mt-1">
+                  AI wzbogaci kurs o aktualne informacje z internetu (standardy,
+                  programy nauczania, nowe trendy)
+                </p>
+              </label>
+            </div>
+          )}
 
           {/* Source URLs input */}
           <div className="space-y-3">
@@ -180,10 +303,14 @@ export function TopicInput({ onSubmit, isLoading = false }: TopicInputProps) {
           {/* Submit button */}
           <Button
             type="submit"
-            disabled={!isTopicValid || hasAnyUrlError || isLoading}
+            disabled={!canSubmit || hasAnyUrlError}
             className="w-full"
           >
-            {isLoading ? "Przetwarzanie..." : "Rozpocznij"}
+            {isLoading
+              ? "Przetwarzanie..."
+              : isProcessing
+                ? "Trwa przetwarzanie plików..."
+                : "Rozpocznij"}
           </Button>
         </form>
       </CardContent>

@@ -16,7 +16,7 @@
 import { streamText, convertToModelMessages, stepCountIs } from "ai";
 import { getModel } from "@/lib/ai/providers";
 import { MENTOR_SYSTEM_PROMPT } from "@/lib/ai/mentor/prompts";
-import { createSearchNotesTool } from "@/lib/ai/mentor/tools";
+import { createSearchNotesTool, createSearchCourseMaterialsTool } from "@/lib/ai/mentor/tools";
 import { createClient } from "@/lib/supabase/server";
 import { saveMessage, updateSessionTitle } from "@/lib/dal/chat";
 import { z } from "zod";
@@ -123,8 +123,12 @@ export async function POST(req: Request) {
     }
   }
 
-  // Create tool with context
+  // Create tools with context
   const searchNotes = createSearchNotesTool({
+    userId: user.id,
+    courseId,
+  });
+  const searchCourseMaterials = createSearchCourseMaterialsTool({
     userId: user.id,
     courseId,
   });
@@ -139,7 +143,7 @@ export async function POST(req: Request) {
     model: getModel("mentor"),
     system: systemPrompt,
     messages: await convertToModelMessages(messages),
-    tools: { searchNotes },
+    tools: { searchNotes, searchCourseMaterials },
     stopWhen: stepCountIs(3),
     onFinish: async ({ text }) => {
       // Save assistant response to DB

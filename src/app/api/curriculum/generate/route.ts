@@ -1,8 +1,12 @@
 /**
  * Curriculum Generation API Endpoint
  *
- * Generates personalized curriculum using AI with web search integration.
- * Uses Tavily for current information and official education standards.
+ * Generates personalized curriculum using AI.
+ * Supports two modes:
+ * 1. Material-based: RAG retrieval from uploaded documents
+ * 2. Web-search: Tavily for current information (original flow)
+ *
+ * The "useWebSearch" flag controls whether internet data supplements materials.
  * Returns streaming structured output.
  */
 
@@ -10,13 +14,13 @@ import { streamObject } from "ai";
 import { getModel } from "@/lib/ai/providers";
 import {
   curriculumSchema,
-  type UserInfo,
 } from "@/lib/ai/curriculum/schemas";
 import {
   CURRICULUM_SYSTEM_PROMPT,
-  OFFICIAL_CURRICULA_SEARCH_PROMPT,
+  CURRICULUM_FROM_MATERIALS_SYSTEM_PROMPT,
 } from "@/lib/ai/curriculum/prompts";
 import { searchWeb, extractUrls } from "@/lib/tavily/client";
+import { getDocumentsByIds, searchChunksSemantic } from "@/lib/dal/source-documents";
 import { z } from "zod";
 
 const requestSchema = z.object({
@@ -25,19 +29,63 @@ const requestSchema = z.object({
     goals: z.array(z.string()),
     experience: z.enum(["beginner", "intermediate", "advanced"]),
     weeklyHours: z.number(),
-    sourceUrl: z.string().url().optional(),
+    sourceUrl: z.string().optional(),
   }),
   courseId: z.string().uuid(),
+  uploadedDocumentIds: z.array(z.string().uuid()).optional(),
+  useWebSearch: z.boolean().optional().default(true),
 });
+
+import {
+  OFFICIAL_CURRICULA_SEARCH_PROMPT,
+} from "@/lib/ai/curriculum/prompts";
 
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const { userInfo, courseId } = requestSchema.parse(body);
+    const { userInfo, courseId, uploadedDocumentIds, useWebSearch } = requestSchema.parse(body);
 
-    // 1. Web search for current information (optional - skip if no TAVILY_API_KEY)
+    const hasDocuments = uploadedDocumentIds && uploadedDocumentIds.length > 0;
+
+    // ===== MATERIAL CONTEXT (if documents uploaded) =====
+    let materialContext = "";
+    if (hasDocuments) {
+      try {
+        // Get document summaries
+        const documents = await getDocumentsByIds(uploadedDocumentIds);
+        const completedDocs = documents.filter(
+          (d) => d.processing_status === "completed" && d.text_summary
+        );
+
+        const summaries = completedDocs
+          .map((d) => `### ${d.filename}\n${d.text_summary}`)
+          .join("\n\n");
+
+        // RAG retrieval - search for most relevant chunks
+        const queryText = `${userInfo.topic} ${userInfo.goals.join(" ")}`;
+        const relevantChunks = await searchChunksSemantic(courseId, queryText, 0.4, 20);
+
+        const chunksText = relevantChunks
+          .map((c) => c.content)
+          .join("\n---\n");
+
+        materialContext = `
+## MATERIALY ZRODLOWE UZYTKOWNIKA:
+
+### Streszczenia dokumentow:
+${summaries}
+
+### Najbardziej relevantne fragmenty (${relevantChunks.length} chunków):
+${chunksText || "(brak wynikow wyszukiwania - uzyj streszczeń)"}
+`;
+      } catch (err) {
+        console.warn("[generate] Failed to load material context:", err);
+      }
+    }
+
+    // ===== WEB SEARCH (only if enabled) =====
     let searchResults = "";
-    if (process.env.TAVILY_API_KEY) {
+    if (useWebSearch && process.env.TAVILY_API_KEY) {
       try {
         // Search for general topic info
         const topicSearch = await searchWeb(userInfo.topic, {
@@ -69,9 +117,9 @@ ${standardsSearch.results.map((r) => `- ${r.title}: ${r.content.slice(0, 200)}`)
       }
     }
 
-    // 2. If user provided sourceUrl, try to extract content
+    // ===== SOURCE URL EXTRACTION (if provided and web search enabled) =====
     let sourceContent = "";
-    if (userInfo.sourceUrl && process.env.TAVILY_API_KEY) {
+    if (userInfo.sourceUrl && useWebSearch && process.env.TAVILY_API_KEY) {
       try {
         const extracted = await extractUrls([userInfo.sourceUrl]);
         if (extracted[0]?.content) {
@@ -82,11 +130,16 @@ ${standardsSearch.results.map((r) => `- ${r.title}: ${r.content.slice(0, 200)}`)
       }
     }
 
-    // 3. Generate curriculum with streaming
+    // ===== CHOOSE SYSTEM PROMPT =====
+    const systemPrompt = hasDocuments
+      ? CURRICULUM_FROM_MATERIALS_SYSTEM_PROMPT
+      : CURRICULUM_SYSTEM_PROMPT;
+
+    // ===== GENERATE CURRICULUM =====
     const result = streamObject({
       model: getModel("curriculum"),
       schema: curriculumSchema,
-      system: CURRICULUM_SYSTEM_PROMPT,
+      system: systemPrompt,
       prompt: `Stworz spersonalizowany program nauczania.
 
 ## Informacje o uzytkowniku:
@@ -95,6 +148,7 @@ ${standardsSearch.results.map((r) => `- ${r.title}: ${r.content.slice(0, 200)}`)
 - Doswiadczenie: ${userInfo.experience === "beginner" ? "Poczatkujacy" : userInfo.experience === "intermediate" ? "Srednio zaawansowany" : "Zaawansowany"}
 - Dostepny czas: ${userInfo.weeklyHours} godzin tygodniowo
 
+${materialContext}
 ${searchResults}
 ${sourceContent}
 

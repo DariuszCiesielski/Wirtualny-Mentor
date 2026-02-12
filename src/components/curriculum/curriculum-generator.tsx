@@ -27,12 +27,16 @@ interface UserInfo {
 interface CurriculumGeneratorProps {
   userInfo: UserInfo;
   courseId: string;
+  uploadedDocumentIds?: string[];
+  useWebSearch?: boolean;
   onComplete: (curriculum: Curriculum) => void;
 }
 
 export function CurriculumGenerator({
   userInfo,
   courseId,
+  uploadedDocumentIds,
+  useWebSearch,
   onComplete,
 }: CurriculumGeneratorProps) {
   const { object, submit, isLoading, error, stop } = useObject({
@@ -47,9 +51,9 @@ export function CurriculumGenerator({
   useEffect(() => {
     if (!hasStarted.current) {
       hasStarted.current = true;
-      submit({ userInfo, courseId });
+      submit({ userInfo, courseId, uploadedDocumentIds, useWebSearch });
     }
-  }, [submit, userInfo, courseId]);
+  }, [submit, userInfo, courseId, uploadedDocumentIds, useWebSearch]);
 
   // Track if we've already called onComplete
   const hasCompleted = useRef(false);

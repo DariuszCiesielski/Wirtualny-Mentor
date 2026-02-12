@@ -29,6 +29,8 @@ type CollectedInfo = ClarificationResponse['collectedInfo'];
 interface ClarifyingChatProps {
   topic: string;
   sourceUrl?: string;
+  uploadedDocumentIds?: string[];
+  useWebSearch?: boolean;
   onComplete: (info: CollectedInfo) => void;
 }
 
@@ -45,6 +47,8 @@ function getMessageText(parts: Array<{ type: string; text?: string }>): string {
 export function ClarifyingChat({
   topic,
   sourceUrl,
+  uploadedDocumentIds,
+  useWebSearch,
   onComplete,
 }: ClarifyingChatProps) {
   const [input, setInput] = useState("");
@@ -58,13 +62,23 @@ export function ClarifyingChat({
     onCompleteRef.current = onComplete;
   }, [onComplete]);
 
-  const initialMessage = sourceUrl
-    ? `Chcę się nauczyć na podstawie tego źródła: ${sourceUrl}. Temat: ${topic}`
-    : `Chcę się nauczyć: ${topic}`;
+  const hasDocuments = uploadedDocumentIds && uploadedDocumentIds.length > 0;
+
+  const initialMessage = hasDocuments
+    ? `Załadowałem materiały szkoleniowe i chcę stworzyć na ich podstawie kurs. Temat: ${topic || "(do ustalenia na podstawie materiałów)"}`
+    : sourceUrl
+      ? `Chcę się nauczyć na podstawie tego źródła: ${sourceUrl}. Temat: ${topic}`
+      : `Chcę się nauczyć: ${topic}`;
 
   const transport = useMemo(
-    () => new DefaultChatTransport({ api: "/api/curriculum/clarify" }),
-    []
+    () => new DefaultChatTransport({
+      api: "/api/curriculum/clarify",
+      body: {
+        documentIds: uploadedDocumentIds ?? [],
+        useWebSearch: useWebSearch ?? true,
+      },
+    }),
+    [uploadedDocumentIds, useWebSearch]
   );
 
   const { messages, sendMessage, status } = useChat({
@@ -156,7 +170,9 @@ export function ClarifyingChat({
           <div>
             <CardTitle>Pytania doprecyzowujące</CardTitle>
             <CardDescription>
-              AI zada kilka pytań, aby lepiej dopasować program do Ciebie
+              {hasDocuments
+                ? "AI przeanalizowało materiały i zada pytania o organizację kursu"
+                : "AI zada kilka pytań, aby lepiej dopasować program do Ciebie"}
             </CardDescription>
           </div>
         </div>

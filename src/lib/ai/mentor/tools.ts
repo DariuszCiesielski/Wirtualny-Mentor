@@ -8,6 +8,7 @@
 import { tool } from 'ai';
 import { z } from 'zod';
 import { searchNotesSemantic } from '@/lib/dal/notes';
+import { searchChunksSemantic } from '@/lib/dal/source-documents';
 
 /**
  * Context required for tool execution
@@ -63,6 +64,62 @@ Przyklad zapytan:
           relevance: Math.round(r.similarity * 100),
         })),
       };
+    },
+  });
+}
+
+/**
+ * Create searchCourseMaterials tool with course context
+ *
+ * Searches through uploaded course source materials (PDF, DOCX, TXT chunks).
+ * Allows the mentor chatbot to answer questions based on original training materials.
+ *
+ * @param context - User and course identifiers
+ * @returns AI SDK tool for semantic source material search
+ */
+export function createSearchCourseMaterialsTool(context: ToolContext) {
+  return tool({
+    description: `Wyszukaj w materialach zrodlowych kursu informacje zwiazane z pytaniem.
+Uzyj tego narzedzia gdy:
+- Uzytkownik pyta o cos co moze byc w materialach kursu
+- Potrzebujesz dokladnych informacji z materialow szkoleniowych
+- Chcesz odwolac sie do oryginalnych zrodel
+
+Przyklad zapytan:
+- "co mowia materialy o tym temacie" -> query: "temat"
+- "znajdz w zrodlach informacje o X" -> query: "X"`,
+    inputSchema: z.object({
+      query: z.string().describe('Fraza do wyszukania semantycznego w materialach kursu'),
+    }),
+    execute: async ({ query }) => {
+      try {
+        const results = await searchChunksSemantic(
+          context.courseId,
+          query,
+          0.4, // Lower threshold for broader recall
+          5
+        );
+
+        if (results.length === 0) {
+          return {
+            found: false,
+            message: 'Nie znaleziono pasujacych fragmentow w materialach kursu.',
+          };
+        }
+
+        return {
+          found: true,
+          materials: results.map((r) => ({
+            content: r.content.slice(0, 500),
+            relevance: Math.round(r.similarity * 100),
+          })),
+        };
+      } catch {
+        return {
+          found: false,
+          message: 'Brak materialow zrodlowych dla tego kursu.',
+        };
+      }
     },
   });
 }

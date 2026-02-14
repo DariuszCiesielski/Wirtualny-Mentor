@@ -10,7 +10,7 @@ Wirtualny Mentor - personalizowana platforma edukacyjna z AI generująca komplek
 
 ## Stack
 
-Next.js 16 (App Router, Turbopack) | React 19 | TypeScript strict | Tailwind CSS v4 | shadcn/ui (New York, Zinc) | Supabase (PostgreSQL + pgvector + RLS) | Vercel AI SDK v6 | Zod 4 | pdf-parse | mammoth
+Next.js 16 (App Router, Turbopack) | React 19 | TypeScript strict | Tailwind CSS v4 | shadcn/ui (New York, Zinc) | Supabase (PostgreSQL + pgvector + RLS) | Vercel AI SDK v6 | Zod 4 | unpdf | mammoth
 
 ## Komendy
 
@@ -120,21 +120,27 @@ sendMessage({ text: 'Wyjaśnij ten diagram', files: dt.files });
 ### Materiały źródłowe (PDF/DOCX/TXT)
 
 ```typescript
-// Upload → extract → chunk → embed → store (pgvector halfvec)
-// POST /api/curriculum/upload (FormData: file, courseId?)
+// Two-stage pipeline: upload+extract+chunk → embed (chunked loop)
+// Stage 1: POST /api/curriculum/upload (extract + chunk, BEZ embeddingów)
+// Stage 2: POST /api/curriculum/embed-chunks (chunked — max 5 batchy/call, frontend loop)
 // POST /api/curriculum/suggest-topic (auto-detekcja tematu z AI)
 // Pipeline: src/lib/documents/ (extract.ts, chunk.ts, process.ts)
 // DAL: src/lib/dal/source-documents.ts (CRUD + semantic search)
 // DB: course_source_documents + course_source_chunks (HNSW index)
+// Statusy: pending → processing → extracted → completed | failed
+// embedChunks(docId, supabase?, maxBatches?) — default 5 (250 chunków/call)
+// withRetry() — exponential backoff (max 2 retry) na OpenAI embedding API
+// Partial save — embedding per batch, nie zbiorczy (odporność na awarie)
+// Frontend: useFileUpload.ts — pętla embed aż remainingCount===0, dynamiczny progress
+// Retry UI: przycisk "Ponów" (RotateCw) + retryEmbedding callback
 // RPC: search_source_chunks_semantic(course_id, embedding, threshold, count)
 // Storage bucket: course-materials (private, 50MB limit)
 // course_source_documents.course_id nullable (upload przed utworzeniem kursu)
-// linkDocumentsToCourse() - UPDATE po initiateCourseCreation
 // Mentor tool: searchCourseMaterials (RAG z chunków materiałów)
 // Checkbox "Uzupełnij danymi z internetu" - warunkowy Tavily search
-// pdf-parse v2.4.5: new PDFParse({ data: Uint8Array }), getText() → { text, total, pages[] }
+// unpdf: extractText() dla PDF (serverless-friendly, zastępuje pdfjs-dist)
 // mammoth: extractRawText({ buffer }) dla DOCX
-// WAŻNE: serverExternalPackages w next.config.ts (pdf-parse, pdfjs-dist, mammoth)
+// WAŻNE: serverExternalPackages w next.config.ts (mammoth)
 ```
 
 ### Shared Chat Utilities

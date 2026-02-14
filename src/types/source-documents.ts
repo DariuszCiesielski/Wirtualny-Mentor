@@ -9,7 +9,7 @@
 // ============================================================================
 
 export type SourceFileType = 'pdf' | 'docx' | 'txt';
-export type DocumentProcessingStatus = 'pending' | 'processing' | 'completed' | 'failed';
+export type DocumentProcessingStatus = 'pending' | 'processing' | 'extracted' | 'completed' | 'failed';
 
 // ============================================================================
 // BASE ENTITIES
@@ -85,6 +85,7 @@ export interface UploadedSourceFile {
   processingError?: string;
   extractedTextPreview?: string;
   wordCount?: number;
+  chunkCount?: number;
 }
 
 // ============================================================================

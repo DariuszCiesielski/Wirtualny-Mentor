@@ -1,8 +1,9 @@
 /**
- * Document Upload API
+ * Document Upload API (Stage 1)
  *
  * Handles file upload for course materials (PDF, DOCX, TXT).
- * Uploads to Supabase Storage, extracts text, chunks, and embeds.
+ * Uploads to Supabase Storage, extracts text, and chunks (WITHOUT embeddings).
+ * Frontend should call /api/curriculum/embed-chunks after this completes.
  *
  * POST /api/curriculum/upload
  * FormData: file, courseId? (optional)
@@ -11,11 +12,12 @@
 import { createClient } from '@/lib/supabase/server';
 import { getUser } from '@/lib/dal/auth';
 import { createSourceDocument } from '@/lib/dal/source-documents';
-import { processDocument } from '@/lib/documents/process';
+import { extractAndChunk } from '@/lib/documents/process';
 import type { SourceFileType, UploadedSourceFile } from '@/types/source-documents';
 
-// Must be nodejs runtime for pdf-parse/mammoth (Buffer, fs)
+// Must be nodejs runtime for mammoth/unpdf (Buffer)
 export const runtime = 'nodejs';
+export const maxDuration = 60;
 
 const ALLOWED_TYPES: Record<string, SourceFileType> = {
   'application/pdf': 'pdf',
@@ -86,12 +88,25 @@ export async function POST(req: Request) {
       storage_path: storagePath,
     });
 
-    // Process document (extract, chunk, embed)
-    // This runs synchronously - for very large files may take time
+    // Stage 1: Extract text + chunk (no embeddings) — fits within 60s
     try {
-      await processDocument(doc.id, buffer, fileType, courseId);
+      const { chunkCount, wordCount } = await extractAndChunk(
+        doc.id, buffer, fileType, courseId, supabase
+      );
+
+      const result: UploadedSourceFile = {
+        documentId: doc.id,
+        filename: file.name,
+        fileType,
+        fileSize: file.size,
+        processingStatus: 'extracted',
+        wordCount,
+        chunkCount,
+        extractedTextPreview: undefined, // fetched by frontend if needed
+      };
+
+      return Response.json(result);
     } catch (processError) {
-      // Processing failed but document record exists - return with failed status
       const errorMessage = processError instanceof Error ? processError.message : 'Unknown processing error';
       console.error('[Upload] Processing failed:', errorMessage, processError);
       const result: UploadedSourceFile = {
@@ -104,25 +119,6 @@ export async function POST(req: Request) {
       };
       return Response.json(result);
     }
-
-    // Fetch updated document for response
-    const { data: updatedDoc } = await supabase
-      .from('course_source_documents')
-      .select('processing_status, text_summary, word_count')
-      .eq('id', doc.id)
-      .single();
-
-    const result: UploadedSourceFile = {
-      documentId: doc.id,
-      filename: file.name,
-      fileType,
-      fileSize: file.size,
-      processingStatus: updatedDoc?.processing_status ?? 'completed',
-      extractedTextPreview: updatedDoc?.text_summary?.slice(0, 200),
-      wordCount: updatedDoc?.word_count,
-    };
-
-    return Response.json(result);
   } catch (error) {
     console.error('[Upload] Error:', error);
     return Response.json(

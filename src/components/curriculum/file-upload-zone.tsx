@@ -17,6 +17,7 @@ import {
   Loader2,
   CheckCircle2,
   AlertCircle,
+  RotateCw,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { FileProcessingState } from "@/types/source-documents";
@@ -32,6 +33,7 @@ interface FileUploadZoneProps {
   files: FileProcessingState[];
   onFilesSelected: (files: FileList) => void;
   onFileRemoved: (index: number) => void;
+  onRetry?: (index: number) => void;
   isProcessing: boolean;
   disabled?: boolean;
 }
@@ -64,12 +66,15 @@ function StatusIndicator({ status }: { status: FileProcessingState["status"] }) 
   }
 }
 
-function statusLabel(status: FileProcessingState["status"]): string {
+function statusLabel(status: FileProcessingState["status"], progress?: number): string {
   switch (status) {
     case "uploading":
-      return "Przetwarzanie...";
+      return "Wysyłanie...";
     case "processing":
-      return "Przetwarzanie...";
+      if (progress != null && progress > 50) {
+        return `Generowanie embeddingów (${progress}%)...`;
+      }
+      return "Przetwarzanie tekstu...";
     case "completed":
       return "Gotowy";
     case "error":
@@ -81,6 +86,7 @@ export function FileUploadZone({
   files,
   onFilesSelected,
   onFileRemoved,
+  onRetry,
   isProcessing,
   disabled = false,
 }: FileUploadZoneProps) {
@@ -208,7 +214,7 @@ export function FileUploadZone({
                   <span className={cn(
                     fileState.status === "error" && "text-destructive"
                   )}>
-                    {fileState.error || statusLabel(fileState.status)}
+                    {fileState.error || statusLabel(fileState.status, fileState.progress)}
                   </span>
                 </div>
 
@@ -224,6 +230,22 @@ export function FileUploadZone({
               </div>
 
               <StatusIndicator status={fileState.status} />
+
+              {fileState.status === "error" && fileState.documentId && onRetry && (
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  className="h-7 w-7 shrink-0"
+                  title="Ponów przetwarzanie"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onRetry(index);
+                  }}
+                >
+                  <RotateCw className="h-3.5 w-3.5" />
+                </Button>
+              )}
 
               <Button
                 type="button"

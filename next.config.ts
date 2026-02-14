@@ -11,8 +11,6 @@ const nextConfig: NextConfig = {
     root: '.',
   },
   // mammoth uses native Node.js APIs — keep as external
-  // pdfjs-dist is BUNDLED (not external) so worker code is inlined
-  // and DOMMatrix polyfill in extract.ts runs before pdfjs initializes
   serverExternalPackages: ['mammoth'],
   experimental: {
     // Tree-shaking for icon libraries

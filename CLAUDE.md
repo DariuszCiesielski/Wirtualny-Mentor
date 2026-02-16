@@ -120,18 +120,21 @@ sendMessage({ text: 'Wyjaśnij ten diagram', files: dt.files });
 ### Materiały źródłowe (PDF/DOCX/TXT)
 
 ```typescript
-// Two-stage pipeline: upload+extract+chunk → embed (chunked loop)
-// Stage 1: POST /api/curriculum/upload (extract + chunk, BEZ embeddingów)
-// Stage 2: POST /api/curriculum/embed-chunks (chunked — max 5 batchy/call, frontend loop)
+// 4-etapowy pipeline (każdy endpoint < 60s — Vercel Hobby limit):
+// Stage 1: POST /api/curriculum/upload — TYLKO storage upload + DB record
+// Stage 2: POST /api/curriculum/extract-text — download ze Storage + unpdf/mammoth + save text do DB
+// Stage 3: POST /api/curriculum/extract-chunks — read text z DB + chunk + insert chunks (BEZ embeddingów)
+// Stage 4: POST /api/curriculum/embed-chunks — embeddingi w pętli (max 5 batchy/call, frontend loop)
 // POST /api/curriculum/suggest-topic (auto-detekcja tematu z AI)
 // Pipeline: src/lib/documents/ (extract.ts, chunk.ts, process.ts)
+// Chunking: fixed-size 2000 chars, 300 overlap, safeguard max 5000 chunków (auto-scale)
 // DAL: src/lib/dal/source-documents.ts (CRUD + semantic search)
 // DB: course_source_documents + course_source_chunks (HNSW index)
 // Statusy: pending → processing → extracted → completed | failed
 // embedChunks(docId, supabase?, maxBatches?) — default 5 (250 chunków/call)
 // withRetry() — exponential backoff (max 2 retry) na OpenAI embedding API
 // Partial save — embedding per batch, nie zbiorczy (odporność na awarie)
-// Frontend: useFileUpload.ts — pętla embed aż remainingCount===0, dynamiczny progress
+// Frontend: useFileUpload.ts — 4-stage pipeline + safeResponseJson() (obsługa non-JSON 504)
 // Retry UI: przycisk "Ponów" (RotateCw) + retryEmbedding callback
 // RPC: search_source_chunks_semantic(course_id, embedding, threshold, count)
 // Storage bucket: course-materials (private, 50MB limit)
@@ -141,6 +144,7 @@ sendMessage({ text: 'Wyjaśnij ten diagram', files: dt.files });
 // unpdf: extractText() dla PDF (serverless-friendly, zastępuje pdfjs-dist)
 // mammoth: extractRawText({ buffer }) dla DOCX
 // WAŻNE: serverExternalPackages w next.config.ts (mammoth)
+// Przetestowane: 4.1MB PDF (174k słów) → 750 chunków, pełny pipeline < 3 min
 ```
 
 ### Shared Chat Utilities

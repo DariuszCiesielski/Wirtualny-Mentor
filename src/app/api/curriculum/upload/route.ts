@@ -1,9 +1,8 @@
 /**
- * Document Upload API (Stage 1)
+ * Document Upload API (Stage 1 of 4)
  *
- * Handles file upload for course materials (PDF, DOCX, TXT).
- * Uploads to Supabase Storage, extracts text, and chunks (WITHOUT embeddings).
- * Frontend should call /api/curriculum/embed-chunks after this completes.
+ * ONLY uploads file to Supabase Storage and creates a DB record.
+ * Text extraction is handled by /api/curriculum/extract-text.
  *
  * POST /api/curriculum/upload
  * FormData: file, courseId? (optional)
@@ -12,10 +11,8 @@
 import { createClient } from '@/lib/supabase/server';
 import { getUser } from '@/lib/dal/auth';
 import { createSourceDocument } from '@/lib/dal/source-documents';
-import { extractAndChunk } from '@/lib/documents/process';
-import type { SourceFileType, UploadedSourceFile } from '@/types/source-documents';
+import type { SourceFileType } from '@/types/source-documents';
 
-// Must be nodejs runtime for mammoth/unpdf (Buffer)
 export const runtime = 'nodejs';
 export const maxDuration = 60;
 
@@ -42,7 +39,6 @@ export async function POST(req: Request) {
       return Response.json({ error: 'Brak pliku' }, { status: 400 });
     }
 
-    // Validate file type
     const fileType = ALLOWED_TYPES[file.type];
     if (!fileType) {
       return Response.json(
@@ -51,7 +47,6 @@ export async function POST(req: Request) {
       );
     }
 
-    // Validate file size
     if (file.size > MAX_FILE_SIZE) {
       return Response.json(
         { error: `Plik za duży (max ${MAX_FILE_SIZE / 1024 / 1024}MB)` },
@@ -59,14 +54,14 @@ export async function POST(req: Request) {
       );
     }
 
-    // Read file to buffer
     const arrayBuffer = await file.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
 
-    // Upload to Supabase Storage
     const supabase = await createClient();
     const sanitizedName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_');
     const storagePath = `${user.id}/${crypto.randomUUID()}_${sanitizedName}`;
+
+    console.log(`[Upload] Uploading ${file.name} (${(file.size / 1024 / 1024).toFixed(1)}MB) to storage`);
 
     const { error: uploadError } = await supabase.storage
       .from('course-materials')
@@ -79,7 +74,6 @@ export async function POST(req: Request) {
       throw new Error(`Storage upload failed: ${uploadError.message}`);
     }
 
-    // Create document record
     const doc = await createSourceDocument(user.id, {
       course_id: courseId || null,
       filename: file.name,
@@ -88,37 +82,14 @@ export async function POST(req: Request) {
       storage_path: storagePath,
     });
 
-    // Stage 1: Extract text + chunk (no embeddings) — fits within 60s
-    try {
-      const { chunkCount, wordCount } = await extractAndChunk(
-        doc.id, buffer, fileType, courseId, supabase
-      );
+    console.log(`[Upload] Done: ${doc.id} (${file.name})`);
 
-      const result: UploadedSourceFile = {
-        documentId: doc.id,
-        filename: file.name,
-        fileType,
-        fileSize: file.size,
-        processingStatus: 'extracted',
-        wordCount,
-        chunkCount,
-        extractedTextPreview: undefined, // fetched by frontend if needed
-      };
-
-      return Response.json(result);
-    } catch (processError) {
-      const errorMessage = processError instanceof Error ? processError.message : 'Unknown processing error';
-      console.error('[Upload] Processing failed:', errorMessage, processError);
-      const result: UploadedSourceFile = {
-        documentId: doc.id,
-        filename: file.name,
-        fileType,
-        fileSize: file.size,
-        processingStatus: 'failed',
-        processingError: errorMessage,
-      };
-      return Response.json(result);
-    }
+    return Response.json({
+      documentId: doc.id,
+      filename: file.name,
+      fileType,
+      fileSize: file.size,
+    });
   } catch (error) {
     console.error('[Upload] Error:', error);
     return Response.json(

@@ -1,13 +1,11 @@
 /**
  * useFileUpload - Custom hook for managing file uploads during course creation
  *
- * Two-stage processing:
- * 1. Upload + extract + chunk (no embeddings) via /api/curriculum/upload
- * 2. Embed chunks via /api/curriculum/embed-chunks (looped for large files)
- *
- * Stage 2 supports chunked embedding — calls embed-chunks in a loop,
- * each call processes up to 250 chunks (~15-25s), with real progress tracking.
- * Falls back to polling if embed request fails/times out.
+ * Four-stage processing (each fits within Vercel's 60s limit):
+ * 1. Upload file to storage via /api/curriculum/upload (~10s)
+ * 2. Extract text via /api/curriculum/extract-text (~40-55s for large PDFs)
+ * 3. Chunk text via /api/curriculum/extract-chunks (~5-10s)
+ * 4. Embed chunks via /api/curriculum/embed-chunks (looped, ~15-25s/batch)
  */
 
 import { useState, useCallback, useRef, useEffect } from "react";
@@ -15,12 +13,32 @@ import { createClient } from "@/lib/supabase/client";
 import type {
   FileProcessingState,
   FileUploadStatus,
-  UploadedSourceFile,
 } from "@/types/source-documents";
 
 const MAX_FILES = 10;
-
 const POLL_INTERVAL = 2000;
+
+interface UploadResponse {
+  documentId: string;
+  filename: string;
+  fileType: string;
+  fileSize: number;
+}
+
+interface ExtractTextResponse {
+  documentId: string;
+  wordCount?: number;
+  pageCount?: number;
+  alreadyExtracted?: boolean;
+}
+
+interface ChunkResponse {
+  documentId: string;
+  chunkCount?: number;
+  wordCount?: number;
+  status: string;
+  alreadyProcessed?: boolean;
+}
 
 interface EmbedChunksResponse {
   documentId: string;
@@ -30,11 +48,26 @@ interface EmbedChunksResponse {
   totalChunks: number;
 }
 
+/**
+ * Safe JSON parse from Response — handles non-JSON responses (e.g. Vercel 504 HTML).
+ */
+async function safeResponseJson<T>(response: Response): Promise<T> {
+  const text = await response.text();
+  try {
+    return JSON.parse(text) as T;
+  } catch {
+    throw new Error(
+      response.status >= 500
+        ? `Serwer zwrócił błąd ${response.status}. Spróbuj ponownie.`
+        : text.slice(0, 200)
+    );
+  }
+}
+
 export function useFileUpload() {
   const [files, setFiles] = useState<FileProcessingState[]>([]);
   const pollTimers = useRef<Map<string, ReturnType<typeof setInterval>>>(new Map());
 
-  // Cleanup polling on unmount
   useEffect(() => {
     return () => {
       pollTimers.current.forEach((timer) => clearInterval(timer));
@@ -93,9 +126,7 @@ export function useFileUpload() {
   );
 
   /**
-   * Stage 2: Call embed-chunks endpoint in a loop for chunked embedding.
-   * Each call processes up to 250 chunks (~15-25s). Loops until all done.
-   * Progress updates dynamically: 50% → ... → 95% → 100%.
+   * Stage 4: Embed chunks in a loop. Each call processes up to 250 chunks.
    * On failure, falls back to polling.
    */
   const embedDocument = useCallback(
@@ -104,8 +135,6 @@ export function useFileUpload() {
       let knownTotal = 0;
 
       try {
-        updateFileStatus(fileIndex, { status: "processing", progress: 50 });
-
         while (true) {
           const response = await fetch("/api/curriculum/embed-chunks", {
             method: "POST",
@@ -114,10 +143,11 @@ export function useFileUpload() {
           });
 
           if (!response.ok) {
-            throw new Error("Embed request failed");
+            const err = await safeResponseJson<{ error?: string }>(response);
+            throw new Error(err.error || "Embed request failed");
           }
 
-          const result: EmbedChunksResponse = await response.json();
+          const result = await safeResponseJson<EmbedChunksResponse>(response);
 
           totalEmbedded += result.embeddedCount;
           knownTotal = totalEmbedded + result.remainingCount;
@@ -130,15 +160,13 @@ export function useFileUpload() {
             return;
           }
 
-          // Update progress: map embedded/total to 50-95% range
           const embedProgress = knownTotal > 0
-            ? Math.round(50 + (totalEmbedded / knownTotal) * 45)
-            : 55;
+            ? Math.round(70 + (totalEmbedded / knownTotal) * 25)
+            : 75;
           updateFileStatus(fileIndex, { progress: embedProgress });
-          // Loop continues — next batch
         }
       } catch {
-        console.warn(`[useFileUpload] Embed failed for ${documentId} (embedded: ${totalEmbedded}), falling back to polling`);
+        console.warn(`[useFileUpload] Embed failed for ${documentId}, falling back to polling`);
         startPolling(documentId, fileIndex);
       }
     },
@@ -146,36 +174,102 @@ export function useFileUpload() {
   );
 
   /**
+   * Stage 3: Chunk text (reads extracted text from DB — fast).
+   */
+  const chunkDocument = useCallback(
+    async (documentId: string, fileIndex: number): Promise<boolean> => {
+      try {
+        updateFileStatus(fileIndex, { progress: 55 });
+
+        const response = await fetch("/api/curriculum/extract-chunks", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ documentId }),
+        });
+
+        if (!response.ok) {
+          const err = await safeResponseJson<{ error?: string }>(response);
+          throw new Error(err.error || "Chunking failed");
+        }
+
+        await safeResponseJson<ChunkResponse>(response);
+        updateFileStatus(fileIndex, { progress: 65 });
+        return true;
+      } catch (err) {
+        const message = err instanceof Error ? err.message : "Chunkowanie tekstu nie powiodło się";
+        updateFileStatus(fileIndex, { status: "error", progress: 100, error: message });
+        return false;
+      }
+    },
+    [updateFileStatus]
+  );
+
+  /**
+   * Stage 2: Extract text from uploaded file (downloads from Storage, uses unpdf/mammoth).
+   */
+  const extractText = useCallback(
+    async (documentId: string, fileIndex: number): Promise<boolean> => {
+      try {
+        updateFileStatus(fileIndex, { status: "processing", progress: 20 });
+
+        const response = await fetch("/api/curriculum/extract-text", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ documentId }),
+        });
+
+        if (!response.ok) {
+          const err = await safeResponseJson<{ error?: string }>(response);
+          throw new Error(err.error || "Text extraction failed");
+        }
+
+        const result = await safeResponseJson<ExtractTextResponse>(response);
+        updateFileStatus(fileIndex, { progress: 50, wordCount: result.wordCount });
+        return true;
+      } catch (err) {
+        const message = err instanceof Error ? err.message : "Ekstrakcja tekstu nie powiodła się";
+        updateFileStatus(fileIndex, { status: "error", progress: 100, error: message });
+        return false;
+      }
+    },
+    [updateFileStatus]
+  );
+
+  /**
    * Retry embedding for a file that previously failed or got stuck.
    */
   const retryEmbedding = useCallback(
     async (fileIndex: number) => {
-      const fileState = files[fileIndex];
-      if (!fileState?.documentId) return;
-      updateFileStatus(fileIndex, { status: "processing", progress: 50, error: undefined });
-      await embedDocument(fileState.documentId, fileIndex);
+      let documentId: string | undefined;
+      setFiles((prev) => {
+        documentId = prev[fileIndex]?.documentId;
+        return prev;
+      });
+
+      if (!documentId) return;
+      updateFileStatus(fileIndex, { status: "processing", progress: 65, error: undefined });
+      await embedDocument(documentId, fileIndex);
     },
-    [files, updateFileStatus, embedDocument]
+    [updateFileStatus, embedDocument]
   );
 
   const uploadFiles = useCallback(
     async (fileList: FileList | File[]) => {
       const newFiles = Array.from(fileList);
 
-      // Check total limit
+      let startIndex = 0;
       setFiles((prev) => {
         const totalCount = prev.length + newFiles.length;
         if (totalCount > MAX_FILES) {
           const slotsLeft = MAX_FILES - prev.length;
           newFiles.splice(slotsLeft);
         }
+        startIndex = prev.length;
         return prev;
       });
 
       if (newFiles.length === 0) return;
 
-      // Add files with 'uploading' status
-      const startIndex = files.length;
       const newEntries: FileProcessingState[] = newFiles.map((file) => ({
         file,
         status: "uploading" as FileUploadStatus,
@@ -184,67 +278,46 @@ export function useFileUpload() {
 
       setFiles((prev) => [...prev, ...newEntries]);
 
-      // Upload each file sequentially to avoid overwhelming the server
       for (let i = 0; i < newFiles.length; i++) {
         const fileIndex = startIndex + i;
         const file = newFiles[i];
 
         try {
-          updateFileStatus(fileIndex, { status: "uploading", progress: 10 });
+          // Stage 1: Upload to storage
+          updateFileStatus(fileIndex, { status: "uploading", progress: 5 });
 
           const formData = new FormData();
           formData.append("file", file);
 
-          updateFileStatus(fileIndex, { progress: 30 });
-
-          // Stage 1: Upload + extract + chunk
-          const response = await fetch("/api/curriculum/upload", {
+          const uploadResponse = await fetch("/api/curriculum/upload", {
             method: "POST",
             body: formData,
           });
 
-          if (!response.ok) {
-            const err = await response.json();
+          if (!uploadResponse.ok) {
+            const err = await safeResponseJson<{ error?: string }>(uploadResponse);
             throw new Error(err.error || "Upload failed");
           }
 
-          const result: UploadedSourceFile = await response.json();
+          const { documentId } = await safeResponseJson<UploadResponse>(uploadResponse);
 
-          if (result.processingStatus === "failed") {
-            updateFileStatus(fileIndex, {
-              status: "error",
-              progress: 100,
-              error: result.processingError || "Nie udało się przetworzyć pliku",
-              documentId: result.documentId,
-            });
-          } else if (result.processingStatus === "extracted") {
-            // Stage 1 done — trigger stage 2 (embedding loop)
-            updateFileStatus(fileIndex, {
-              status: "processing",
-              progress: 50,
-              documentId: result.documentId,
-              wordCount: result.wordCount,
-            });
-            // Don't await — let embedding happen while next file uploads
-            embedDocument(result.documentId, fileIndex);
-          } else if (result.processingStatus === "completed") {
-            // Both stages done (small file, fast processing)
-            updateFileStatus(fileIndex, {
-              status: "completed",
-              progress: 100,
-              documentId: result.documentId,
-              extractedTextPreview: result.extractedTextPreview,
-              wordCount: result.wordCount,
-            });
-          } else {
-            // processing/pending — poll for completion
-            updateFileStatus(fileIndex, {
-              status: "processing",
-              progress: 50,
-              documentId: result.documentId,
-            });
-            startPolling(result.documentId, fileIndex);
-          }
+          updateFileStatus(fileIndex, {
+            status: "processing",
+            progress: 15,
+            documentId,
+          });
+
+          // Stage 2: Extract text (downloads from Storage, heavy)
+          const extracted = await extractText(documentId, fileIndex);
+          if (!extracted) continue;
+
+          // Stage 3: Chunk text (reads from DB, fast)
+          const chunked = await chunkDocument(documentId, fileIndex);
+          if (!chunked) continue;
+
+          // Stage 4: Embed chunks (don't await — runs in background)
+          updateFileStatus(fileIndex, { status: "processing", progress: 70 });
+          embedDocument(documentId, fileIndex);
         } catch (err) {
           const message = err instanceof Error ? err.message : "Nieznany błąd";
           updateFileStatus(fileIndex, {
@@ -255,7 +328,7 @@ export function useFileUpload() {
         }
       }
     },
-    [files.length, updateFileStatus, startPolling, embedDocument]
+    [updateFileStatus, extractText, chunkDocument, embedDocument]
   );
 
   const removeFile = useCallback((index: number) => {

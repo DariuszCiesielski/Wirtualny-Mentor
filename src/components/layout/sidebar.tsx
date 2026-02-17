@@ -9,7 +9,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, BookOpen, FileText, User } from "lucide-react";
+import { Home, BookOpen, FileText, User, ShieldCheck } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const navItems = [
@@ -39,8 +39,26 @@ const navItems = [
   },
 ];
 
-export function Sidebar() {
+interface SidebarProps {
+  isAdmin?: boolean;
+}
+
+export function Sidebar({ isAdmin = false }: SidebarProps) {
   const pathname = usePathname();
+
+  const allNavItems = [
+    ...navItems,
+    ...(isAdmin
+      ? [
+          {
+            label: "Administracja",
+            href: "/admin",
+            icon: ShieldCheck,
+            disabled: false,
+          },
+        ]
+      : []),
+  ];
 
   return (
     <aside className="fixed left-0 top-0 z-40 hidden h-screen w-60 border-r bg-background lg:block">
@@ -54,7 +72,7 @@ export function Sidebar() {
 
         {/* Navigation */}
         <nav className="flex-1 space-y-1 p-4">
-          {navItems.map((item) => {
+          {allNavItems.map((item) => {
             const isActive =
               pathname === item.href ||
               (item.href !== "/dashboard" && pathname.startsWith(item.href));

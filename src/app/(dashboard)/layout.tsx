@@ -5,7 +5,7 @@
  * Includes sidebar navigation and header.
  */
 
-import { requireAuth } from "@/lib/dal/auth";
+import { requireAllowedUser } from "@/lib/dal/auth";
 import { Sidebar } from "@/components/layout/sidebar";
 import { Header } from "@/components/layout/header";
 import { MobileNav } from "@/components/layout/mobile-nav";
@@ -15,8 +15,9 @@ export default async function DashboardLayout({
 }: {
   children: React.ReactNode;
 }) {
-  // This will redirect to /login if not authenticated
-  const user = await requireAuth();
+  // Redirects to /login if not authenticated, /unauthorized if not on whitelist
+  const { user, role } = await requireAllowedUser();
+  const isAdmin = role === "admin";
 
   const fullName = user.user_metadata?.full_name as string | undefined;
   const avatarUrl = user.user_metadata?.avatar_url as string | undefined;
@@ -34,13 +35,13 @@ export default async function DashboardLayout({
   return (
     <div className="min-h-screen bg-background">
       {/* Sidebar - fixed on left */}
-      <Sidebar />
+      <Sidebar isAdmin={isAdmin} />
 
       {/* Main content area - offset by sidebar width on desktop */}
       <div className="lg:pl-60">
         {/* Mobile nav - visible only on small screens */}
         <div className="fixed left-0 top-0 z-50 p-2 lg:hidden">
-          <MobileNav />
+          <MobileNav isAdmin={isAdmin} />
         </div>
 
         {/* Header - sticky at top */}

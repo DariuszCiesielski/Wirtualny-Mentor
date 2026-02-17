@@ -16,7 +16,6 @@ import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
@@ -107,14 +106,6 @@ export function LoginForm({ message }: LoginFormProps) {
         </form>
       </CardContent>
 
-      <CardFooter className="justify-center">
-        <p className="text-sm text-muted-foreground">
-          Nie masz konta?{" "}
-          <Link href="/sign-up" className="text-primary hover:underline">
-            Zarejestruj się
-          </Link>
-        </p>
-      </CardFooter>
     </Card>
   );
 }

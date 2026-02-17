@@ -13,10 +13,12 @@
  */
 
 import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
 import { cache } from "react";
 import type { User } from "@supabase/supabase-js";
+import type { UserRole, UserAccessResult } from "@/types/admin";
 
 // Check if mock auth is enabled
 function isMockAuth(): boolean {
@@ -137,4 +139,95 @@ export async function verifySession(): Promise<User> {
   }
 
   return user;
+}
+
+// ============================================================================
+// WHITELIST / ACCESS CONTROL
+// ============================================================================
+
+/**
+ * Check if the authenticated user is on the whitelist and get their role.
+ *
+ * Queries wm_allowed_users by email. If the entry exists but user_id is null
+ * (e.g. admin added user before they registered), syncs the user_id.
+ *
+ * Cached per-request via React cache().
+ */
+export const getUserAccess = cache(
+  async (): Promise<UserAccessResult> => {
+    const user = await getUser();
+
+    if (!user?.email) {
+      return { hasAccess: false, role: null, allowedUserId: null };
+    }
+
+    // Mock auth mode — treat all mock users as admin
+    if (isMockAuth()) {
+      return { hasAccess: true, role: "admin", allowedUserId: user.id };
+    }
+
+    const supabase = await createClient();
+
+    const { data, error } = await supabase
+      .from("wm_allowed_users")
+      .select("id, role, user_id")
+      .eq("email", user.email)
+      .maybeSingle();
+
+    if (error || !data) {
+      return { hasAccess: false, role: null, allowedUserId: null };
+    }
+
+    // Sync user_id on first login (entry was created before user registered)
+    if (!data.user_id) {
+      const admin = createAdminClient();
+      await admin
+        .from("wm_allowed_users")
+        .update({ user_id: user.id })
+        .eq("id", data.id);
+    }
+
+    return {
+      hasAccess: true,
+      role: data.role as UserRole,
+      allowedUserId: data.id,
+    };
+  }
+);
+
+/**
+ * Require user to be authenticated AND on the whitelist.
+ *
+ * Redirects to /login if not authenticated, /unauthorized if not on whitelist.
+ */
+export async function requireAllowedUser(): Promise<{
+  user: User;
+  role: UserRole;
+  allowedUserId: string;
+}> {
+  const user = await requireAuth();
+  const access = await getUserAccess();
+
+  if (!access.hasAccess || !access.role || !access.allowedUserId) {
+    redirect("/unauthorized");
+  }
+
+  return { user, role: access.role, allowedUserId: access.allowedUserId };
+}
+
+/**
+ * Require admin role. Redirects to /unauthorized if not admin.
+ */
+export async function requireAdmin(): Promise<{
+  user: User;
+  role: "admin";
+  allowedUserId: string;
+}> {
+  const { user, role, allowedUserId } = await requireAllowedUser();
+
+  if (role !== "admin") {
+    redirect("/unauthorized");
+  }
+
+  return { user, role: "admin", allowedUserId };
 }

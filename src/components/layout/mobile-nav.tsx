@@ -11,7 +11,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Menu, Home, BookOpen, FileText, User } from 'lucide-react';
+import { Menu, Home, BookOpen, FileText, User, ShieldCheck } from 'lucide-react';
 import {
   Sheet,
   SheetContent,
@@ -49,9 +49,27 @@ const navItems = [
   },
 ];
 
-export function MobileNav() {
+interface MobileNavProps {
+  isAdmin?: boolean;
+}
+
+export function MobileNav({ isAdmin = false }: MobileNavProps) {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
+
+  const allNavItems = [
+    ...navItems,
+    ...(isAdmin
+      ? [
+          {
+            label: 'Administracja',
+            href: '/admin',
+            icon: ShieldCheck,
+            disabled: false,
+          },
+        ]
+      : []),
+  ];
 
   return (
     <Sheet open={open} onOpenChange={setOpen}>
@@ -73,7 +91,7 @@ export function MobileNav() {
         </SheetHeader>
 
         <nav className="flex-1 space-y-1 p-4">
-          {navItems.map((item) => {
+          {allNavItems.map((item) => {
             const isActive =
               pathname === item.href ||
               (item.href !== '/dashboard' && pathname.startsWith(item.href));

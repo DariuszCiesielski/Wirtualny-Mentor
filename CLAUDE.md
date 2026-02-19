@@ -136,7 +136,11 @@ sendMessage({ text: 'Wyjaśnij ten diagram', files: dt.files });
 // withRetry() — exponential backoff (max 2 retry) na OpenAI embedding API
 // Partial save — embedding per batch, nie zbiorczy (odporność na awarie)
 // Frontend: useFileUpload.ts — 4-stage pipeline + safeResponseJson() (obsługa non-JSON 504)
-// Retry UI: przycisk "Ponów" (RotateCw) + retryEmbedding callback
+// Sanityzacja tekstu: sanitizeForPostgres() w extract.ts — usuwa \u0000, C0 control chars
+// Persist: useFileUpload ładuje niezlinkowane dokumenty z DB przy mount (przetrwają F5)
+// Retry UI: przycisk "Ponów" (RotateCw) + retryProcessing (od dowolnego etapu)
+// Remove: removeFile kasuje z DB + Storage (deleteDocumentFromDB, fire-and-forget)
+// extract-chunks idempotentny: usuwa stare chunki przed ponownym insertem
 // RPC: search_source_chunks_semantic(course_id, embedding, threshold, count)
 // Storage bucket: course-materials (private, 50MB limit)
 // course_source_documents.course_id nullable (upload przed utworzeniem kursu)
@@ -146,6 +150,7 @@ sendMessage({ text: 'Wyjaśnij ten diagram', files: dt.files });
 // mammoth: extractRawText({ buffer }) dla DOCX
 // WAŻNE: serverExternalPackages w next.config.ts (mammoth)
 // Przetestowane: 4.1MB PDF (174k słów) → 750 chunków, pełny pipeline < 3 min
+// Przetestowane: 36-49MB PDF — sanityzacja Unicode, retry, persist, usuwanie z DB
 ```
 
 ### Shared Chat Utilities

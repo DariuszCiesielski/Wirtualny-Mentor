@@ -95,7 +95,10 @@ export interface UploadedSourceFile {
 export type FileUploadStatus = 'uploading' | 'processing' | 'completed' | 'error';
 
 export interface FileProcessingState {
-  file: File;
+  file?: File; // Not present for DB-loaded documents
+  filename: string;
+  fileSize: number;
+  fileType: string; // MIME type or extension for icon display
   documentId?: string;
   status: FileUploadStatus;
   progress: number; // 0-100

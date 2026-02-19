@@ -45,10 +45,10 @@ function formatFileSize(bytes: number): string {
 }
 
 function FileIcon({ type }: { type: string }) {
-  if (type === "application/pdf" || type.endsWith(".pdf")) {
+  if (type === "application/pdf" || type.endsWith(".pdf") || type === "pdf") {
     return <FileText className="h-4 w-4 text-red-500" />;
   }
-  if (type.includes("wordprocessingml") || type.endsWith(".docx")) {
+  if (type.includes("wordprocessingml") || type.endsWith(".docx") || type === "docx") {
     return <FileType className="h-4 w-4 text-blue-500" />;
   }
   return <FileText className="h-4 w-4 text-gray-500" />;
@@ -190,20 +190,20 @@ export function FileUploadZone({
         <div className="space-y-2">
           {files.map((fileState, index) => (
             <div
-              key={`${fileState.file.name}-${index}`}
+              key={fileState.documentId || `${fileState.filename}-${index}`}
               className={cn(
                 "flex items-center gap-3 rounded-lg border p-3",
                 fileState.status === "error" && "border-destructive/50 bg-destructive/5"
               )}
             >
-              <FileIcon type={fileState.file.type || fileState.file.name} />
+              <FileIcon type={fileState.fileType} />
 
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-medium truncate">
-                  {fileState.file.name}
+                  {fileState.filename}
                 </p>
                 <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                  <span>{formatFileSize(fileState.file.size)}</span>
+                  <span>{formatFileSize(fileState.fileSize)}</span>
                   {fileState.wordCount && (
                     <>
                       <span>|</span>

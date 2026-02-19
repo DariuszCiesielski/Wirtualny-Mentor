@@ -7,6 +7,8 @@
  * 2. Extract text via /api/curriculum/extract-text (~40-55s for large PDFs)
  * 3. Chunk text via /api/curriculum/extract-chunks (~5-10s)
  * 4. Embed chunks via /api/curriculum/embed-chunks (looped, ~15-25s/batch)
+ *
+ * Persists across page refreshes: loads unlinked documents from DB on mount.
  */
 
 import { useState, useCallback, useRef, useEffect } from "react";
@@ -34,6 +36,21 @@ function detectFileType(mimeType: string, filename: string): SourceFileType | nu
   if (ext === "docx") return "docx";
   if (ext === "txt") return "txt";
   return null;
+}
+
+/** Map DB processing_status to UI status */
+function mapDbStatus(
+  dbStatus: string
+): { status: FileUploadStatus; progress: number } {
+  switch (dbStatus) {
+    case "completed":
+      return { status: "completed", progress: 100 };
+    case "failed":
+      return { status: "error", progress: 100 };
+    default:
+      // pending, processing, extracted — still in progress
+      return { status: "processing", progress: 50 };
+  }
 }
 
 interface UploadResponse {
@@ -85,6 +102,47 @@ async function safeResponseJson<T>(response: Response): Promise<T> {
 export function useFileUpload() {
   const [files, setFiles] = useState<FileProcessingState[]>([]);
   const pollTimers = useRef<Map<string, ReturnType<typeof setInterval>>>(new Map());
+  const loadedRef = useRef(false);
+
+  // Load existing unlinked documents from DB on mount
+  useEffect(() => {
+    if (loadedRef.current) return;
+    loadedRef.current = true;
+
+    const loadExistingDocuments = async () => {
+      try {
+        const supabase = createClient();
+        const { data: docs } = await supabase
+          .from("course_source_documents")
+          .select("id, filename, file_type, file_size, processing_status, processing_error, text_summary, word_count")
+          .is("course_id", null)
+          .order("created_at", { ascending: true });
+
+        if (!docs || docs.length === 0) return;
+
+        const existing: FileProcessingState[] = docs.map((doc) => {
+          const { status, progress } = mapDbStatus(doc.processing_status);
+          return {
+            filename: doc.filename,
+            fileSize: doc.file_size,
+            fileType: doc.file_type,
+            documentId: doc.id,
+            status,
+            progress,
+            error: doc.processing_error ?? undefined,
+            extractedTextPreview: doc.text_summary?.slice(0, 200),
+            wordCount: doc.word_count ?? undefined,
+          };
+        });
+
+        setFiles(existing);
+      } catch (err) {
+        console.warn("[useFileUpload] Failed to load existing documents:", err);
+      }
+    };
+
+    loadExistingDocuments();
+  }, []);
 
   useEffect(() => {
     return () => {
@@ -254,9 +312,10 @@ export function useFileUpload() {
   );
 
   /**
-   * Retry embedding for a file that previously failed or got stuck.
+   * Retry processing from the beginning (extract → chunk → embed).
+   * Each stage is idempotent: skips work already completed.
    */
-  const retryEmbedding = useCallback(
+  const retryProcessing = useCallback(
     async (fileIndex: number) => {
       let documentId: string | undefined;
       setFiles((prev) => {
@@ -265,10 +324,19 @@ export function useFileUpload() {
       });
 
       if (!documentId) return;
-      updateFileStatus(fileIndex, { status: "processing", progress: 65, error: undefined });
-      await embedDocument(documentId, fileIndex);
+      updateFileStatus(fileIndex, { status: "processing", progress: 15, error: undefined });
+
+      // Re-run all stages — each skips if already done
+      const extracted = await extractText(documentId, fileIndex);
+      if (!extracted) return;
+
+      const chunked = await chunkDocument(documentId, fileIndex);
+      if (!chunked) return;
+
+      updateFileStatus(fileIndex, { status: "processing", progress: 70 });
+      embedDocument(documentId, fileIndex);
     },
-    [updateFileStatus, embedDocument]
+    [updateFileStatus, extractText, chunkDocument, embedDocument]
   );
 
   const uploadFiles = useCallback(
@@ -290,6 +358,9 @@ export function useFileUpload() {
 
       const newEntries: FileProcessingState[] = newFiles.map((file) => ({
         file,
+        filename: file.name,
+        fileSize: file.size,
+        fileType: file.type || file.name,
         status: "uploading" as FileUploadStatus,
         progress: 0,
       }));
@@ -405,7 +476,7 @@ export function useFileUpload() {
     files,
     uploadFiles,
     removeFile,
-    retryEmbedding,
+    retryProcessing,
     isProcessing,
     completedDocumentIds,
     hasFiles,

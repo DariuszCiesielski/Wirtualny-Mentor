@@ -43,7 +43,7 @@ export function TopicInput({ onSubmit, isLoading = false }: TopicInputProps) {
     files,
     uploadFiles,
     removeFile,
-    retryEmbedding,
+    retryProcessing,
     isProcessing,
     completedDocumentIds,
     hasFiles,
@@ -162,7 +162,7 @@ export function TopicInput({ onSubmit, isLoading = false }: TopicInputProps) {
               files={files}
               onFilesSelected={(fileList) => uploadFiles(fileList)}
               onFileRemoved={removeFile}
-              onRetry={retryEmbedding}
+              onRetry={retryProcessing}
               isProcessing={isProcessing}
               disabled={isLoading}
             />

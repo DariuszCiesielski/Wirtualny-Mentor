@@ -43,8 +43,8 @@ export async function POST(req: Request) {
       return Response.json({ error: 'Dokument nie znaleziony' }, { status: 404 });
     }
 
-    // Already has chunks — skip
-    if (doc.processing_status === 'extracted' || doc.processing_status === 'completed') {
+    // Already has chunks and completed — skip
+    if (doc.processing_status === 'completed') {
       return Response.json({
         documentId: doc.id,
         status: doc.processing_status,
@@ -58,6 +58,16 @@ export async function POST(req: Request) {
         { error: 'Brak wyekstrahowanego tekstu. Plik mógł nie zostać poprawnie przetworzony.' },
         { status: 400 }
       );
+    }
+
+    // Delete existing chunks (idempotency for retry after partial failure)
+    const { error: deleteError } = await supabase
+      .from('course_source_chunks')
+      .delete()
+      .eq('document_id', documentId);
+
+    if (deleteError) {
+      console.warn(`[ExtractChunks] Failed to clean old chunks: ${deleteError.message}`);
     }
 
     // Chunk the extracted text (fast — pure string processing)

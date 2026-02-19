@@ -461,7 +461,50 @@ export function useFileUpload() {
   );
 
   const removeFile = useCallback((index: number) => {
-    setFiles((prev) => prev.filter((_, i) => i !== index));
+    // Get documentId before removing from state
+    let documentId: string | undefined;
+    setFiles((prev) => {
+      documentId = prev[index]?.documentId;
+      return prev.filter((_, i) => i !== index);
+    });
+
+    // Delete from DB + Storage in background (fire-and-forget)
+    if (documentId) {
+      const docId = documentId;
+      (async () => {
+        try {
+          const supabase = createClient();
+
+          // Get storage_path before deleting DB record
+          const { data: doc } = await supabase
+            .from("course_source_documents")
+            .select("storage_path")
+            .eq("id", docId)
+            .single();
+
+          // Delete chunks first (CASCADE should handle it, but be explicit)
+          await supabase
+            .from("course_source_chunks")
+            .delete()
+            .eq("document_id", docId);
+
+          // Delete DB record
+          await supabase
+            .from("course_source_documents")
+            .delete()
+            .eq("id", docId);
+
+          // Delete file from Storage
+          if (doc?.storage_path) {
+            await supabase.storage
+              .from("course-materials")
+              .remove([doc.storage_path]);
+          }
+        } catch (err) {
+          console.warn("[useFileUpload] Failed to delete document from DB:", err);
+        }
+      })();
+    }
   }, []);
 
   const isProcessing = files.some(

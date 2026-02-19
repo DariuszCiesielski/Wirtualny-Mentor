@@ -101,6 +101,45 @@ async function safeResponseJson<T>(response: Response): Promise<T> {
   }
 }
 
+/** Delete document, its chunks, and storage file. Fire-and-forget. */
+function deleteDocumentFromDB(docId: string) {
+  (async () => {
+    try {
+      const supabase = createClient();
+
+      // Get storage_path before deleting DB record
+      const { data: doc } = await supabase
+        .from("course_source_documents")
+        .select("storage_path")
+        .eq("id", docId)
+        .single();
+
+      // Delete chunks (CASCADE should handle it, but be explicit)
+      await supabase
+        .from("course_source_chunks")
+        .delete()
+        .eq("document_id", docId);
+
+      // Delete DB record
+      await supabase
+        .from("course_source_documents")
+        .delete()
+        .eq("id", docId);
+
+      // Delete file from Storage
+      if (doc?.storage_path) {
+        await supabase.storage
+          .from("course-materials")
+          .remove([doc.storage_path]);
+      }
+
+      console.log(`[useFileUpload] Deleted document ${docId} from DB + Storage`);
+    } catch (err) {
+      console.error("[useFileUpload] Failed to delete document from DB:", err);
+    }
+  })();
+}
+
 export function useFileUpload() {
   const [files, setFiles] = useState<FileProcessingState[]>([]);
   const pollTimers = useRef<Map<string, ReturnType<typeof setInterval>>>(new Map());
@@ -461,50 +500,16 @@ export function useFileUpload() {
   );
 
   const removeFile = useCallback((index: number) => {
-    // Get documentId before removing from state
-    let documentId: string | undefined;
     setFiles((prev) => {
-      documentId = prev[index]?.documentId;
+      const fileToRemove = prev[index];
+
+      // Delete from DB + Storage in background
+      if (fileToRemove?.documentId) {
+        deleteDocumentFromDB(fileToRemove.documentId);
+      }
+
       return prev.filter((_, i) => i !== index);
     });
-
-    // Delete from DB + Storage in background (fire-and-forget)
-    if (documentId) {
-      const docId = documentId;
-      (async () => {
-        try {
-          const supabase = createClient();
-
-          // Get storage_path before deleting DB record
-          const { data: doc } = await supabase
-            .from("course_source_documents")
-            .select("storage_path")
-            .eq("id", docId)
-            .single();
-
-          // Delete chunks first (CASCADE should handle it, but be explicit)
-          await supabase
-            .from("course_source_chunks")
-            .delete()
-            .eq("document_id", docId);
-
-          // Delete DB record
-          await supabase
-            .from("course_source_documents")
-            .delete()
-            .eq("id", docId);
-
-          // Delete file from Storage
-          if (doc?.storage_path) {
-            await supabase.storage
-              .from("course-materials")
-              .remove([doc.storage_path]);
-          }
-        } catch (err) {
-          console.warn("[useFileUpload] Failed to delete document from DB:", err);
-        }
-      })();
-    }
   }, []);
 
   const isProcessing = files.some(

@@ -2,7 +2,8 @@
  * useFileUpload - Custom hook for managing file uploads during course creation
  *
  * Four-stage processing (each fits within Vercel's 60s limit):
- * 1. Upload file to storage via /api/curriculum/upload (~10s)
+ * 1. Upload file directly to Supabase Storage from browser (bypasses Vercel 4.5MB limit)
+ *    + register metadata via /api/curriculum/register-document
  * 2. Extract text via /api/curriculum/extract-text (~40-55s for large PDFs)
  * 3. Chunk text via /api/curriculum/extract-chunks (~5-10s)
  * 4. Embed chunks via /api/curriculum/embed-chunks (looped, ~15-25s/batch)
@@ -13,10 +14,27 @@ import { createClient } from "@/lib/supabase/client";
 import type {
   FileProcessingState,
   FileUploadStatus,
+  SourceFileType,
 } from "@/types/source-documents";
 
 const MAX_FILES = 10;
+const MAX_FILE_SIZE = 50 * 1024 * 1024; // 50MB
 const POLL_INTERVAL = 2000;
+
+const ALLOWED_TYPES: Record<string, SourceFileType> = {
+  "application/pdf": "pdf",
+  "application/vnd.openxmlformats-officedocument.wordprocessingml.document": "docx",
+  "text/plain": "txt",
+};
+
+function detectFileType(mimeType: string, filename: string): SourceFileType | null {
+  if (ALLOWED_TYPES[mimeType]) return ALLOWED_TYPES[mimeType];
+  const ext = filename.split(".").pop()?.toLowerCase();
+  if (ext === "pdf") return "pdf";
+  if (ext === "docx") return "docx";
+  if (ext === "txt") return "txt";
+  return null;
+}
 
 interface UploadResponse {
   documentId: string;
@@ -283,23 +301,61 @@ export function useFileUpload() {
         const file = newFiles[i];
 
         try {
-          // Stage 1: Upload to storage
-          updateFileStatus(fileIndex, { status: "uploading", progress: 5 });
+          // Stage 1a: Validate & upload directly to Supabase Storage
+          updateFileStatus(fileIndex, { status: "uploading", progress: 3 });
 
-          const formData = new FormData();
-          formData.append("file", file);
-
-          const uploadResponse = await fetch("/api/curriculum/upload", {
-            method: "POST",
-            body: formData,
-          });
-
-          if (!uploadResponse.ok) {
-            const err = await safeResponseJson<{ error?: string }>(uploadResponse);
-            throw new Error(err.error || "Upload failed");
+          const fileType = detectFileType(file.type, file.name);
+          if (!fileType) {
+            throw new Error(`Nieobsługiwany typ pliku. Dozwolone: PDF, DOCX, TXT`);
+          }
+          if (file.size > MAX_FILE_SIZE) {
+            throw new Error(`Plik za duży (max ${MAX_FILE_SIZE / 1024 / 1024}MB)`);
           }
 
-          const { documentId } = await safeResponseJson<UploadResponse>(uploadResponse);
+          const supabase = createClient();
+          const { data: { user } } = await supabase.auth.getUser();
+          if (!user) {
+            throw new Error("Musisz być zalogowany aby przesyłać pliki");
+          }
+
+          const sanitizedName = file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
+          const storagePath = `${user.id}/${crypto.randomUUID()}_${sanitizedName}`;
+
+          updateFileStatus(fileIndex, { progress: 5 });
+
+          const { error: storageError } = await supabase.storage
+            .from("course-materials")
+            .upload(storagePath, file, {
+              contentType: file.type,
+              upsert: false,
+            });
+
+          if (storageError) {
+            throw new Error(`Błąd przesyłania: ${storageError.message}`);
+          }
+
+          updateFileStatus(fileIndex, { progress: 12 });
+
+          // Stage 1b: Register metadata in DB (JSON, ~200 bytes)
+          const registerResponse = await fetch("/api/curriculum/register-document", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              filename: file.name,
+              fileType,
+              fileSize: file.size,
+              storagePath,
+            }),
+          });
+
+          if (!registerResponse.ok) {
+            // Cleanup orphaned file from Storage
+            await supabase.storage.from("course-materials").remove([storagePath]);
+            const err = await safeResponseJson<{ error?: string }>(registerResponse);
+            throw new Error(err.error || "Rejestracja dokumentu nie powiodła się");
+          }
+
+          const { documentId } = await safeResponseJson<UploadResponse>(registerResponse);
 
           updateFileStatus(fileIndex, {
             status: "processing",

@@ -121,7 +121,8 @@ sendMessage({ text: 'Wyjaśnij ten diagram', files: dt.files });
 
 ```typescript
 // 4-etapowy pipeline (każdy endpoint < 60s — Vercel Hobby limit):
-// Stage 1: POST /api/curriculum/upload — TYLKO storage upload + DB record
+// Stage 1: Direct upload z przeglądarki do Supabase Storage (omija Vercel 4.5MB body limit)
+//          + POST /api/curriculum/register-document — JSON z metadanymi → DB record
 // Stage 2: POST /api/curriculum/extract-text — download ze Storage + unpdf/mammoth + save text do DB
 // Stage 3: POST /api/curriculum/extract-chunks — read text z DB + chunk + insert chunks (BEZ embeddingów)
 // Stage 4: POST /api/curriculum/embed-chunks — embeddingi w pętli (max 5 batchy/call, frontend loop)

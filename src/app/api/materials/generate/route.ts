@@ -72,10 +72,10 @@ Tematy do pokrycia: ${topics.join(', ')}
 ${courseContext ? `Kontekst kursu: ${courseContext}` : ''}
 
 Wyszukaj:
-1. Oficjalna dokumentacje
-2. Praktyczne tutoriale
-3. Narzedzia i ich linki instalacyjne
-4. Przyklady kodu/komend
+1. Wiarygodne zrodla na temat
+2. Praktyczne poradniki i materialy
+3. Przydatne narzedzia i zasoby
+4. Przyklady i cwiczenia
 
 Uzyj narzedzia searchResources dla kazdego tematu.`,
     tools: materialGenerationTools,

@@ -99,7 +99,7 @@ export const OFFICIAL_CURRICULA_SEARCH_PROMPT = `Wyszukaj oficjalne programy nau
 Szukaj:
 - Programow nauczania MEN (Ministerstwo Edukacji)
 - Programow studiow uczelnianych
-- Certyfikacji branowych (np. AWS, Google, Microsoft)
+- Certyfikacji branzowych i zawodowych
 - Standardow PRK (Polska Rama Kwalifikacji)
 - Wymagan rynku pracy
 

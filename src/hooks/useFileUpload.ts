@@ -38,18 +38,20 @@ function detectFileType(mimeType: string, filename: string): SourceFileType | nu
   return null;
 }
 
-/** Map DB processing_status to UI status */
+/** Map DB processing_status to UI status for documents loaded on mount.
+ *  Non-completed docs show as error with retry button (pipeline was interrupted). */
 function mapDbStatus(
-  dbStatus: string
-): { status: FileUploadStatus; progress: number } {
+  dbStatus: string,
+  dbError?: string | null
+): { status: FileUploadStatus; progress: number; error?: string } {
   switch (dbStatus) {
     case "completed":
       return { status: "completed", progress: 100 };
     case "failed":
-      return { status: "error", progress: 100 };
+      return { status: "error", progress: 100, error: dbError || "Przetwarzanie nie powiodło się" };
     default:
-      // pending, processing, extracted — still in progress
-      return { status: "processing", progress: 50 };
+      // pending, processing, extracted — interrupted, user can click retry
+      return { status: "error", progress: 100, error: "Przetwarzanie przerwane — kliknij ponów" };
   }
 }
 
@@ -121,15 +123,15 @@ export function useFileUpload() {
         if (!docs || docs.length === 0) return;
 
         const existing: FileProcessingState[] = docs.map((doc) => {
-          const { status, progress } = mapDbStatus(doc.processing_status);
+          const mapped = mapDbStatus(doc.processing_status, doc.processing_error);
           return {
             filename: doc.filename,
             fileSize: doc.file_size,
             fileType: doc.file_type,
             documentId: doc.id,
-            status,
-            progress,
-            error: doc.processing_error ?? undefined,
+            status: mapped.status,
+            progress: mapped.progress,
+            error: mapped.error,
             extractedTextPreview: doc.text_summary?.slice(0, 200),
             wordCount: doc.word_count ?? undefined,
           };

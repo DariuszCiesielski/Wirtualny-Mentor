@@ -27,7 +27,7 @@ import {
   MATERIAL_GENERATION_PROMPT,
   CONTENT_GENERATION_USER_PROMPT,
 } from '@/lib/ai/materials/prompts';
-import { saveSectionContent } from '@/lib/dal/materials';
+import { getSectionContent, saveSectionContent } from '@/lib/dal/materials';
 import { createClient } from '@/lib/supabase/server';
 
 // Request validation schema
@@ -37,7 +37,13 @@ const requestSchema = z.object({
   chapterDescription: z.string(),
   topics: z.array(z.string()),
   courseContext: z.string().optional(),
+  forceRegenerate: z.boolean().optional().default(false),
+  regenerationMode: z.enum(['from_scratch', 'from_stage']).optional().default('from_scratch'),
+  startStage: z.enum(['searching', 'generating', 'saving']).optional().default('searching'),
+  regenerationInstructions: z.string().max(3000).optional().default(''),
 });
+
+type GenerationStartStage = 'searching' | 'generating' | 'saving';
 
 // SSE event types
 type SSEEvent =
@@ -59,6 +65,7 @@ async function runResearchPhase(
   chapterDescription: string,
   topics: string[],
   courseContext?: string,
+  regenerationInstructions?: string,
   onProgress?: (sourcesFound: number, message: string) => void
 ): Promise<CollectedSource[]> {
   console.log('[Materials] Starting research phase for:', chapterTitle);
@@ -70,6 +77,7 @@ async function runResearchPhase(
 Opis: ${chapterDescription}
 Tematy do pokrycia: ${topics.join(', ')}
 ${courseContext ? `Kontekst kursu: ${courseContext}` : ''}
+${regenerationInstructions ? `Dodatkowe wskazowki od uzytkownika (uwzglednij je przy doborze zrodel): ${regenerationInstructions}` : ''}
 
 Wyszukaj:
 1. Wiarygodne zrodla na temat
@@ -124,6 +132,18 @@ function processCollectedSources(sources: CollectedSource[], limit: number = 10)
   return uniqueSources.slice(0, limit);
 }
 
+function buildSourcesFromExistingContent(
+  existingContent: NonNullable<Awaited<ReturnType<typeof getSectionContent>>>
+): CollectedSource[] {
+  return (existingContent.sources || []).map((source, index) => ({
+    id: source.id || `prev-src-${index + 1}`,
+    title: source.title,
+    url: source.url,
+    content: source.snippet?.trim() || `${source.title}\nURL: ${source.url}`,
+    type: source.type,
+  }));
+}
+
 export async function POST(request: NextRequest) {
   // Validate request first (before streaming)
   const body = await request.json();
@@ -136,7 +156,17 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const { chapterId, chapterTitle, chapterDescription, topics, courseContext } = parsed.data;
+  const {
+    chapterId,
+    chapterTitle,
+    chapterDescription,
+    topics,
+    courseContext,
+    forceRegenerate,
+    regenerationMode,
+    startStage,
+    regenerationInstructions,
+  } = parsed.data;
 
   // Verify user has access to this chapter
   const supabase = await createClient();
@@ -169,6 +199,11 @@ export async function POST(request: NextRequest) {
     );
   }
 
+  const existingContent = await getSectionContent(chapterId);
+  const trimmedInstructions = regenerationInstructions.trim();
+  const requestedStartStage: GenerationStartStage =
+    regenerationMode === 'from_stage' ? startStage : 'searching';
+
   // Create SSE stream
   const encoder = new TextEncoder();
   const stream = new ReadableStream({
@@ -178,29 +213,128 @@ export async function POST(request: NextRequest) {
       };
 
       try {
-        // Phase 1: Research
-        send({
-          event: 'phase',
-          data: { phase: 'searching', message: 'Szukam źródeł i dokumentacji...' },
-        });
+        if (!forceRegenerate && existingContent) {
+          send({
+            event: 'complete',
+            data: { content: existingContent },
+          });
+          return;
+        }
 
-        const collectedSources = await runResearchPhase(
-          chapterTitle,
-          chapterDescription,
-          topics,
-          courseContext,
-          // Progress callback - send updates as sources are found
-          (sourcesFound, message) => {
-            send({
-              event: 'progress',
-              data: { phase: 'searching', sourcesFound, message },
-            });
-          }
-        );
+        let effectiveStartStage: GenerationStartStage = requestedStartStage;
+        const hasExistingContent = !!existingContent;
 
-        const limitedSources = processCollectedSources(collectedSources);
+        if (effectiveStartStage !== 'searching' && !hasExistingContent) {
+          effectiveStartStage = 'searching';
+          send({
+            event: 'progress',
+            data: {
+              phase: 'searching',
+              message: 'Brak poprzedniej wersji - uruchamiam pełne generowanie od etapu wyszukiwania.',
+            },
+          });
+        }
 
-        // Phase 2: Generate structured content
+        if (effectiveStartStage === 'saving' && trimmedInstructions) {
+          effectiveStartStage = 'generating';
+          send({
+            event: 'progress',
+            data: {
+              phase: 'generating',
+              message:
+                'Wskazowki wymagaja wygenerowania nowej tresci - przechodze do etapu generowania.',
+            },
+          });
+        }
+
+        if (effectiveStartStage === 'saving' && existingContent) {
+          send({
+            event: 'phase',
+            data: { phase: 'saving', message: 'Ponawiam etap zapisu na podstawie poprzedniej wersji...' },
+          });
+
+          const duplicatedContent = await saveSectionContent(
+            chapterId,
+            {
+              content: existingContent.content,
+              keyConcepts: existingContent.keyConcepts,
+              practicalSteps: existingContent.practicalSteps,
+              tools: existingContent.tools,
+              externalResources: existingContent.externalResources,
+              sources: existingContent.sources,
+              wordCount: existingContent.wordCount,
+              estimatedReadingMinutes: existingContent.estimatedReadingMinutes,
+              language: existingContent.language,
+            },
+            existingContent.generationModel || 'manual-saving-stage-retry'
+          );
+
+          send({
+            event: 'complete',
+            data: { content: duplicatedContent },
+          });
+          return;
+        }
+
+        let limitedSources: CollectedSource[] = [];
+
+        if (effectiveStartStage === 'searching') {
+          send({
+            event: 'phase',
+            data: { phase: 'searching', message: 'Szukam źródeł i dokumentacji...' },
+          });
+
+          const collectedSources = await runResearchPhase(
+            chapterTitle,
+            chapterDescription,
+            topics,
+            courseContext,
+            trimmedInstructions || undefined,
+            // Progress callback - send updates as sources are found
+            (sourcesFound, message) => {
+              send({
+                event: 'progress',
+                data: { phase: 'searching', sourcesFound, message },
+              });
+            }
+          );
+
+          limitedSources = processCollectedSources(collectedSources);
+        } else if (effectiveStartStage === 'generating' && existingContent) {
+          limitedSources = processCollectedSources(buildSourcesFromExistingContent(existingContent));
+          send({
+            event: 'progress',
+            data: {
+              phase: 'searching',
+              sourcesFound: limitedSources.length,
+              message: `Uzywam ${limitedSources.length} zrodel z poprzedniej wersji.`,
+            },
+          });
+        }
+
+        if (limitedSources.length === 0) {
+          send({
+            event: 'phase',
+            data: { phase: 'searching', message: 'Nie znaleziono źródeł - próbuję ponownie z web search.' },
+          });
+
+          const fallbackSources = await runResearchPhase(
+            chapterTitle,
+            chapterDescription,
+            topics,
+            courseContext,
+            trimmedInstructions || undefined,
+            (sourcesFound, message) => {
+              send({
+                event: 'progress',
+                data: { phase: 'searching', sourcesFound, message },
+              });
+            }
+          );
+
+          limitedSources = processCollectedSources(fallbackSources);
+        }
+
         send({
           event: 'phase',
           data: {
@@ -211,20 +345,30 @@ export async function POST(request: NextRequest) {
 
         console.log('[Materials] Starting generation phase with', limitedSources.length, 'sources');
 
+        let generationPrompt = CONTENT_GENERATION_USER_PROMPT(
+          chapterTitle,
+          chapterDescription,
+          topics,
+          limitedSources.map((s) => ({
+            title: s.title,
+            url: s.url,
+            content: s.content,
+          }))
+        );
+
+        if (existingContent) {
+          generationPrompt += `\n\nFRAGMENT POPRZEDNIEJ WERSJI (uzyj jako kontekst - zachowaj to, co wartosciowe):\n${existingContent.content.slice(0, 5000)}`;
+        }
+
+        if (trimmedInstructions) {
+          generationPrompt += `\n\nDODATKOWE WSKAZOWKI OD UZYTKOWNIKA (najwyzszy priorytet):\n${trimmedInstructions}`;
+        }
+
         const contentResult = await generateObject({
           model: getModel('curriculum'),
           schema: sectionContentSchema,
           system: MATERIAL_GENERATION_PROMPT,
-          prompt: CONTENT_GENERATION_USER_PROMPT(
-            chapterTitle,
-            chapterDescription,
-            topics,
-            limitedSources.map((s) => ({
-              title: s.title,
-              url: s.url,
-              content: s.content,
-            }))
-          ),
+          prompt: generationPrompt,
         });
 
         // Prepare sources for storage

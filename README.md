@@ -1,5 +1,42 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
+## Wirtualny Mentor
+
+Platforma edukacyjna AI do tworzenia kursów, lekcji, quizów i czatu mentora.
+
+## Regeneracja Lekcji (Nowe)
+
+Dodano możliwość ponownego generowania materiałów lekcji na każdym etapie.
+
+### Co potrafi regeneracja
+
+- Regeneracja `od zera` (pełny przebieg: wyszukiwanie -> generowanie -> zapis)
+- Regeneracja `od wybranego etapu`:
+  - `searching` (wyszukiwanie źródeł)
+  - `generating` (generowanie treści)
+  - `saving` (ponowienie zapisu)
+- Pole na instrukcje użytkownika:
+  - co zmienić
+  - co uzyskać
+  - co się nie podobało
+  - co zachować
+
+### Gdzie w UI
+
+- Strona lekcji: przycisk `Regeneruj lekcję`
+- Dialog z wyborem trybu/etapu i dodatkowych instrukcji
+
+### API
+
+Endpoint: `POST /api/materials/generate`
+
+Nowe pola requestu:
+
+- `forceRegenerate: boolean`
+- `regenerationMode: "from_scratch" | "from_stage"`
+- `startStage: "searching" | "generating" | "saving"`
+- `regenerationInstructions: string`
+
 ## Getting Started
 
 First, run the development server:

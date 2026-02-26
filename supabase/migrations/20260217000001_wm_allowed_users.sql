@@ -31,11 +31,13 @@ CREATE TRIGGER update_wm_allowed_users_updated_at
 ALTER TABLE wm_allowed_users ENABLE ROW LEVEL SECURITY;
 
 -- Users can check their own whitelist entry (needed for access check on login)
+-- NOTE: Use auth.jwt() instead of subquery on auth.users — the authenticated
+-- role does not have SELECT on auth.users, which would cause the policy to fail.
 CREATE POLICY "Users can check own access"
   ON wm_allowed_users FOR SELECT
   USING (
     user_id = auth.uid()
-    OR email = (SELECT email FROM auth.users WHERE id = auth.uid())
+    OR email = (auth.jwt() ->> 'email')
   );
 
 -- Admin mutations go through service role key (bypasses RLS)

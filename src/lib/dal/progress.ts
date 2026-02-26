@@ -11,6 +11,7 @@ import type {
   ProgressUpdate,
   CourseWithDetails,
 } from "@/types/database";
+import { awardPoints, checkAchievements } from "@/lib/gamification/gamification-dal";
 
 /**
  * Get user's progress for a specific course
@@ -153,6 +154,16 @@ export async function markChapterComplete(
   if (updateError) {
     throw new Error(`Failed to mark chapter complete: ${updateError.message}`);
   }
+
+  // Gamification: award points and check achievements (fire-and-forget)
+  awardPoints("chapter_complete", chapterId).catch(() => {});
+  if (updatedCompletedLevels.length > currentProgress.completed_levels.length) {
+    awardPoints("level_complete").catch(() => {});
+  }
+  if (allLevelsComplete) {
+    awardPoints("course_complete").catch(() => {});
+  }
+  checkAchievements("learning").catch(() => {});
 }
 
 /**

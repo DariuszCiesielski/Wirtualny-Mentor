@@ -16,6 +16,7 @@ import type {
   QuestionResult,
   RemediationContent,
 } from "@/types/quiz";
+import { awardPoints, checkAchievements } from "@/lib/gamification/gamification-dal";
 
 // ============================================================================
 // ROW TO APPLICATION TYPE CONVERTERS
@@ -305,6 +306,15 @@ export async function submitAttempt(
     questionResults,
     timeSpentSeconds,
   };
+
+  // Gamification: award points for passed/perfect quizzes (fire-and-forget)
+  if (passed) {
+    awardPoints("quiz_passed", attemptId).catch(() => {});
+    if (score === 100) {
+      awardPoints("quiz_perfect", attemptId).catch(() => {});
+    }
+    checkAchievements("quiz").catch(() => {});
+  }
 
   return {
     attempt: attemptRowToAttempt(data as QuizAttemptRow),

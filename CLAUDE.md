@@ -6,11 +6,11 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Wirtualny Mentor - personalizowana platforma edukacyjna z AI generująca kompleksowe programy nauczania. Użytkownik podaje temat, AI zadaje pytania doprecyzowujące, następnie tworzy strukturyzowany kurs od poziomu Początkujący do Guru z materiałami, quizami i chatbotem-mentorem.
 
-**Status:** Projekt zakończony (7 faz, 33 plany) + materiały źródłowe (PDF/DOCX/TXT)
+**Status:** Projekt zakończony (7 faz, 33 plany) + materiały źródłowe (PDF/DOCX/TXT) + Focus Panel + Gamification
 
 ## Stack
 
-Next.js 16 (App Router, Turbopack) | React 19 | TypeScript strict | Tailwind CSS v4 | shadcn/ui (New York, Zinc) | Supabase (PostgreSQL + pgvector + RLS) | Vercel AI SDK v6 | Zod 4 | unpdf | mammoth
+Next.js 16 (App Router, Turbopack) | React 19 | TypeScript strict | Tailwind CSS v4 | shadcn/ui (New York, Zinc) | Supabase (PostgreSQL + pgvector + RLS + Storage) | Vercel AI SDK v6 | Zod 4 | unpdf | mammoth | sonner (toasts) | Web Audio API
 
 ## Komendy
 
@@ -54,6 +54,10 @@ User Input → API Route → DAL (auth check) → Supabase
 - `src/lib/ai/` - Prompty, schematy Zod, orchestracja AI
 - `src/lib/dal/` - Data Access Layer z auth verification
 - `src/lib/documents/` - Ekstrakcja tekstu, chunking (PDF/DOCX/TXT)
+- `src/lib/focus/` - Audio manager, presets, focus DAL (server actions)
+- `src/lib/gamification/` - Points, achievements, DAL
+- `src/components/focus/` - Focus Panel UI (Pomodoro, sounds, focus mode)
+- `src/components/gamification/` - Points badge, achievements list, toast
 - `src/lib/supabase/` - Client/Server/Middleware
 - `src/app/api/` - Route handlers (streaming)
 
@@ -115,6 +119,53 @@ sendMessage({ text: 'Wyjaśnij ten diagram', files: dt.files });
 // notes.section_heading (TEXT, nullable) - identyfikuje sekcję
 // SectionNoteIndicator (badge przy h2) + SectionNotesInline (panel pod h2)
 // NoteEditor: props sectionHeading + compact mode
+```
+
+### Focus Panel (Pomodoro + Sounds + Focus Mode)
+
+```typescript
+// FocusShell (provider) wraps DashboardLayout; FocusContentArea reaguje na focus mode
+// FocusContext: centralny provider (pomodoro + sounds + focusMode + stats + customSounds)
+// useFocusContextSafe(): zwraca null poza providerem (bezpieczny dla header/sidebar)
+// Pomodoro: usePomodoro (reducer + timestamp-based timer, 250ms tick, stateRef inside interval)
+// sessionIdRef pattern: zapobiega cyklicznej referencji pomodoro → focus-context
+// Audio: Web Audio API singleton — getAudioManager() (lazy, SSR-safe)
+// Binaural beats: synteza (Gamma 40Hz, Alpha 10Hz, Theta 6Hz), Ambient: MP3 z public/sounds/
+// startAmbient(id, filenameOrUrl): http → URL, inaczej → /sounds/{filename}
+// Focus mode: ukrywa sidebar (-translate-x-full), zmniejsza header (h-10), lg:pl-0
+// useFocusMode: localStorage + useSyncExternalStore (SSR-compatible)
+// Stats: RPC get_focus_stats_today (Supabase), useFocusStats hook
+// Break reminder: sonner toast po zakończeniu work session
+// DB: focus_sessions + trigger auto-duration + RLS
+// DAL: src/lib/focus/focus-dal.ts (createFocusSession, completeFocusSession, cancelFocusSession)
+```
+
+### Custom Ambient Sounds Upload
+
+```typescript
+// Upload MP3 do Supabase Storage bucket `ambient-sounds` (per user, max 5MB)
+// API: POST /api/focus/upload-sound (multipart), GET /api/focus/custom-sounds, DELETE ?slotId=
+// useCustomSounds hook: upload/remove/getCustomUrl + auto-refresh signed URLs co 50min
+// DB: user_ambient_sounds (user_id, slot_id, storage_path, original_name, UNIQUE)
+// SoundMixer: upload button per slot + badge "Własny" + reset do domyślnego
+// useFocusSounds: parametr getCustomUrl (custom URL nadpisuje domyślny plik)
+```
+
+### Gamification (Points + Achievements)
+
+```typescript
+// 6 reguł punktowych: chapter_complete(10), level_complete(50), course_complete(200),
+//   quiz_passed(15), quiz_perfect(+10 bonus), pomodoro_complete(5)
+// 13 odznak w 4 kategoriach: learning, quiz, focus, streak
+// Integracja fire-and-forget: awardPoints().catch(() => {}), checkAchievements().catch(() => {})
+// Idempotency: awardPoints sprawdza duplikat przed insertem (action_type + reference_id)
+// checkAchievements: level_complete → COUNT completed_levels, streak → consecutive days
+// PointsBadge: Zap icon w headerze, getUserTotalPoints RPC
+// AchievementsList: 13 odznak, 4 kategorie, progress bars
+// AchievementToast: sonner toast na odblokowanie
+// DB: achievements (seed 13) + user_achievements + user_points_log + RLS
+// DAL: src/lib/gamification/gamification-dal.ts (server actions)
+// Hookpoints: progress.ts (chapter/level/course), quizzes.ts (pass/perfect), focus-dal.ts (pomodoro)
 ```
 
 ### Materiały źródłowe (PDF/DOCX/TXT)

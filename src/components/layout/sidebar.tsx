@@ -11,6 +11,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Home, BookOpen, FileText, User, ShieldCheck } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useFocusContextSafe } from "@/components/focus/focus-context";
 
 const navItems = [
   {
@@ -45,6 +46,8 @@ interface SidebarProps {
 
 export function Sidebar({ isAdmin = false }: SidebarProps) {
   const pathname = usePathname();
+  const focus = useFocusContextSafe();
+  const isHidden = focus?.focusMode.isFocusMode ?? false;
 
   const allNavItems = [
     ...navItems,
@@ -61,7 +64,10 @@ export function Sidebar({ isAdmin = false }: SidebarProps) {
   ];
 
   return (
-    <aside className="fixed left-0 top-0 z-40 hidden h-screen w-60 border-r bg-background lg:block">
+    <aside className={cn(
+      "fixed left-0 top-0 z-40 hidden h-screen w-60 border-r bg-background lg:block transition-transform duration-300",
+      isHidden && "-translate-x-full"
+    )}>
       <div className="flex h-full flex-col">
         {/* Logo */}
         <div className="flex h-16 items-center border-b px-6">

@@ -35,7 +35,7 @@ const requestSchema = z.object({
 type SSEEvent =
   | { event: 'planning'; data: { message: string } }
   | { event: 'generating'; data: { sectionHeading: string; imageType: string; message: string } }
-  | { event: 'image_ready'; data: { sectionHeading: string; imageUrl: string; altText: string; imageType: string; attribution: string | null } }
+  | { event: 'image_ready'; data: { id: string; sectionHeading: string; imageUrl: string; altText: string; imageType: string; provider: string; attribution: string | null } }
   | { event: 'complete'; data: { imageCount: number } }
   | { event: 'error'; data: { message: string } }
 

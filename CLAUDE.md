@@ -182,12 +182,16 @@ sendMessage({ text: 'Wyjaśnij ten diagram', files: dt.files });
 // DALL-E 3: sync OpenAI API, ~$0.04/image, reuse OPENAI_API_KEY (external fallback)
 // Unsplash: search + download, attribution "Photo by X on Unsplash" (wymagane)
 // Planner: generateObject() z GPT-4o-mini, Zod schema, max 2 obrazy, truncate 4000 chars
+// Planner prompt: explicit "kopiuj heading DOKŁADNIE z listy, z numerami" (fix AI stripping)
 // DAL: src/lib/dal/lesson-images.ts (getLessonImages, saveLessonImage, signed URLs 1h)
 // Storage: bucket lesson-images (private, 10MB, path: {userId}/{chapterId}/{uuid}.ext)
 // API SSE: POST /api/materials/generate-images (maxDuration: 120, events: planning→generating→image_ready→complete)
+// SSE abort signal: request.signal propagowany do kie-ai polling (zapobiega blokowaniu dev server)
 // API on-demand: POST /api/materials/generate-image (sync JSON response)
 // Frontend: useChapterImages hook (SSE listener + on-demand generateImage)
+// useChapterImages: deps [chapterId, canGenerate] (NIE images), hasInitialImages ref, Strict Mode reset
 // Server: page.tsx → getLessonImagesBySection() → initialImages (persystencja po refresh)
+// ContentRenderer: findSectionImage() — exact match + fuzzy (stripHeadingNumber) fallback
 // ContentRenderer: h2 → SectionImage | SectionImageSkeleton | GenerateImageButton
 // DB: lesson_images (chapter_id, section_heading, image_type, provider, storage_path, alt_text)
 // RLS: chapters → course_levels → courses ownership chain

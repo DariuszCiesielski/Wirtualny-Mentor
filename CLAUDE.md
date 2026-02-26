@@ -177,8 +177,9 @@ sendMessage({ text: 'Wyjaśnij ten diagram', files: dt.files });
 // Auto-trigger po załadowaniu lekcji (premium only) + on-demand per sekcja (przycisk ImagePlus)
 // Feature gating: canAccessPremiumFeature() → admin role (docelowo subscription tiers)
 // Providers: src/lib/images/ (kie-ai.ts, dalle.ts, unsplash.ts, providers.ts, planner.ts)
-// kie.ai: async API (POST generate → poll record-info co 3s, max 40 attempts)
-// DALL-E 3: sync OpenAI API, ~$0.04/image, reuse OPENAI_API_KEY
+// kie.ai model chain: Nano Banana Pro (Gemini 3.0 Pro, $0.09, 2K) → 4o Image (GPT-Image-1, $0.03)
+// kie.ai APIs: Jobs API (/api/v1/jobs/createTask + /recordInfo) + legacy 4o API (/gpt4o-image/)
+// DALL-E 3: sync OpenAI API, ~$0.04/image, reuse OPENAI_API_KEY (external fallback)
 // Unsplash: search + download, attribution "Photo by X on Unsplash" (wymagane)
 // Planner: generateObject() z GPT-4o-mini, Zod schema, max 2 obrazy, truncate 4000 chars
 // DAL: src/lib/dal/lesson-images.ts (getLessonImages, saveLessonImage, signed URLs 1h)
@@ -186,6 +187,7 @@ sendMessage({ text: 'Wyjaśnij ten diagram', files: dt.files });
 // API SSE: POST /api/materials/generate-images (maxDuration: 120, events: planning→generating→image_ready→complete)
 // API on-demand: POST /api/materials/generate-image (sync JSON response)
 // Frontend: useChapterImages hook (SSE listener + on-demand generateImage)
+// Server: page.tsx → getLessonImagesBySection() → initialImages (persystencja po refresh)
 // ContentRenderer: h2 → SectionImage | SectionImageSkeleton | GenerateImageButton
 // DB: lesson_images (chapter_id, section_heading, image_type, provider, storage_path, alt_text)
 // RLS: chapters → course_levels → courses ownership chain

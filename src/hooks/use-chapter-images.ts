@@ -41,11 +41,12 @@ export function useChapterImages(
   const [generatingSection, setGeneratingSection] = useState<GeneratingSection | null>(null)
   const [generatingSections, setGeneratingSections] = useState<Set<string>>(new Set())
   const autoGenerationAttempted = useRef(false)
+  const hasInitialImages = useRef(Object.keys(initialImages || {}).length > 0)
 
   // Auto-generate images after lesson loads (premium only, once)
   useEffect(() => {
     if (!canGenerate || autoGenerationAttempted.current) return
-    if (Object.keys(images).length > 0) return // Already have images
+    if (hasInitialImages.current) return // Already have images from server
     autoGenerationAttempted.current = true
 
     const controller = new AbortController()
@@ -143,7 +144,10 @@ export function useChapterImages(
           }
         }
       } catch (err) {
-        if ((err as Error).name !== 'AbortError') {
+        // Ignore abort errors (Strict Mode double-mount, navigation, etc.)
+        const isAbort = (err as Error).name === 'AbortError'
+          || controller.signal.aborted
+        if (!isAbort) {
           console.error('[useChapterImages] Auto-generation error:', err)
         }
       } finally {
@@ -154,8 +158,13 @@ export function useChapterImages(
 
     void autoGenerate()
 
-    return () => controller.abort()
-  }, [chapterId, canGenerate, courseTopic, images])
+    return () => {
+      controller.abort()
+      // Reset so Strict Mode re-mount can retry
+      autoGenerationAttempted.current = false
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [chapterId, canGenerate])
 
   // On-demand image generation for a specific section
   const generateImage = useCallback(

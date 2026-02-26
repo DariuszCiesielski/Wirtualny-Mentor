@@ -27,13 +27,15 @@ export interface SearchOptions {
  */
 export async function generateAiImage(
   prompt: string,
-  options?: GenerateOptions
+  options?: GenerateOptions,
+  signal?: AbortSignal
 ): Promise<ImageResult> {
   // Try kie.ai first (cheaper)
   if (process.env.KIE_AI_API_KEY) {
     try {
-      return await generateWithKieAi(prompt, options)
+      return await generateWithKieAi(prompt, options, signal)
     } catch (error) {
+      if (signal?.aborted) throw error
       console.warn('[Images] kie.ai failed, falling back to DALL-E 3:', error)
     }
   }
@@ -58,14 +60,15 @@ export async function searchStockPhoto(
 export async function executeImagePlan(
   imageType: ImageType,
   query: string,
-  altText: string
+  altText: string,
+  signal?: AbortSignal
 ): Promise<ImageResult> {
   if (imageType === 'stock_photo') {
     const result = await searchStockPhoto(query, { orientation: 'landscape' })
     return { ...result, altText }
   }
 
-  const result = await generateAiImage(query, { size: '3:2' })
+  const result = await generateAiImage(query, { size: '3:2' }, signal)
   return { ...result, altText }
 }
 

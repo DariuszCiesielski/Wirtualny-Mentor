@@ -98,12 +98,20 @@ export async function POST(request: NextRequest) {
     return new Response(JSON.stringify({ error: 'No lesson content' }), { status: 404 })
   }
 
+  // Capture abort signal from client (stops polling when SSE connection closes)
+  const signal = request.signal
+
   // Create SSE stream
   const encoder = new TextEncoder()
   const stream = new ReadableStream({
     async start(controller) {
       const send = (event: SSEEvent) => {
-        controller.enqueue(encoder.encode(formatSSE(event)))
+        if (signal.aborted) return
+        try {
+          controller.enqueue(encoder.encode(formatSSE(event)))
+        } catch {
+          // Controller may be closed if client disconnected
+        }
       }
 
       try {
@@ -112,6 +120,8 @@ export async function POST(request: NextRequest) {
           event: 'planning',
           data: { message: 'Analizuję treść lekcji...' },
         })
+
+        if (signal.aborted) { controller.close(); return }
 
         const chapterTitle = chapter.title as string
         // Supabase returns nested !inner joins as arrays
@@ -129,6 +139,8 @@ export async function POST(request: NextRequest) {
         let imageCount = 0
 
         for (const plan of plans) {
+          if (signal.aborted) break
+
           send({
             event: 'generating',
             data: {
@@ -141,7 +153,9 @@ export async function POST(request: NextRequest) {
           })
 
           try {
-            const result = await executeImagePlan(plan.imageType, plan.query, plan.altText)
+            const result = await executeImagePlan(plan.imageType, plan.query, plan.altText, signal)
+
+            if (signal.aborted) break
 
             // Save to Storage + DB
             const savedImage = await saveLessonImage({
@@ -172,6 +186,7 @@ export async function POST(request: NextRequest) {
 
             imageCount++
           } catch (imgError) {
+            if (signal.aborted) break
             console.error(`[Images] Failed to generate image for "${plan.sectionHeading}":`, imgError)
             // Continue with other images - non-fatal
             send({
@@ -183,13 +198,17 @@ export async function POST(request: NextRequest) {
           }
         }
 
-        send({ event: 'complete', data: { imageCount } })
+        if (!signal.aborted) {
+          send({ event: 'complete', data: { imageCount } })
+        }
       } catch (error) {
-        console.error('[Images] Generation error:', error)
-        send({
-          event: 'error',
-          data: { message: error instanceof Error ? error.message : 'Nieznany błąd' },
-        })
+        if (!signal.aborted) {
+          console.error('[Images] Generation error:', error)
+          send({
+            event: 'error',
+            data: { message: error instanceof Error ? error.message : 'Nieznany błąd' },
+          })
+        }
       } finally {
         controller.close()
       }

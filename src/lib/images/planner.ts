@@ -19,7 +19,7 @@ import type { ImagePlan } from '@/types/images'
 const imagePlanSchema = z.object({
   images: z.array(
     z.object({
-      sectionHeading: z.string().describe('Exact h2 heading from the lesson content'),
+      sectionHeading: z.string().describe('Copy the heading EXACTLY as it appears in the list below, including any numbering like "2. " prefix. Do NOT modify, simplify, or remove prefixes.'),
       imageType: z.enum(['stock_photo', 'ai_generated']).describe(
         'stock_photo for real-world subjects (plants, animals, places, food, people, objects). ' +
         'ai_generated for abstract concepts, diagrams, infographics, processes, comparisons.'
@@ -46,7 +46,12 @@ Zasady:
 - altText MUSI byc po polsku (dla uzytkownikow platformy)
 - NIE ilustruj sekcji "Wprowadzenie", "Podsumowanie", "Zrodla" — to nie potrzebuje grafik
 - Jesli lekcja jest czysto teoretyczna/abstrakcyjna — moze potrzebowac max 1 grafiki
-- Jesli lekcja dotyczy czegoś wizualnego (rosliny, gotowanie, geografia) — 2 grafiki`
+- Jesli lekcja dotyczy czegoś wizualnego (rosliny, gotowanie, geografia) — 2 grafiki
+
+KRYTYCZNE: sectionHeading MUSI byc DOKLADNA kopia naglowka z listy "Dostepne sekcje (h2)".
+Kopiuj heading DOKLADNIE jak jest, lacznie z numerami (np. "2. KLUCZOWE POJECIA").
+NIE usuwaj numerow, prefiksow, znakow specjalnych ani formatowania.
+Jesli heading to "3. SZCZEGOLOWE WYJASNIENIE", uzyj dokladnie "3. SZCZEGOLOWE WYJASNIENIE".`
 
 /**
  * Plan which sections of a lesson should have images

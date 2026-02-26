@@ -33,6 +33,32 @@ import type { LessonImage } from '@/types/images';
 // Import highlight.js theme (github-dark matches our dark mode)
 import 'highlight.js/styles/github-dark.css';
 
+/**
+ * Strip leading numbering from heading (e.g. "2. KLUCZOWE POJĘCIA" → "KLUCZOWE POJĘCIA")
+ */
+function stripHeadingNumber(text: string): string {
+  return text.replace(/^\d+\.\s*/, '');
+}
+
+/**
+ * Find image for a heading, with fuzzy fallback for number-prefix mismatch.
+ * AI planner may omit "2. " prefix, so we try exact match first, then stripped.
+ */
+function findSectionImage(
+  images: Record<string, LessonImage> | undefined,
+  headingText: string,
+): LessonImage | undefined {
+  if (!images) return undefined;
+  // Exact match first
+  if (images[headingText]) return images[headingText];
+  // Fuzzy: strip numbers from both sides
+  const stripped = stripHeadingNumber(headingText);
+  for (const [key, img] of Object.entries(images)) {
+    if (stripHeadingNumber(key) === stripped) return img;
+  }
+  return undefined;
+}
+
 interface ContentRendererProps {
   content: string;
   sources?: Source[];
@@ -160,7 +186,7 @@ export function ContentRenderer({
           // Section headings with notes indicator, mentor button, and images
           h2({ children }) {
             const headingText = extractText(children);
-            const sectionImage = images?.[headingText];
+            const sectionImage = findSectionImage(images, headingText);
             const isSectionGenerating = generatingSections?.has(headingText);
             const isAutoGeneratingThis = autoGeneratingSection === headingText;
             const showGenerateButton = onGenerateImage && !sectionImage && !isSectionGenerating && !isAutoGeneratingThis;

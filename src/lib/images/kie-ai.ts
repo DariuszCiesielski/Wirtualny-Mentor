@@ -124,13 +124,21 @@ async function submitNanoBananaPro(prompt: string, size: string): Promise<string
   return data.data.taskId
 }
 
-async function pollJobsUntilComplete(taskId: string, model: string): Promise<string> {
+async function pollJobsUntilComplete(taskId: string, model: string, signal?: AbortSignal): Promise<string> {
   for (let attempt = 0; attempt < MAX_POLL_ATTEMPTS; attempt++) {
+    if (signal?.aborted) {
+      throw new Error(`[kie.ai/${model}] Aborted by client`)
+    }
+
     await new Promise((resolve) => setTimeout(resolve, POLL_INTERVAL_MS))
+
+    if (signal?.aborted) {
+      throw new Error(`[kie.ai/${model}] Aborted by client`)
+    }
 
     const response = await fetch(
       `${KIE_BASE_URL}/api/v1/jobs/recordInfo?taskId=${taskId}`,
-      { headers: { Authorization: `Bearer ${getApiKey()}` } }
+      { headers: { Authorization: `Bearer ${getApiKey()}` }, signal }
     )
 
     if (!response.ok) {
@@ -164,7 +172,8 @@ async function pollJobsUntilComplete(taskId: string, model: string): Promise<str
 
 async function generateWithNanaBananaPro(
   prompt: string,
-  options?: GenerateOptions
+  options?: GenerateOptions,
+  signal?: AbortSignal
 ): Promise<ImageResult> {
   const size = options?.size || '3:2'
 
@@ -172,7 +181,7 @@ async function generateWithNanaBananaPro(
   const taskId = await submitNanoBananaPro(prompt, size)
 
   console.log(`[kie.ai/nano-banana-pro] Task ${taskId}, polling...`)
-  const imageUrl = await pollJobsUntilComplete(taskId, 'nano-banana-pro')
+  const imageUrl = await pollJobsUntilComplete(taskId, 'nano-banana-pro', signal)
 
   console.log(`[kie.ai/nano-banana-pro] Downloading image...`)
   const { buffer, contentType } = await downloadImage(imageUrl)
@@ -215,13 +224,21 @@ async function submitGpt4oTask(prompt: string, size: string): Promise<string> {
   return data.data.taskId
 }
 
-async function pollGpt4oUntilComplete(taskId: string): Promise<string> {
+async function pollGpt4oUntilComplete(taskId: string, signal?: AbortSignal): Promise<string> {
   for (let attempt = 0; attempt < MAX_POLL_ATTEMPTS; attempt++) {
+    if (signal?.aborted) {
+      throw new Error('[kie.ai/4o-image] Aborted by client')
+    }
+
     await new Promise((resolve) => setTimeout(resolve, POLL_INTERVAL_MS))
+
+    if (signal?.aborted) {
+      throw new Error('[kie.ai/4o-image] Aborted by client')
+    }
 
     const response = await fetch(
       `${KIE_BASE_URL}/api/v1/gpt4o-image/record-info?taskId=${taskId}`,
-      { headers: { Authorization: `Bearer ${getApiKey()}` } }
+      { headers: { Authorization: `Bearer ${getApiKey()}` }, signal }
     )
 
     if (!response.ok) {
@@ -250,7 +267,8 @@ async function pollGpt4oUntilComplete(taskId: string): Promise<string> {
 
 async function generateWithGpt4oImage(
   prompt: string,
-  options?: GenerateOptions
+  options?: GenerateOptions,
+  signal?: AbortSignal
 ): Promise<ImageResult> {
   const size = options?.size || '3:2'
 
@@ -258,7 +276,7 @@ async function generateWithGpt4oImage(
   const taskId = await submitGpt4oTask(prompt, size)
 
   console.log(`[kie.ai/4o-image] Task ${taskId}, polling...`)
-  const imageUrl = await pollGpt4oUntilComplete(taskId)
+  const imageUrl = await pollGpt4oUntilComplete(taskId, signal)
 
   console.log(`[kie.ai/4o-image] Downloading image...`)
   const { buffer, contentType } = await downloadImage(imageUrl)
@@ -298,15 +316,18 @@ async function downloadImage(url: string): Promise<{ buffer: Buffer; contentType
  */
 export async function generateWithKieAi(
   prompt: string,
-  options?: GenerateOptions
+  options?: GenerateOptions,
+  signal?: AbortSignal
 ): Promise<ImageResult> {
   // Try Nano Banana Pro first (highest quality)
   try {
-    return await generateWithNanaBananaPro(prompt, options)
+    return await generateWithNanaBananaPro(prompt, options, signal)
   } catch (error) {
+    // Don't fallback if aborted — propagate immediately
+    if (signal?.aborted) throw error
     console.warn('[kie.ai] Nano Banana Pro failed, falling back to 4o Image:', error)
   }
 
   // Fallback to 4o Image
-  return generateWithGpt4oImage(prompt, options)
+  return generateWithGpt4oImage(prompt, options, signal)
 }

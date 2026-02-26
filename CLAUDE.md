@@ -202,7 +202,9 @@ sendMessage({ text: 'Wyjaśnij ten diagram', files: dt.files });
 // Server: page.tsx → getLessonImagesBySection() → initialImages (persystencja po refresh)
 // ContentRenderer: findSectionImage() — exact match + fuzzy (stripHeadingNumber) fallback
 // ContentRenderer: h2 → SectionImage (z trash icon) | SectionImageSkeleton | GenerateImageButton
-// SectionImage: onDelete prop → ikona kosza w figcaption, isDeleting → spinner
+// SectionImage: next/image (sizes responsive), onDelete → trash icon, Radix Dialog lightbox (Escape, swipe-to-close)
+// next.config.ts: remotePatterns *.supabase.co/storage/v1/object/sign/** (signed URLs)
+// h2 wrapper: flex-wrap + gap-2 (mobile-safe layout)
 // DB: lesson_images (chapter_id, section_heading, image_type, provider, storage_path, alt_text, signed_url, signed_url_expires_at)
 // RLS: chapters → course_levels → courses ownership chain
 // Env: KIE_AI_API_KEY, UNSPLASH_ACCESS_KEY (opcjonalne, graceful degradation)

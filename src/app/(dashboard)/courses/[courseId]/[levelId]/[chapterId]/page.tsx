@@ -10,6 +10,7 @@ import { getCourse } from "@/lib/dal/courses";
 import { getSectionContent } from "@/lib/dal/materials";
 import { getProgress, calculateProgressPercentage } from "@/lib/dal/progress";
 import { getNotes } from "@/lib/dal/notes";
+import { getLessonImagesBySection } from "@/lib/dal/lesson-images";
 import { notFound } from "next/navigation";
 import { ChapterPageClient } from "./components/chapter-page-client";
 
@@ -91,6 +92,11 @@ Grupa docelowa: ${course.target_audience || "Nie określono"}
   // Check if user can access premium image generation
   const canGenerateImages = await canAccessPremiumFeature();
 
+  // Load existing images from DB (so they persist across page refreshes)
+  const initialImages = canGenerateImages
+    ? await getLessonImagesBySection(chapterId).catch(() => ({}))
+    : {};
+
   return (
     <ChapterPageClient
       courseId={courseId}
@@ -116,6 +122,7 @@ Grupa docelowa: ${course.target_audience || "Nie określono"}
       prevChapter={prevChapter}
       nextChapter={nextChapter}
       canGenerateImages={canGenerateImages}
+      initialImages={initialImages}
     />
   );
 }

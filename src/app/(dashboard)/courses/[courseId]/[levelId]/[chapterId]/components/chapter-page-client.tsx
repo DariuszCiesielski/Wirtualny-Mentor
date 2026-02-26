@@ -22,6 +22,7 @@ import Link from 'next/link';
 import { getLevelDisplayName } from '@/lib/utils';
 import type { SectionContent } from '@/types/materials';
 import type { Note } from '@/types/notes';
+import type { LessonImage } from '@/types/images';
 
 interface ChapterPageClientProps {
   courseId: string;
@@ -47,6 +48,7 @@ interface ChapterPageClientProps {
   prevChapter: { levelId: string; chapterId: string } | null;
   nextChapter: { levelId: string; chapterId: string } | null;
   canGenerateImages?: boolean;
+  initialImages?: Record<string, LessonImage>;
 }
 
 export function ChapterPageClient({
@@ -66,6 +68,7 @@ export function ChapterPageClient({
   prevChapter,
   nextChapter,
   canGenerateImages = false,
+  initialImages,
 }: ChapterPageClientProps) {
   // Filter notes: section notes handled by ChapterContent, general notes at bottom
   const generalNotes = notes.filter((n) => !n.section_heading);
@@ -132,6 +135,7 @@ export function ChapterPageClient({
             initialNotes={notes}
             courseId={courseId}
             canGenerateImages={canGenerateImages}
+            initialImages={initialImages}
             courseTopic={courseTitle}
           />
         </Suspense>

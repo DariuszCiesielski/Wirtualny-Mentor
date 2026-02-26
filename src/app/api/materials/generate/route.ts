@@ -221,6 +221,15 @@ export async function POST(request: NextRequest) {
           return;
         }
 
+        // Clean up old lesson images when content is being regenerated
+        if (forceRegenerate) {
+          import('@/lib/dal/lesson-images').then(({ deleteLessonImages }) =>
+            deleteLessonImages(chapterId).catch((err: unknown) =>
+              console.warn('[Materials] Failed to cleanup old images:', err)
+            )
+          )
+        }
+
         let effectiveStartStage: GenerationStartStage = requestedStartStage;
         const hasExistingContent = !!existingContent;
 

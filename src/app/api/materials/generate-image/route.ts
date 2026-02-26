@@ -82,7 +82,7 @@ export async function POST(request: NextRequest) {
     const savedImage = await saveLessonImage({
       chapterId,
       userId: user.id,
-      sectionHeading: plan.sectionHeading,
+      sectionHeading: sectionHeading,  // from request body, not AI output
       imageType: plan.imageType,
       provider: result.provider,
       buffer: result.buffer,

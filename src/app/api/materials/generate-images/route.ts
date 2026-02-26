@@ -20,7 +20,7 @@ import { z } from 'zod'
 import { createClient } from '@/lib/supabase/server'
 import { getUserAccess } from '@/lib/dal/auth'
 import { getSectionContent } from '@/lib/dal/materials'
-import { saveLessonImage, hasLessonImages } from '@/lib/dal/lesson-images'
+import { saveLessonImage, hasLessonImages, deleteLessonImages } from '@/lib/dal/lesson-images'
 import { planLessonImages } from '@/lib/images/planner'
 import { executeImagePlan } from '@/lib/images/providers'
 
@@ -29,6 +29,7 @@ export const maxDuration = 120 // Vercel Pro: up to 300s
 const requestSchema = z.object({
   chapterId: z.string().uuid(),
   courseTopic: z.string().optional(),
+  force: z.boolean().optional().default(false),
 })
 
 type SSEEvent =
@@ -53,7 +54,7 @@ export async function POST(request: NextRequest) {
     )
   }
 
-  const { chapterId, courseTopic } = parsed.data
+  const { chapterId, courseTopic, force } = parsed.data
 
   // Auth + premium check
   const supabase = await createClient()
@@ -86,10 +87,14 @@ export async function POST(request: NextRequest) {
   // Check if images already exist
   const imagesExist = await hasLessonImages(chapterId)
   if (imagesExist) {
-    return new Response(
-      JSON.stringify({ error: 'Images already exist', code: 'ALREADY_EXISTS' }),
-      { status: 409, headers: { 'Content-Type': 'application/json' } }
-    )
+    if (!force) {
+      return new Response(
+        JSON.stringify({ error: 'Images already exist', code: 'ALREADY_EXISTS' }),
+        { status: 409, headers: { 'Content-Type': 'application/json' } }
+      )
+    }
+    // Force mode: delete existing images first
+    await deleteLessonImages(chapterId)
   }
 
   // Get lesson content

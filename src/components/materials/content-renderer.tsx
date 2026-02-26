@@ -205,6 +205,8 @@ export function ContentRenderer({
                 url={sectionImage.url}
                 altText={sectionImage.altText}
                 attribution={sectionImage.sourceAttribution}
+                width={sectionImage.width}
+                height={sectionImage.height}
                 onDelete={onDeleteImage && sectionImage.id
                   ? () => onDeleteImage(headingText, sectionImage.id)
                   : undefined}
@@ -219,10 +221,10 @@ export function ContentRenderer({
             if (!hasSectionFeatures) {
               return (
                 <>
-                  <div className="not-prose flex items-center justify-between mt-10 mb-3 pb-2 border-b border-border">
+                  <div className="not-prose flex flex-wrap items-center justify-between gap-2 mt-10 mb-3 pb-2 border-b border-border">
                     <h2 className="text-2xl font-bold leading-tight">{children}</h2>
                     {showGenerateButton && (
-                      <div className="shrink-0 ml-4">
+                      <div className="shrink-0">
                         <GenerateImageButton
                           sectionHeading={headingText}
                           canGenerate={canGenerateImages}
@@ -241,9 +243,9 @@ export function ContentRenderer({
 
             return (
               <>
-                <div className="not-prose flex items-center justify-between mt-10 mb-3 pb-2 border-b border-border">
+                <div className="not-prose flex flex-wrap items-center justify-between gap-2 mt-10 mb-3 pb-2 border-b border-border">
                   <h2 className="text-2xl font-bold leading-tight">{children}</h2>
-                  <div className="flex items-center gap-1 shrink-0 ml-4">
+                  <div className="flex items-center gap-1 shrink-0">
                     {showGenerateButton && (
                       <GenerateImageButton
                         sectionHeading={headingText}

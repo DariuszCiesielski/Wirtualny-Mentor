@@ -16,9 +16,16 @@ const nextConfig: NextConfig = {
     // Tree-shaking for icon libraries
     optimizePackageImports: ['lucide-react', '@radix-ui/react-icons'],
   },
-  // Modern image formats for better compression
+  // Modern image formats + Supabase Storage signed URLs
   images: {
     formats: ['image/avif', 'image/webp'],
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: '*.supabase.co',
+        pathname: '/storage/v1/object/sign/**',
+      },
+    ],
   },
 };
 

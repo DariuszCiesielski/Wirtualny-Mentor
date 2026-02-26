@@ -183,17 +183,27 @@ sendMessage({ text: 'Wyjaśnij ten diagram', files: dt.files });
 // Unsplash: search + download, attribution "Photo by X on Unsplash" (wymagane)
 // Planner: generateObject() z GPT-4o-mini, Zod schema, max 2 obrazy, truncate 4000 chars
 // Planner prompt: explicit "kopiuj heading DOKŁADNIE z listy, z numerami" (fix AI stripping)
-// DAL: src/lib/dal/lesson-images.ts (getLessonImages, saveLessonImage, signed URLs 1h)
+// DAL: src/lib/dal/lesson-images.ts (getLessonImages, saveLessonImage, deleteLessonImage)
+// Signed URL cache: kolumny signed_url + signed_url_expires_at w DB, 5min buffer przed odświeżeniem
+// getLessonImages: cache hit → 0 wywołań Storage API, miss → batch createSignedUrls + fire-and-forget UPDATE
+// saveLessonImage: UPSERT z onConflict (chapter_id,section_heading), cleanup old Storage file
+// deleteLessonImage(imageId): kasuje plik ze Storage + rekord z DB
+// UNIQUE INDEX: idx_lesson_images_chapter_section (partial, WHERE section_heading IS NOT NULL)
 // Storage: bucket lesson-images (private, 10MB, path: {userId}/{chapterId}/{uuid}.ext)
 // API SSE: POST /api/materials/generate-images (maxDuration: 120, events: planning→generating→image_ready→complete)
+// SSE image_ready: zawiera id, provider, sectionHeading, imageUrl, altText, imageType, attribution
+// SSE force param: force=true → deleteLessonImages() zamiast 409 (regeneracja obrazów)
 // SSE abort signal: request.signal propagowany do kie-ai polling (zapobiega blokowaniu dev server)
-// API on-demand: POST /api/materials/generate-image (sync JSON response)
-// Frontend: useChapterImages hook (SSE listener + on-demand generateImage)
+// API on-demand: POST /api/materials/generate-image (sync JSON, sectionHeading z request body, NIE z AI)
+// API delete: DELETE /api/materials/lesson-image?imageId= (ownership check przez chapter chain)
+// Cleanup: forceRegenerate w /api/materials/generate → deleteLessonImages fire-and-forget
+// Frontend: useChapterImages hook (SSE + on-demand generateImage + deleteImage + deletingSections)
 // useChapterImages: deps [chapterId, canGenerate] (NIE images), hasInitialImages ref, Strict Mode reset
 // Server: page.tsx → getLessonImagesBySection() → initialImages (persystencja po refresh)
 // ContentRenderer: findSectionImage() — exact match + fuzzy (stripHeadingNumber) fallback
-// ContentRenderer: h2 → SectionImage | SectionImageSkeleton | GenerateImageButton
-// DB: lesson_images (chapter_id, section_heading, image_type, provider, storage_path, alt_text)
+// ContentRenderer: h2 → SectionImage (z trash icon) | SectionImageSkeleton | GenerateImageButton
+// SectionImage: onDelete prop → ikona kosza w figcaption, isDeleting → spinner
+// DB: lesson_images (chapter_id, section_heading, image_type, provider, storage_path, alt_text, signed_url, signed_url_expires_at)
 // RLS: chapters → course_levels → courses ownership chain
 // Env: KIE_AI_API_KEY, UNSPLASH_ACCESS_KEY (opcjonalne, graceful degradation)
 ```

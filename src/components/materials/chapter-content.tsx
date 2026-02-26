@@ -38,8 +38,11 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Textarea } from '@/components/ui/textarea';
 import { Clock, BookOpen, AlertCircle, RotateCcw, Loader2 } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { useChapterImages } from '@/hooks/use-chapter-images';
+import { toast } from 'sonner';
 import type { SectionContent } from '@/types/materials';
 import type { Note } from '@/types/notes';
+import type { LessonImage } from '@/types/images';
 
 interface ChapterData {
   id: string;
@@ -60,6 +63,12 @@ interface ChapterContentProps {
   courseId?: string;
   /** Callback when user wants to ask mentor about a section */
   onAskMentor?: (context: string) => void;
+  /** Whether user can generate images (premium feature) */
+  canGenerateImages?: boolean;
+  /** Pre-loaded images keyed by section heading */
+  initialImages?: Record<string, LessonImage>;
+  /** Course topic for image generation context */
+  courseTopic?: string;
 }
 
 type GenerationPhase = 'idle' | 'searching' | 'generating' | 'saving' | 'complete' | 'error';
@@ -86,6 +95,9 @@ export function ChapterContent({
   initialNotes = [],
   courseId,
   onAskMentor,
+  canGenerateImages = false,
+  initialImages,
+  courseTopic,
 }: ChapterContentProps) {
   const [content, setContent] = useState<SectionContent | null>(initialContent || null);
   const [progress, setProgress] = useState<GenerationProgress>({
@@ -103,6 +115,21 @@ export function ChapterContent({
   // Section notes state
   const [notes, setNotes] = useState<Note[]>(initialNotes);
   const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set());
+
+  // Lesson images (auto-generation + on-demand)
+  const contentReady = progress.phase === 'complete' && !!content;
+  const {
+    images,
+    isAutoGenerating,
+    generatingSection,
+    generateImage,
+    generatingSections,
+  } = useChapterImages(
+    chapter.id,
+    canGenerateImages && contentReady,
+    initialImages,
+    courseTopic,
+  );
 
   const isGenerating =
     progress.phase === 'searching' ||
@@ -260,6 +287,28 @@ export function ChapterContent({
       regenerationInstructions: '',
     });
   }, [content, generateContent]);
+
+  // On-demand image generation handler
+  const handleGenerateImage = useCallback(
+    (sectionHeading: string) => {
+      if (!content) return;
+
+      // Extract section content (text between this h2 and the next h2)
+      const sections = content.content.split(/^## /m);
+      const sectionContent = sections.find((s) => s.startsWith(sectionHeading))
+        ?.slice(sectionHeading.length) || '';
+
+      void generateImage(
+        sectionHeading,
+        sectionContent.slice(0, 3000),
+        chapter.title,
+        courseTopic,
+      ).catch((err) => {
+        toast.error(`Nie udało się wygenerować grafiki: ${err instanceof Error ? err.message : 'Nieznany błąd'}`);
+      });
+    },
+    [content, chapter.title, courseTopic, generateImage]
+  );
 
   const handleRegenerate = useCallback(() => {
     const payload: RegenerationPayload = {
@@ -484,6 +533,11 @@ export function ChapterContent({
           onAskMentor={onAskMentor}
           courseId={courseId}
           chapterId={chapter.id}
+          images={images}
+          onGenerateImage={handleGenerateImage}
+          canGenerateImages={canGenerateImages}
+          generatingSections={generatingSections}
+          autoGeneratingSection={generatingSection?.sectionHeading}
         />
 
         {/* Tools section */}

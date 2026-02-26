@@ -231,3 +231,14 @@ export async function requireAdmin(): Promise<{
 
   return { user, role: "admin", allowedUserId };
 }
+
+/**
+ * Check if the current user can access a premium feature.
+ *
+ * Currently: admin role = premium access.
+ * Future: will check subscription tier instead.
+ */
+export async function canAccessPremiumFeature(): Promise<boolean> {
+  const access = await getUserAccess();
+  return access.role === "admin";
+}

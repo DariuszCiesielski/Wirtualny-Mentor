@@ -11,6 +11,7 @@ import { ChapterContent } from '@/components/materials/chapter-content';
 import { useChatContext } from './chat-context';
 import type { SectionContent } from '@/types/materials';
 import type { Note } from '@/types/notes';
+import type { LessonImage } from '@/types/images';
 
 interface ChapterContentWithChatProps {
   chapter: {
@@ -24,6 +25,9 @@ interface ChapterContentWithChatProps {
   initialContent?: SectionContent | null;
   initialNotes?: Note[];
   courseId?: string;
+  canGenerateImages?: boolean;
+  initialImages?: Record<string, LessonImage>;
+  courseTopic?: string;
 }
 
 export function ChapterContentWithChat(props: ChapterContentWithChatProps) {

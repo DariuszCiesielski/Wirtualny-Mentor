@@ -5,7 +5,7 @@
  * to ChapterPageClient which handles inline chat and section notes.
  */
 
-import { requireAuth } from "@/lib/dal/auth";
+import { requireAuth, canAccessPremiumFeature } from "@/lib/dal/auth";
 import { getCourse } from "@/lib/dal/courses";
 import { getSectionContent } from "@/lib/dal/materials";
 import { getProgress, calculateProgressPercentage } from "@/lib/dal/progress";
@@ -88,6 +88,9 @@ Poziom: ${level.name} - ${level.description}
 Grupa docelowa: ${course.target_audience || "Nie określono"}
 `.trim();
 
+  // Check if user can access premium image generation
+  const canGenerateImages = await canAccessPremiumFeature();
+
   return (
     <ChapterPageClient
       courseId={courseId}
@@ -112,6 +115,7 @@ Grupa docelowa: ${course.target_audience || "Nie określono"}
       isCompleted={isCompleted}
       prevChapter={prevChapter}
       nextChapter={nextChapter}
+      canGenerateImages={canGenerateImages}
     />
   );
 }

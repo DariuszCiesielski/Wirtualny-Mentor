@@ -24,8 +24,11 @@ import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { SectionNoteIndicator } from '@/components/notes/section-note-indicator';
 import { SectionNotesInline } from '@/components/notes/section-notes-inline';
+import { SectionImage, SectionImageSkeleton } from './section-image';
+import { GenerateImageButton } from './generate-image-button';
 import type { Source } from '@/types/materials';
 import type { Note } from '@/types/notes';
+import type { LessonImage } from '@/types/images';
 
 // Import highlight.js theme (github-dark matches our dark mode)
 import 'highlight.js/styles/github-dark.css';
@@ -51,6 +54,16 @@ interface ContentRendererProps {
   /** Course and chapter IDs for note creation */
   courseId?: string;
   chapterId?: string;
+  /** Images keyed by section heading */
+  images?: Record<string, LessonImage>;
+  /** Callback to generate an image for a section */
+  onGenerateImage?: (sectionHeading: string) => void;
+  /** Whether the user can generate images (premium feature) */
+  canGenerateImages?: boolean;
+  /** Sections currently being generated */
+  generatingSections?: Set<string>;
+  /** Section currently being auto-generated (skeleton) */
+  autoGeneratingSection?: string;
 }
 
 /**
@@ -112,6 +125,11 @@ export function ContentRenderer({
   onAskMentor,
   courseId,
   chapterId,
+  images,
+  onGenerateImage,
+  canGenerateImages = false,
+  generatingSections,
+  autoGeneratingSection,
 }: ContentRendererProps) {
   // Replace citation markers [1] with markdown links to sources
   const contentWithLinks = content.replace(
@@ -139,17 +157,47 @@ export function ContentRenderer({
           [rehypeHighlight, { detect: true, ignoreMissing: true }],
         ]}
         components={{
-          // Section headings with notes indicator and mentor button
+          // Section headings with notes indicator, mentor button, and images
           h2({ children }) {
+            const headingText = extractText(children);
+            const sectionImage = images?.[headingText];
+            const isSectionGenerating = generatingSections?.has(headingText);
+            const isAutoGeneratingThis = autoGeneratingSection === headingText;
+            const showGenerateButton = onGenerateImage && !sectionImage && !isSectionGenerating && !isAutoGeneratingThis;
+
+            // Image element (shown below the heading)
+            const imageElement = sectionImage?.url ? (
+              <SectionImage
+                url={sectionImage.url}
+                altText={sectionImage.altText}
+                attribution={sectionImage.sourceAttribution}
+              />
+            ) : isSectionGenerating || isAutoGeneratingThis ? (
+              <SectionImageSkeleton
+                message={isSectionGenerating ? 'Generuję grafikę...' : 'Automatyczne tworzenie grafiki...'}
+              />
+            ) : null;
+
             if (!hasSectionFeatures) {
               return (
-                <h2 className="mt-10 mb-3 pb-2 border-b border-border text-2xl font-bold leading-tight">
-                  {children}
-                </h2>
+                <>
+                  <div className="not-prose flex items-center justify-between mt-10 mb-3 pb-2 border-b border-border">
+                    <h2 className="text-2xl font-bold leading-tight">{children}</h2>
+                    {showGenerateButton && (
+                      <div className="shrink-0 ml-4">
+                        <GenerateImageButton
+                          sectionHeading={headingText}
+                          canGenerate={canGenerateImages}
+                          onGenerate={onGenerateImage}
+                        />
+                      </div>
+                    )}
+                  </div>
+                  {imageElement}
+                </>
               );
             }
 
-            const headingText = extractText(children);
             const notes = sectionNotes[headingText] || [];
             const isExpanded = expandedSections?.has(headingText) ?? false;
 
@@ -158,6 +206,13 @@ export function ContentRenderer({
                 <div className="not-prose flex items-center justify-between mt-10 mb-3 pb-2 border-b border-border">
                   <h2 className="text-2xl font-bold leading-tight">{children}</h2>
                   <div className="flex items-center gap-1 shrink-0 ml-4">
+                    {showGenerateButton && (
+                      <GenerateImageButton
+                        sectionHeading={headingText}
+                        canGenerate={canGenerateImages}
+                        onGenerate={onGenerateImage}
+                      />
+                    )}
                     {onAskMentor && (
                       <Button
                         variant="ghost"
@@ -176,6 +231,7 @@ export function ContentRenderer({
                     />
                   </div>
                 </div>
+                {imageElement}
                 {isExpanded && (
                   <SectionNotesInline
                     notes={notes}

@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Wirtualny Mentor - personalizowana platforma edukacyjna z AI generująca kompleksowe programy nauczania. Użytkownik podaje temat, AI zadaje pytania doprecyzowujące, następnie tworzy strukturyzowany kurs od poziomu Początkujący do Guru z materiałami, quizami i chatbotem-mentorem.
 
-**Status:** Projekt zakończony (7 faz, 33 plany) + materiały źródłowe (PDF/DOCX/TXT) + Focus Panel + Gamification
+**Status:** Projekt zakończony (7 faz, 33 plany) + materiały źródłowe (PDF/DOCX/TXT) + Focus Panel + Gamification + Lesson Images
 
 ## Stack
 
@@ -54,6 +54,7 @@ User Input → API Route → DAL (auth check) → Supabase
 - `src/lib/ai/` - Prompty, schematy Zod, orchestracja AI
 - `src/lib/dal/` - Data Access Layer z auth verification
 - `src/lib/documents/` - Ekstrakcja tekstu, chunking (PDF/DOCX/TXT)
+- `src/lib/images/` - Providerzy obrazów (kie.ai, DALL-E, Unsplash) + AI Planner
 - `src/lib/focus/` - Audio manager, presets, focus DAL (server actions)
 - `src/lib/gamification/` - Points, achievements, DAL
 - `src/components/focus/` - Focus Panel UI (Pomodoro, sounds, focus mode)
@@ -168,6 +169,29 @@ sendMessage({ text: 'Wyjaśnij ten diagram', files: dt.files });
 // Hookpoints: progress.ts (chapter/level/course), quizzes.ts (pass/perfect), focus-dal.ts (pomodoro)
 ```
 
+### Lesson Images (Premium — AI + Stock Photos)
+
+```typescript
+// Hybryda: AI Image Planner (GPT-4o-mini) analizuje lekcję i wybiera 1-2 sekcje do zilustrowania
+// Decyzja per sekcja: stock_photo (Unsplash) vs ai_generated (kie.ai → DALL-E 3 fallback)
+// Auto-trigger po załadowaniu lekcji (premium only) + on-demand per sekcja (przycisk ImagePlus)
+// Feature gating: canAccessPremiumFeature() → admin role (docelowo subscription tiers)
+// Providers: src/lib/images/ (kie-ai.ts, dalle.ts, unsplash.ts, providers.ts, planner.ts)
+// kie.ai: async API (POST generate → poll record-info co 3s, max 40 attempts)
+// DALL-E 3: sync OpenAI API, ~$0.04/image, reuse OPENAI_API_KEY
+// Unsplash: search + download, attribution "Photo by X on Unsplash" (wymagane)
+// Planner: generateObject() z GPT-4o-mini, Zod schema, max 2 obrazy, truncate 4000 chars
+// DAL: src/lib/dal/lesson-images.ts (getLessonImages, saveLessonImage, signed URLs 1h)
+// Storage: bucket lesson-images (private, 10MB, path: {userId}/{chapterId}/{uuid}.ext)
+// API SSE: POST /api/materials/generate-images (maxDuration: 120, events: planning→generating→image_ready→complete)
+// API on-demand: POST /api/materials/generate-image (sync JSON response)
+// Frontend: useChapterImages hook (SSE listener + on-demand generateImage)
+// ContentRenderer: h2 → SectionImage | SectionImageSkeleton | GenerateImageButton
+// DB: lesson_images (chapter_id, section_heading, image_type, provider, storage_path, alt_text)
+// RLS: chapters → course_levels → courses ownership chain
+// Env: KIE_AI_API_KEY, UNSPLASH_ACCESS_KEY (opcjonalne, graceful degradation)
+```
+
 ### Materiały źródłowe (PDF/DOCX/TXT)
 
 ```typescript
@@ -255,6 +279,8 @@ Opcjonalne:
 - `HELICONE_API_KEY` (monitoring)
 - `CRON_SECRET` (Vercel Cron)
 - `USE_MOCK_AUTH=true` (dev bez Supabase)
+- `KIE_AI_API_KEY` (kie.ai — generowanie grafik AI)
+- `UNSPLASH_ACCESS_KEY` (Unsplash — stock photos)
 
 Patrz: `.env.example`
 

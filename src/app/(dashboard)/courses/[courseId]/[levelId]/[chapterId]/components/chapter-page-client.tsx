@@ -46,6 +46,7 @@ interface ChapterPageClientProps {
   isCompleted: boolean;
   prevChapter: { levelId: string; chapterId: string } | null;
   nextChapter: { levelId: string; chapterId: string } | null;
+  canGenerateImages?: boolean;
 }
 
 export function ChapterPageClient({
@@ -64,6 +65,7 @@ export function ChapterPageClient({
   isCompleted,
   prevChapter,
   nextChapter,
+  canGenerateImages = false,
 }: ChapterPageClientProps) {
   // Filter notes: section notes handled by ChapterContent, general notes at bottom
   const generalNotes = notes.filter((n) => !n.section_heading);
@@ -129,6 +131,8 @@ export function ChapterPageClient({
             initialContent={existingContent}
             initialNotes={notes}
             courseId={courseId}
+            canGenerateImages={canGenerateImages}
+            courseTopic={courseTitle}
           />
         </Suspense>
 

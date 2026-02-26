@@ -181,10 +181,12 @@ export async function POST(request: NextRequest) {
             send({
               event: 'image_ready',
               data: {
+                id: savedImage.id,
                 sectionHeading: plan.sectionHeading,
                 imageUrl: savedImage.url || '',
                 altText: plan.altText,
                 imageType: plan.imageType,
+                provider: result.provider,
                 attribution: result.attribution || null,
               },
             })

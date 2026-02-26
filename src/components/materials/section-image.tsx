@@ -11,8 +11,7 @@
  */
 
 import { useState } from 'react'
-import Image from 'next/image'
-import { X } from 'lucide-react'
+import { X, Trash2, Loader2 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 interface SectionImageProps {
@@ -20,9 +19,11 @@ interface SectionImageProps {
   altText: string
   attribution?: string | null
   className?: string
+  onDelete?: () => void
+  isDeleting?: boolean
 }
 
-export function SectionImage({ url, altText, attribution, className }: SectionImageProps) {
+export function SectionImage({ url, altText, attribution, className, onDelete, isDeleting }: SectionImageProps) {
   const [isExpanded, setIsExpanded] = useState(false)
   const [isLoaded, setIsLoaded] = useState(false)
 
@@ -50,12 +51,28 @@ export function SectionImage({ url, altText, attribution, className }: SectionIm
           />
         </div>
 
-        {/* Alt text + attribution */}
+        {/* Alt text + attribution + delete */}
         <figcaption className="flex items-center justify-between gap-2 px-3 py-2 text-xs text-muted-foreground">
           <span>{altText}</span>
-          {attribution && (
-            <span className="shrink-0 text-[10px] opacity-70">{attribution}</span>
-          )}
+          <div className="flex items-center gap-2 shrink-0">
+            {attribution && (
+              <span className="text-[10px] opacity-70">{attribution}</span>
+            )}
+            {onDelete && (
+              <button
+                onClick={onDelete}
+                disabled={isDeleting}
+                className="shrink-0 rounded p-1 text-muted-foreground/50 hover:text-destructive hover:bg-destructive/10 transition-colors disabled:opacity-50"
+                title="Usuń grafikę"
+              >
+                {isDeleting ? (
+                  <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                ) : (
+                  <Trash2 className="h-3.5 w-3.5" />
+                )}
+              </button>
+            )}
+          </div>
         </figcaption>
       </figure>
 

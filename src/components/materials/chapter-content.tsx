@@ -123,7 +123,9 @@ export function ChapterContent({
     isAutoGenerating,
     generatingSection,
     generateImage,
+    deleteImage,
     generatingSections,
+    deletingSections,
   } = useChapterImages(
     chapter.id,
     canGenerateImages && contentReady,
@@ -308,6 +310,16 @@ export function ChapterContent({
       });
     },
     [content, chapter.title, courseTopic, generateImage]
+  );
+
+  // On-demand image deletion handler
+  const handleDeleteImage = useCallback(
+    (sectionHeading: string, imageId: string) => {
+      void deleteImage(sectionHeading, imageId).catch((err) => {
+        toast.error(`Nie udało się usunąć grafiki: ${err instanceof Error ? err.message : 'Nieznany błąd'}`)
+      })
+    },
+    [deleteImage]
   );
 
   const handleRegenerate = useCallback(() => {
@@ -538,6 +550,8 @@ export function ChapterContent({
           canGenerateImages={canGenerateImages}
           generatingSections={generatingSections}
           autoGeneratingSection={generatingSection?.sectionHeading}
+          onDeleteImage={handleDeleteImage}
+          deletingSections={deletingSections}
         />
 
         {/* Tools section */}

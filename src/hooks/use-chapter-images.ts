@@ -27,7 +27,9 @@ interface UseChapterImagesReturn {
   isAutoGenerating: boolean
   generatingSection: GeneratingSection | null
   generateImage: (sectionHeading: string, sectionContent: string, chapterTitle: string, courseTopic?: string) => Promise<void>
+  deleteImage: (sectionHeading: string, imageId: string) => Promise<void>
   generatingSections: Set<string>
+  deletingSections: Set<string>
 }
 
 export function useChapterImages(
@@ -40,6 +42,7 @@ export function useChapterImages(
   const [isAutoGenerating, setIsAutoGenerating] = useState(false)
   const [generatingSection, setGeneratingSection] = useState<GeneratingSection | null>(null)
   const [generatingSections, setGeneratingSections] = useState<Set<string>>(new Set())
+  const [deletingSections, setDeletingSections] = useState<Set<string>>(new Set())
   const autoGenerationAttempted = useRef(false)
   const hasInitialImages = useRef(Object.keys(initialImages || {}).length > 0)
 
@@ -112,11 +115,11 @@ export function useChapterImages(
                     setImages((prev) => ({
                       ...prev,
                       [parsed.sectionHeading]: {
-                        id: '',
+                        id: parsed.id || '',
                         chapterId,
                         sectionHeading: parsed.sectionHeading,
                         imageType: parsed.imageType,
-                        provider: 'unsplash', // Will be refined
+                        provider: parsed.provider || 'unsplash',
                         storagePath: '',
                         prompt: null,
                         altText: parsed.altText,
@@ -228,11 +231,47 @@ export function useChapterImages(
     [chapterId, courseTopic]
   )
 
+  // Delete an image for a specific section
+  const deleteImage = useCallback(
+    async (sectionHeading: string, imageId: string) => {
+      setDeletingSections((prev) => new Set(prev).add(sectionHeading))
+
+      try {
+        const response = await fetch(`/api/materials/lesson-image?imageId=${imageId}`, {
+          method: 'DELETE',
+        })
+
+        if (!response.ok) {
+          const err = await response.json()
+          throw new Error(err.error || 'Failed to delete image')
+        }
+
+        setImages((prev) => {
+          const next = { ...prev }
+          delete next[sectionHeading]
+          return next
+        })
+      } catch (err) {
+        console.error(`[useChapterImages] Delete error for "${sectionHeading}":`, err)
+        throw err
+      } finally {
+        setDeletingSections((prev) => {
+          const next = new Set(prev)
+          next.delete(sectionHeading)
+          return next
+        })
+      }
+    },
+    []
+  )
+
   return {
     images,
     isAutoGenerating,
     generatingSection,
     generateImage,
+    deleteImage,
     generatingSections,
+    deletingSections,
   }
 }

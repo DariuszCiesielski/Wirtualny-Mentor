@@ -90,6 +90,10 @@ interface ContentRendererProps {
   generatingSections?: Set<string>;
   /** Section currently being auto-generated (skeleton) */
   autoGeneratingSection?: string;
+  /** Callback to delete an image */
+  onDeleteImage?: (sectionHeading: string, imageId: string) => void;
+  /** Sections currently being deleted */
+  deletingSections?: Set<string>;
 }
 
 /**
@@ -156,6 +160,8 @@ export function ContentRenderer({
   canGenerateImages = false,
   generatingSections,
   autoGeneratingSection,
+  onDeleteImage,
+  deletingSections,
 }: ContentRendererProps) {
   // Replace citation markers [1] with markdown links to sources
   const contentWithLinks = content.replace(
@@ -191,12 +197,18 @@ export function ContentRenderer({
             const isAutoGeneratingThis = autoGeneratingSection === headingText;
             const showGenerateButton = onGenerateImage && !sectionImage && !isSectionGenerating && !isAutoGeneratingThis;
 
+            const isDeletingThis = deletingSections?.has(headingText);
+
             // Image element (shown below the heading)
             const imageElement = sectionImage?.url ? (
               <SectionImage
                 url={sectionImage.url}
                 altText={sectionImage.altText}
                 attribution={sectionImage.sourceAttribution}
+                onDelete={onDeleteImage && sectionImage.id
+                  ? () => onDeleteImage(headingText, sectionImage.id)
+                  : undefined}
+                isDeleting={isDeletingThis}
               />
             ) : isSectionGenerating || isAutoGeneratingThis ? (
               <SectionImageSkeleton

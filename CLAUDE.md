@@ -186,7 +186,7 @@ sendMessage({ text: 'Wyjaśnij ten diagram', files: dt.files });
 // DAL: src/lib/dal/lesson-images.ts (getLessonImages, saveLessonImage, deleteLessonImage)
 // Signed URL cache: kolumny signed_url + signed_url_expires_at w DB, 5min buffer przed odświeżeniem
 // getLessonImages: cache hit → 0 wywołań Storage API, miss → batch createSignedUrls + fire-and-forget UPDATE
-// saveLessonImage: UPSERT z onConflict (chapter_id,section_heading), cleanup old Storage file
+// saveLessonImage: select→update/insert (NIE upsert — partial index niekompatybilny z PostgREST), cleanup old Storage file
 // deleteLessonImage(imageId): kasuje plik ze Storage + rekord z DB
 // UNIQUE INDEX: idx_lesson_images_chapter_section (partial, WHERE section_heading IS NOT NULL)
 // Storage: bucket lesson-images (private, 10MB, path: {userId}/{chapterId}/{uuid}.ext)

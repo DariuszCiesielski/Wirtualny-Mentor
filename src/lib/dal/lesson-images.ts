@@ -10,6 +10,7 @@ import type { LessonImage, LessonImageRow, ImageProvider, ImageType } from '@/ty
 
 const BUCKET = 'lesson-images'
 const SIGNED_URL_EXPIRY = 3600 // 1 hour
+const URL_CACHE_BUFFER = 5 * 60 // 5 minutes before expiry
 
 /**
  * Transform database row to frontend type (snake_case -> camelCase)
@@ -32,7 +33,11 @@ function transformRow(row: LessonImageRow): LessonImage {
 }
 
 /**
- * Get all images for a chapter with signed URLs
+ * Get all images for a chapter with signed URLs (cached in DB)
+ *
+ * Uses cached signed URLs from DB when still valid (with 5-min buffer).
+ * Only generates new signed URLs for expired ones, then fire-and-forget
+ * updates the cache so subsequent requests are faster.
  */
 export async function getLessonImages(
   chapterId: string
@@ -51,24 +56,80 @@ export async function getLessonImages(
 
   if (!data || data.length === 0) return []
 
-  // Generate signed URLs for all images
-  const images = (data as LessonImageRow[]).map(transformRow)
+  const rows = data as LessonImageRow[]
+  const now = Date.now()
+  const bufferMs = URL_CACHE_BUFFER * 1000
 
-  const paths = images.map(img => img.storagePath)
+  // Separate rows with valid cached URLs from expired ones
+  const expired: { index: number; row: LessonImageRow }[] = []
+
+  const images: LessonImage[] = rows.map((row, i) => {
+    const image = transformRow(row)
+
+    const cachedUrl = row.signed_url
+    const expiresAt = row.signed_url_expires_at
+      ? new Date(row.signed_url_expires_at).getTime()
+      : 0
+
+    if (cachedUrl && expiresAt > now + bufferMs) {
+      // Cached URL still valid
+      return { ...image, url: cachedUrl }
+    }
+
+    // Needs refresh
+    expired.push({ index: i, row })
+    return image
+  })
+
+  // If all URLs are cached, return immediately
+  if (expired.length === 0) return images
+
+  // Batch generate signed URLs only for expired ones
+  const expiredPaths = expired.map(e => e.row.storage_path)
   const { data: signedUrls, error: urlError } = await supabase.storage
     .from(BUCKET)
-    .createSignedUrls(paths, SIGNED_URL_EXPIRY)
+    .createSignedUrls(expiredPaths, SIGNED_URL_EXPIRY)
 
   if (urlError) {
     console.warn('[LessonImages] Failed to generate signed URLs:', urlError.message)
-    return images
+    return images // graceful degradation — return images without URLs for expired ones
   }
 
-  // Attach signed URLs to images
-  return images.map((img, i) => ({
-    ...img,
-    url: signedUrls[i]?.signedUrl || undefined,
-  }))
+  const expiresAtIso = new Date(Date.now() + SIGNED_URL_EXPIRY * 1000).toISOString()
+
+  // Attach fresh URLs to images + prepare DB cache updates
+  const updates: { id: string; signed_url: string; signed_url_expires_at: string }[] = []
+
+  expired.forEach((entry, j) => {
+    const url = signedUrls[j]?.signedUrl
+    if (url) {
+      images[entry.index] = { ...images[entry.index], url }
+      updates.push({
+        id: entry.row.id,
+        signed_url: url,
+        signed_url_expires_at: expiresAtIso,
+      })
+    }
+  })
+
+  // Fire-and-forget: cache new signed URLs in DB (don't block page load)
+  if (updates.length > 0) {
+    Promise.all(
+      updates.map(u =>
+        supabase
+          .from('lesson_images')
+          .update({
+            signed_url: u.signed_url,
+            signed_url_expires_at: u.signed_url_expires_at,
+          })
+          .eq('id', u.id)
+      )
+    ).catch(err => {
+      console.warn('[LessonImages] Failed to cache signed URLs in DB:', err)
+    })
+  }
+
+  return images
 }
 
 /**
@@ -90,7 +151,11 @@ export async function getLessonImagesBySection(
 }
 
 /**
- * Save a lesson image (upload to Storage + insert DB record)
+ * Save a lesson image (upload to Storage + upsert DB record)
+ *
+ * Uses UPSERT on (chapter_id, section_heading) unique index.
+ * If an image already exists for this section, the old file is deleted
+ * from Storage before uploading the new one.
  */
 export async function saveLessonImage(params: {
   chapterId: string
@@ -108,6 +173,21 @@ export async function saveLessonImage(params: {
 }): Promise<LessonImage> {
   const supabase = await createClient()
 
+  // If section heading is set, check for existing image to clean up old file
+  let oldStoragePath: string | null = null
+  if (params.sectionHeading !== null) {
+    const { data: existing } = await supabase
+      .from('lesson_images')
+      .select('id, storage_path')
+      .eq('chapter_id', params.chapterId)
+      .eq('section_heading', params.sectionHeading)
+      .single()
+
+    if (existing) {
+      oldStoragePath = existing.storage_path
+    }
+  }
+
   // Generate unique storage path
   const ext = params.contentType.includes('png') ? 'png'
     : params.contentType.includes('webp') ? 'webp'
@@ -115,7 +195,12 @@ export async function saveLessonImage(params: {
   const filename = `${crypto.randomUUID()}.${ext}`
   const storagePath = `${params.userId}/${params.chapterId}/${filename}`
 
-  // Upload to Storage
+  // Delete old file from Storage (before uploading new one)
+  if (oldStoragePath) {
+    await supabase.storage.from(BUCKET).remove([oldStoragePath])
+  }
+
+  // Upload new file to Storage
   const { error: uploadError } = await supabase.storage
     .from(BUCKET)
     .upload(storagePath, params.buffer, {
@@ -127,21 +212,36 @@ export async function saveLessonImage(params: {
     throw new Error(`Failed to upload image: ${uploadError.message}`)
   }
 
-  // Insert DB record
+  // Generate signed URL immediately for the new image
+  const { data: urlData } = await supabase.storage
+    .from(BUCKET)
+    .createSignedUrl(storagePath, SIGNED_URL_EXPIRY)
+
+  const signedUrl = urlData?.signedUrl || null
+  const signedUrlExpiresAt = signedUrl
+    ? new Date(Date.now() + SIGNED_URL_EXPIRY * 1000).toISOString()
+    : null
+
+  // Upsert DB record (partial index on chapter_id + section_heading WHERE NOT NULL)
   const { data, error } = await supabase
     .from('lesson_images')
-    .insert({
-      chapter_id: params.chapterId,
-      section_heading: params.sectionHeading,
-      image_type: params.imageType,
-      provider: params.provider,
-      storage_path: storagePath,
-      prompt: params.prompt,
-      alt_text: params.altText,
-      source_attribution: params.sourceAttribution || null,
-      width: params.width || null,
-      height: params.height || null,
-    })
+    .upsert(
+      {
+        chapter_id: params.chapterId,
+        section_heading: params.sectionHeading,
+        image_type: params.imageType,
+        provider: params.provider,
+        storage_path: storagePath,
+        prompt: params.prompt,
+        alt_text: params.altText,
+        source_attribution: params.sourceAttribution || null,
+        width: params.width || null,
+        height: params.height || null,
+        signed_url: signedUrl,
+        signed_url_expires_at: signedUrlExpiresAt,
+      },
+      { onConflict: 'chapter_id,section_heading' }
+    )
     .select()
     .single()
 
@@ -151,13 +251,8 @@ export async function saveLessonImage(params: {
     throw new Error(`Failed to save image record: ${error.message}`)
   }
 
-  // Generate signed URL for the new image
-  const { data: urlData } = await supabase.storage
-    .from(BUCKET)
-    .createSignedUrl(storagePath, SIGNED_URL_EXPIRY)
-
   const image = transformRow(data as LessonImageRow)
-  return { ...image, url: urlData?.signedUrl || undefined }
+  return { ...image, url: signedUrl || undefined }
 }
 
 /**
@@ -186,6 +281,34 @@ export async function deleteLessonImages(chapterId: string): Promise<void> {
 
   if (error) {
     throw new Error(`Failed to delete lesson images: ${error.message}`)
+  }
+}
+
+/**
+ * Delete a single lesson image by ID (Storage file + DB record)
+ */
+export async function deleteLessonImage(imageId: string): Promise<void> {
+  const supabase = await createClient()
+
+  const { data: image, error: fetchError } = await supabase
+    .from('lesson_images')
+    .select('storage_path')
+    .eq('id', imageId)
+    .single()
+
+  if (fetchError || !image) {
+    throw new Error('Image not found')
+  }
+
+  await supabase.storage.from(BUCKET).remove([image.storage_path])
+
+  const { error } = await supabase
+    .from('lesson_images')
+    .delete()
+    .eq('id', imageId)
+
+  if (error) {
+    throw new Error(`Failed to delete image: ${error.message}`)
   }
 }
 

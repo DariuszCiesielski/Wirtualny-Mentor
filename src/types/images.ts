@@ -24,6 +24,8 @@ export interface LessonImageRow {
   width: number | null
   height: number | null
   created_at: string
+  signed_url: string | null
+  signed_url_expires_at: string | null
 }
 
 /**

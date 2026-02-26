@@ -174,6 +174,7 @@ export async function saveLessonImage(params: {
   const supabase = await createClient()
 
   // If section heading is set, check for existing image to clean up old file
+  let existingId: string | null = null
   let oldStoragePath: string | null = null
   if (params.sectionHeading !== null) {
     const { data: existing } = await supabase
@@ -184,6 +185,7 @@ export async function saveLessonImage(params: {
       .single()
 
     if (existing) {
+      existingId = existing.id
       oldStoragePath = existing.storage_path
     }
   }
@@ -222,28 +224,47 @@ export async function saveLessonImage(params: {
     ? new Date(Date.now() + SIGNED_URL_EXPIRY * 1000).toISOString()
     : null
 
-  // Upsert DB record (partial index on chapter_id + section_heading WHERE NOT NULL)
-  const { data, error } = await supabase
-    .from('lesson_images')
-    .upsert(
-      {
-        chapter_id: params.chapterId,
-        section_heading: params.sectionHeading,
-        image_type: params.imageType,
-        provider: params.provider,
-        storage_path: storagePath,
-        prompt: params.prompt,
-        alt_text: params.altText,
-        source_attribution: params.sourceAttribution || null,
-        width: params.width || null,
-        height: params.height || null,
-        signed_url: signedUrl,
-        signed_url_expires_at: signedUrlExpiresAt,
-      },
-      { onConflict: 'chapter_id,section_heading' }
-    )
-    .select()
-    .single()
+  // Insert or update DB record
+  // Cannot use upsert() because Supabase PostgREST doesn't support partial unique indexes.
+  // The idx_lesson_images_chapter_section index has WHERE section_heading IS NOT NULL.
+  const imageRecord = {
+    chapter_id: params.chapterId,
+    section_heading: params.sectionHeading,
+    image_type: params.imageType,
+    provider: params.provider,
+    storage_path: storagePath,
+    prompt: params.prompt,
+    alt_text: params.altText,
+    source_attribution: params.sourceAttribution || null,
+    width: params.width || null,
+    height: params.height || null,
+    signed_url: signedUrl,
+    signed_url_expires_at: signedUrlExpiresAt,
+  }
+
+  // Update existing or insert new record
+  // Cannot use upsert() — Supabase PostgREST doesn't support partial unique indexes
+  let data, error
+  if (existingId) {
+    // Update existing record by ID
+    const result = await supabase
+      .from('lesson_images')
+      .update(imageRecord)
+      .eq('id', existingId)
+      .select()
+      .single()
+    data = result.data
+    error = result.error
+  } else {
+    // Insert new record
+    const result = await supabase
+      .from('lesson_images')
+      .insert(imageRecord)
+      .select()
+      .single()
+    data = result.data
+    error = result.error
+  }
 
   if (error) {
     // Cleanup uploaded file on DB error

@@ -94,7 +94,7 @@ export function FocusTimerWidget() {
         <CompactTimerDisplay />
       </Button>
       <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
-        <SheetContent side="bottom" className="h-[85vh] overflow-y-auto">
+        <SheetContent side="bottom" className="max-h-[80vh] overflow-y-auto rounded-t-xl">
           <SheetTitle>Focus Panel</SheetTitle>
           <div className="mt-4">
             <FocusPanelContent />

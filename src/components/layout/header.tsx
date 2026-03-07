@@ -8,6 +8,7 @@
  */
 
 import { UserMenu } from "@/components/layout/user-menu";
+import { MobileNav } from "@/components/layout/mobile-nav";
 import { FocusTimerWidget } from "@/components/focus/focus-timer-widget";
 import { PointsBadge } from "@/components/gamification/points-badge";
 import { useFocusContextSafe } from "@/components/focus/focus-context";
@@ -18,6 +19,7 @@ interface HeaderProps {
   displayName: string;
   avatarUrl?: string;
   initials: string;
+  isAdmin?: boolean;
 }
 
 export function Header({
@@ -25,6 +27,7 @@ export function Header({
   displayName,
   avatarUrl,
   initials,
+  isAdmin,
 }: HeaderProps) {
   const focus = useFocusContextSafe();
   const isFocusMode = focus?.focusMode.isFocusMode ?? false;
@@ -32,12 +35,15 @@ export function Header({
   return (
     <header
       className={cn(
-        "sticky top-0 z-30 flex items-center justify-between border-b bg-background px-4 pl-16 lg:px-6 lg:pl-6 transition-[height] duration-300",
-        isFocusMode ? "h-10" : "h-16"
+        "sticky top-0 z-30 flex items-center justify-between border-b bg-background px-3 sm:px-4 lg:px-6 transition-[height] duration-300",
+        isFocusMode ? "h-10" : "h-14 lg:h-16"
       )}
     >
-      {/* Left side - Focus Timer + Points */}
-      <div className="flex items-center gap-2">
+      {/* Left side - Mobile nav + Focus Timer + Points */}
+      <div className="flex items-center gap-1.5 sm:gap-2">
+        <div className="lg:hidden -ml-1">
+          <MobileNav isAdmin={isAdmin} />
+        </div>
         <FocusTimerWidget />
         <PointsBadge />
       </div>

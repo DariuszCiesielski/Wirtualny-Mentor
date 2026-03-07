@@ -316,6 +316,18 @@ Typ: `LevelName` w `src/types/database.ts`
 
 - Tailwind CSS v4 z dark mode
 - shadcn/ui: New York style, Zinc palette
+- **Domyślny motyw:** Szkło (glass) — `defaultTheme="glass"` w `src/app/layout.tsx`
 - Breakpoint `lg` (1024px) dla sidebar visibility
 - **Fonty:** Geist Sans/Mono z `latin-ext` (polskie znaki ą, ę, ć, ł, ń, ó, ś, ź, ż)
 - **Szerokość treści:** `ContentContainer` (Wąski/Standard/Szeroki/Pełny) — `useContentWidth` hook + `localStorage: wm-content-width`
+
+### Mobile Layout
+
+```typescript
+// Header: MobileNav w flow (NIE fixed) — eliminuje pl-16 hack
+// Header klasy: px-3 sm:px-4 lg:px-6, h-14 lg:h-16, gap-1.5 sm:gap-2
+// Welcome section: flex-col na mobile, truncate na emailu, w-full sm:w-auto na Button
+// Spacing: space-y-5 sm:space-y-8, gap-4 sm:gap-6
+// Focus Panel Sheet: max-h-[80vh] (NIE h-[85vh]), rounded-t-xl
+// WAŻNE: min-w-0 na flex child z truncate (inaczej flexbox nie pozwoli skurczyć)
+```

@@ -47,20 +47,20 @@ export default async function DashboardPage() {
   const hasNotes = recentNotes.length > 0;
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-5 sm:space-y-8">
       {/* Welcome section */}
-      <div className="flex items-start justify-between">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
+        <div className="min-w-0">
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight truncate">
             Witaj, {displayName}!
           </h1>
-          <p className="text-muted-foreground mt-2">
+          <p className="text-muted-foreground mt-1 sm:mt-2">
             {hasCourses
               ? `Masz ${courses.length} ${courses.length === 1 ? "kurs" : courses.length < 5 ? "kursy" : "kursów"}.`
               : "Zacznij od utworzenia pierwszego kursu."}
           </p>
         </div>
-        <Button asChild>
+        <Button asChild className="w-full sm:w-auto shrink-0">
           <Link href="/courses/new">
             <Plus className="h-4 w-4 mr-2" />
             Nowy kurs
@@ -69,7 +69,7 @@ export default async function DashboardPage() {
       </div>
 
       {/* Quick stats */}
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-4 sm:gap-6 md:grid-cols-2 lg:grid-cols-3">
         {/* Moje kursy */}
         <Link href="/courses">
           <Card className="hover:shadow-md transition-shadow cursor-pointer h-full">

@@ -8,7 +8,7 @@
 import { requireAllowedUser } from "@/lib/dal/auth";
 import { Sidebar } from "@/components/layout/sidebar";
 import { Header } from "@/components/layout/header";
-import { MobileNav } from "@/components/layout/mobile-nav";
+
 import { FocusShell } from "@/components/focus/focus-shell";
 import { FocusContentArea } from "@/components/focus/focus-content-area";
 
@@ -42,17 +42,13 @@ export default async function DashboardLayout({
 
         {/* Main content area - offset by sidebar width on desktop */}
         <FocusContentArea>
-          {/* Mobile nav - visible only on small screens */}
-          <div className="fixed left-0 top-0 z-50 p-2 lg:hidden">
-            <MobileNav isAdmin={isAdmin} />
-          </div>
-
-          {/* Header - sticky at top */}
+          {/* Header - sticky at top (includes MobileNav on small screens) */}
           <Header
             email={email}
             displayName={displayName}
             avatarUrl={avatarUrl}
             initials={initials}
+            isAdmin={isAdmin}
           />
 
           {/* Page content */}

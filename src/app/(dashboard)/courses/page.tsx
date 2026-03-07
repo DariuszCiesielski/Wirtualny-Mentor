@@ -19,14 +19,14 @@ export default async function CoursesPage() {
 
   return (
     <ContentContainer className="py-8">
-      <div className="flex justify-between items-center mb-8">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-8">
         <div>
-          <h1 className="text-3xl font-bold">Moje kursy</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold">Moje kursy</h1>
           <p className="text-muted-foreground mt-1">
             Zarządzaj swoimi kursami i śledź postępy
           </p>
         </div>
-        <Button asChild>
+        <Button asChild className="w-full sm:w-auto shrink-0">
           <Link href="/courses/new">
             <Plus className="h-4 w-4 mr-2" />
             Nowy kurs
@@ -49,7 +49,7 @@ export default async function CoursesPage() {
           </Button>
         </div>
       ) : (
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {courses.map((course) => (
             <CourseCard key={course.id} course={course} />
           ))}

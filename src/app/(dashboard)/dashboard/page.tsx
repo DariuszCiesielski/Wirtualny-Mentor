@@ -69,7 +69,7 @@ export default async function DashboardPage() {
       </div>
 
       {/* Quick stats */}
-      <div className="grid gap-4 sm:gap-6 md:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-4 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3">
         {/* Moje kursy */}
         <Link href="/courses">
           <Card className="hover:shadow-md transition-shadow cursor-pointer h-full">
@@ -188,7 +188,7 @@ export default async function DashboardPage() {
               </Link>
             </Button>
           </div>
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {courses.slice(0, 3).map((course) => {
               const completedChapters =
                 course.user_progress?.completed_chapters.length || 0;

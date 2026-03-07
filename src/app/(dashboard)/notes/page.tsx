@@ -58,7 +58,7 @@ export default async function NotesPage() {
   return (
     <ContentContainer className="py-8">
       <header className="mb-8">
-        <h1 className="text-3xl font-bold flex items-center gap-3">
+        <h1 className="text-2xl sm:text-3xl font-bold flex items-center gap-3">
           <FileText className="h-8 w-8" />
           Moje notatki
         </h1>

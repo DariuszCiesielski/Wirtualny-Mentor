@@ -94,15 +94,15 @@ Requirements for milestone v2.0. Each maps to roadmap phases (starting from Phas
 
 ### Business Suggestions
 
-- [ ] **SUG-01**: Użytkownik może wygenerować sugestię biznesową na żądanie (przycisk przy lekcji)
-- [ ] **SUG-02**: AI analizuje treść lekcji + profil biznesowy i generuje 0-1 sugestii (structured output)
-- [ ] **SUG-03**: Sugestie bez profilu biznesowego działają (ogólne, mniej spersonalizowane)
-- [ ] **SUG-04**: Sugestie są cache'owane w DB (brak ponownych wywołań AI dla tej samej lekcji)
-- [ ] **SUG-05**: Użytkownik może zapisać (bookmark) lub odrzucić (dismiss) sugestie
-- [ ] **SUG-06**: Rate limit: max 5 generowań sugestii dziennie (free tier)
-- [ ] **SUG-07**: Sugestia wyświetla się inline przy odpowiedniej sekcji lekcji (fuzzy heading match)
-- [ ] **SUG-08**: Input hash + profile version zapewniają idempotencję i invalidację cache
-- [ ] **SUG-09**: Przełączalny wariant wyświetlania inline: compact (A) / hint (C)
+- [x] **SUG-01**: Użytkownik może wygenerować sugestię biznesową na żądanie (przycisk przy lekcji)
+- [x] **SUG-02**: AI analizuje treść lekcji + profil biznesowy i generuje 0-1 sugestii (structured output)
+- [x] **SUG-03**: Sugestie bez profilu biznesowego działają (ogólne, mniej spersonalizowane)
+- [x] **SUG-04**: Sugestie są cache'owane w DB (brak ponownych wywołań AI dla tej samej lekcji)
+- [x] **SUG-05**: Użytkownik może zapisać (bookmark) lub odrzucić (dismiss) sugestie
+- [x] **SUG-06**: Rate limit: max 5 generowań sugestii dziennie (free tier)
+- [x] **SUG-07**: Sugestia wyświetla się inline przy odpowiedniej sekcji lekcji (fuzzy heading match)
+- [x] **SUG-08**: Input hash + profile version zapewniają idempotencję i invalidację cache
+- [x] **SUG-09**: Przełączalny wariant wyświetlania inline: compact (A) / hint (C)
 
 ### Business Ideas Page
 
@@ -229,15 +229,15 @@ Which phases cover which requirements. Updated during roadmap creation.
 | ONB-04 | Phase 8 | Complete |
 | ONB-05 | Phase 8 | Complete |
 | ONB-06 | Phase 8 | Complete |
-| SUG-01 | Phase 9 | Pending |
-| SUG-02 | Phase 9 | Pending |
-| SUG-03 | Phase 9 | Pending |
-| SUG-04 | Phase 9 | Pending |
-| SUG-05 | Phase 9 | Pending |
-| SUG-06 | Phase 9 | Pending |
-| SUG-07 | Phase 9 | Pending |
-| SUG-08 | Phase 9 | Pending |
-| SUG-09 | Phase 9 | Pending |
+| SUG-01 | Phase 9 | Complete |
+| SUG-02 | Phase 9 | Complete |
+| SUG-03 | Phase 9 | Complete |
+| SUG-04 | Phase 9 | Complete |
+| SUG-05 | Phase 9 | Complete |
+| SUG-06 | Phase 9 | Complete |
+| SUG-07 | Phase 9 | Complete |
+| SUG-08 | Phase 9 | Complete |
+| SUG-09 | Phase 9 | Complete |
 | IDEAS-01 | Phase 10 | Pending |
 | IDEAS-02 | Phase 10 | Pending |
 | IDEAS-03 | Phase 10 | Pending |

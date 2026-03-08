@@ -252,9 +252,11 @@ Plans:
 **Plans**: 3 plans in 3 waves
 
 Plans:
-- [ ] 09-01-PLAN.md — DB migration, typy, schema, DAL, AI prompt, provider config
-- [ ] 09-02-PLAN.md — API endpoint POST + hook useChapterSuggestion
-- [ ] 09-03-PLAN.md — UI komponenty InlineSuggestion + integracja z content-renderer i chapter page
+- [x] 09-01-PLAN.md — DB migration, typy, schema, DAL, AI prompt, provider config ✓
+- [x] 09-02-PLAN.md — API endpoint POST + hook useChapterSuggestion ✓
+- [x] 09-03-PLAN.md — UI komponenty InlineSuggestion + integracja z content-renderer i chapter page ✓
+
+**Completed:** 2026-03-08
 
 ---
 
@@ -285,13 +287,13 @@ v2.0: 8 -> 9 -> 10
 | 6. Mentor Chatbot | 3/3 | Complete | 2026-01-31 |
 | 7. Polish & Optimization | 4/4 | Complete | 2026-01-31 |
 | 8. Business Onboarding | 4/4 | Complete | 2026-03-08 |
-| 9. Business Suggestions | 0/3 | Planned | — |
+| 9. Business Suggestions | 3/3 | Complete | 2026-03-08 |
 | 10. Business Ideas & Lead Generation | 0/? | Pending | — |
 
 **v1.0 Total:** 33/33 plans complete (100%)
-**v2.0 Total:** 4/7+ plans (~40%) — phase 8 complete, phase 9 planned
+**v2.0 Total:** 7/7+ plans (~67%) — phases 8-9 complete, phase 10 pending
 
 ---
 *Roadmap created: 2025-01-30*
 *v2.0 phases added: 2026-03-08*
-*Last updated: 2026-03-08 — phase 9 planned (3 plans in 3 waves)*
+*Last updated: 2026-03-08 — phase 9 complete (3/3 plans)*

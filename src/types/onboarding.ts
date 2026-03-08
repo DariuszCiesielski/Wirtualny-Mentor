@@ -11,6 +11,7 @@ export interface BusinessProfile {
   company_size: string | null;
   experience_summary: string | null;
   onboarding_completed: boolean;
+  profile_version: number;
   created_at: string;
   updated_at: string;
 }

@@ -85,35 +85,35 @@ Requirements for milestone v2.0. Each maps to roadmap phases (starting from Phas
 
 ### Business Onboarding
 
-- [ ] **ONB-01**: Użytkownik może wypełnić formularz profilu biznesowego (branża, rola, cel, wielkość firmy)
-- [ ] **ONB-02**: Użytkownik może opcjonalnie doprecyzować profil w krótkim chacie z AI (2-3 pytania)
+- [ ] **ONB-01**: Uzytkownik moze wypelnic formularz profilu biznesowego (branza, rola, cel, wielkosc firmy)
+- [ ] **ONB-02**: Uzytkownik moze opcjonalnie doprecyzowac profil w krotkim chacie z AI (2-3 pytania)
 - [ ] **ONB-03**: AI generuje podsumowanie profilu (experience_summary) z odpowiedzi chatu
-- [ ] **ONB-04**: Dashboard wyświetla banner zachęcający do uzupełnienia profilu (dopóki onboarding nie ukończony)
-- [ ] **ONB-05**: Użytkownik może edytować profil biznesowy ze strony /profile
-- [ ] **ONB-06**: Profil biznesowy wpływa na generowanie kursów (wstrzyknięcie kontekstu do ClarifyingChat)
+- [ ] **ONB-04**: Dashboard wyswietla banner zachecajacy do uzupelnienia profilu (dopoki onboarding nie ukonczony)
+- [ ] **ONB-05**: Uzytkownik moze edytowac profil biznesowy ze strony /profile
+- [ ] **ONB-06**: Profil biznesowy wplywa na generowanie kursow (wstrzykniecie kontekstu do ClarifyingChat)
 
 ### Business Suggestions
 
-- [ ] **SUG-01**: Użytkownik może wygenerować sugestię biznesową na żądanie (przycisk przy lekcji)
-- [ ] **SUG-02**: AI analizuje treść lekcji + profil biznesowy i generuje 0-1 sugestii (structured output)
-- [ ] **SUG-03**: Sugestie bez profilu biznesowego działają (ogólne, mniej spersonalizowane)
-- [ ] **SUG-04**: Sugestie są cache'owane w DB (brak ponownych wywołań AI dla tej samej lekcji)
-- [ ] **SUG-05**: Użytkownik może zapisać (bookmark) lub odrzucić (dismiss) sugestię
-- [ ] **SUG-06**: Rate limit: max 5 generowań sugestii dziennie (free tier)
-- [ ] **SUG-07**: Sugestia wyświetla się inline przy odpowiedniej sekcji lekcji (fuzzy heading match)
-- [ ] **SUG-08**: Input hash + profile version zapewniają idempotencję i invalidację cache
-- [ ] **SUG-09**: Przełączalny wariant wyświetlania inline: compact (A) / hint (C)
+- [ ] **SUG-01**: Uzytkownik moze wygenerowac sugestie biznesowa na zadanie (przycisk przy lekcji)
+- [ ] **SUG-02**: AI analizuje tresc lekcji + profil biznesowy i generuje 0-1 sugestii (structured output)
+- [ ] **SUG-03**: Sugestie bez profilu biznesowego dzialaja (ogolne, mniej spersonalizowane)
+- [ ] **SUG-04**: Sugestie sa cache'owane w DB (brak ponownych wywolan AI dla tej samej lekcji)
+- [ ] **SUG-05**: Uzytkownik moze zapisac (bookmark) lub odrzucic (dismiss) sugestie
+- [ ] **SUG-06**: Rate limit: max 5 generowan sugestii dziennie (free tier)
+- [ ] **SUG-07**: Sugestia wyswietla sie inline przy odpowiedniej sekcji lekcji (fuzzy heading match)
+- [ ] **SUG-08**: Input hash + profile version zapewniaja idempotencje i invalidacje cache
+- [ ] **SUG-09**: Przelaczalny wariant wyswietlania inline: compact (A) / hint (C)
 
 ### Business Ideas Page
 
-- [ ] **IDEAS-01**: Zbiorcza strona pomysłów biznesowych w sidebarze (/business-ideas)
-- [ ] **IDEAS-02**: Filtrowanie pomysłów po kursie
-- [ ] **IDEAS-03**: Widok pełnej karty pomysłu (tytuł, opis, potencjał, złożoność)
+- [ ] **IDEAS-01**: Zbiorcza strona pomyslow biznesowych w sidebarze (/business-ideas)
+- [ ] **IDEAS-02**: Filtrowanie pomyslow po kursie
+- [ ] **IDEAS-03**: Widok pelnej karty pomyslu (tytul, opis, potencjal, zlozonosc)
 
 ### Lead Generation
 
-- [ ] **LEAD-01**: Warunkowe CTA kontaktowe (pojawia się po bookmarku lub powrocie do pomysłu)
-- [ ] **LEAD-02**: Dane kontaktowe z zmiennych środowiskowych (CONTACT_EMAIL, CONTACT_PHONE, CONTACT_FORM_URL)
+- [ ] **LEAD-01**: Warunkowe CTA kontaktowe (pojawia sie po bookmarku lub powrocie do pomyslu)
+- [ ] **LEAD-02**: Dane kontaktowe z zmiennych srodowiskowych (CONTACT_EMAIL, CONTACT_PHONE, CONTACT_FORM_URL)
 - [ ] **LEAD-03**: Disclaimer "charakter inspiracyjny, nie rekomendacja biznesowa"
 
 ## Future Requirements
@@ -122,14 +122,14 @@ Deferred to future milestones. Tracked but not in current roadmap.
 
 ### Subscription & Billing
 
-- **BILL-01**: Free tier: max 3 kursy/miesiąc
-- **BILL-02**: Płatny plan z wyższymi limitami
-- **BILL-03**: Integracja płatności (Stripe)
+- **BILL-01**: Free tier: max 3 kursy/miesiac
+- **BILL-02**: Platny plan z wyzszymi limitami
+- **BILL-03**: Integracja platnosci (Stripe)
 
 ### User API Keys
 
-- **KEY-01**: Użytkownik może podłączyć własny klucz Anthropic (Claude)
-- **KEY-02**: Claude poprawia jakość kursów i sugestii
+- **KEY-01**: Uzytkownik moze podlaczyc wlasny klucz Anthropic (Claude)
+- **KEY-02**: Claude poprawia jakosc kursow i sugestii
 - **KEY-03**: Szyfrowanie kluczy w DB (AES + ENV)
 
 ### White-Label
@@ -141,7 +141,7 @@ Deferred to future milestones. Tracked but not in current roadmap.
 
 - **ANAL-01**: Tracking interakcji z sugestiami (viewed/bookmarked/contact_clicked)
 - **ANAL-02**: Telemetria onboardingu (completion rate, skip rate)
-- **ANAL-03**: A/B test wariantów inline (compact vs hint)
+- **ANAL-03**: A/B test wariantow inline (compact vs hint)
 
 ### Previously Deferred (v1 era)
 
@@ -223,6 +223,27 @@ Which phases cover which requirements. Updated during roadmap creation.
 | UX-03 | Phase 2 | Complete |
 | UX-04 | Phase 2 | Complete |
 | UX-05 | Phase 1 | Complete |
+| ONB-01 | Phase 8 | Pending |
+| ONB-02 | Phase 8 | Pending |
+| ONB-03 | Phase 8 | Pending |
+| ONB-04 | Phase 8 | Pending |
+| ONB-05 | Phase 8 | Pending |
+| ONB-06 | Phase 8 | Pending |
+| SUG-01 | Phase 9 | Pending |
+| SUG-02 | Phase 9 | Pending |
+| SUG-03 | Phase 9 | Pending |
+| SUG-04 | Phase 9 | Pending |
+| SUG-05 | Phase 9 | Pending |
+| SUG-06 | Phase 9 | Pending |
+| SUG-07 | Phase 9 | Pending |
+| SUG-08 | Phase 9 | Pending |
+| SUG-09 | Phase 9 | Pending |
+| IDEAS-01 | Phase 10 | Pending |
+| IDEAS-02 | Phase 10 | Pending |
+| IDEAS-03 | Phase 10 | Pending |
+| LEAD-01 | Phase 10 | Pending |
+| LEAD-02 | Phase 10 | Pending |
+| LEAD-03 | Phase 10 | Pending |
 
 **v1 Coverage:**
 - v1 requirements: 44 total
@@ -230,11 +251,11 @@ Which phases cover which requirements. Updated during roadmap creation.
 - Unmapped: 0
 
 **v2.0 Coverage:**
-- v2.0 requirements: 18 total (ONB: 6, SUG: 9, IDEAS: 3, LEAD: 3 — to be corrected)
-- Mapped to phases: 0 (pending roadmap)
-- Unmapped: 18
+- v2.0 requirements: 21 total (ONB: 6, SUG: 9, IDEAS: 3, LEAD: 3)
+- Mapped to phases: 21
+- Unmapped: 0
 
 ---
 *Requirements defined: 2025-01-30*
 *v2.0 requirements added: 2026-03-08*
-*Last updated: 2026-03-08 — Milestone v2.0 Business Enablement*
+*Last updated: 2026-03-08 — v2.0 traceability complete*

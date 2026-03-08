@@ -2,7 +2,7 @@
 
 ## Overview
 
-Wirtualny Mentor to platforma edukacyjna AI, która generuje spersonalizowane programy nauczania z 5 poziomami zaawansowania (Poczatkujacy -> Guru). Projekt budujemy w 8 fazach: od fundamentow infrastruktury AI, przez autentykacje i generowanie curriculum, az po system quizow, notatek z embeddingami i chatbota-mentora wykorzystujacego metode sokratyczna. Koncowe fazy dopracowuja UX i dodaja automatyczne odswiezanie wiedzy.
+Wirtualny Mentor to platforma edukacyjna AI, ktora generuje spersonalizowane programy nauczania z 5 poziomami zaawansowania (Poczatkujacy -> Guru). Milestone v1.0 (fazy 0-7) dostarczyl kompletna platforme edukacyjna z auth, curriculum, materialami, quizami, notatkami, chatbotem-mentorem i optymalizacja. Milestone v2.0 "Business Enablement" (fazy 8-10) dodaje profil biznesowy uzytkownika, kontekstowe sugestie biznesowe generowane AI przy lekcjach i zbiorcza strone pomyslow z lead generation.
 
 ## Phases
 
@@ -10,14 +10,22 @@ Wirtualny Mentor to platforma edukacyjna AI, która generuje spersonalizowane pr
 - Integer phases (0, 1, 2...): Planned milestone work
 - Decimal phases (2.1, 2.2): Urgent insertions (marked with INSERTED)
 
-- [x] **Phase 0: Foundation & AI Architecture** - Setup Next.js, Vercel AI SDK, model tiering strategy ✓
+### Milestone v1.0 (Complete)
+
+- [x] **Phase 0: Foundation & AI Architecture** - Setup Next.js, Vercel AI SDK, model tiering strategy
 - [x] **Phase 1: Auth & Basic UI** - Supabase auth, database schema, podstawowy interfejs
-- [x] **Phase 2: Curriculum Generation** - Generowanie spersonalizowanego programu nauczania z 5 poziomami ✓
-- [x] **Phase 3: Learning Materials** - Materialy podre­cznikowe z praktycznymi instrukcjami ✓
-- [x] **Phase 4: Assessment System** - Quizy, testy, adaptacyjna remediacja ✓
-- [x] **Phase 5: Notes System & Embeddings** - Notatki uzytkownika z wektoryzacja do RAG ✓
-- [x] **Phase 6: Mentor Chatbot** - Chatbot z metoda sokratyczna i dostepem do notatek ✓
-- [x] **Phase 7: Polish & Optimization** - Responsywnosc, odswiezanie wiedzy, monitoring ✓
+- [x] **Phase 2: Curriculum Generation** - Generowanie spersonalizowanego programu nauczania z 5 poziomami
+- [x] **Phase 3: Learning Materials** - Materialy podrecznikowe z praktycznymi instrukcjami
+- [x] **Phase 4: Assessment System** - Quizy, testy, adaptacyjna remediacja
+- [x] **Phase 5: Notes System & Embeddings** - Notatki uzytkownika z wektoryzacja do RAG
+- [x] **Phase 6: Mentor Chatbot** - Chatbot z metoda sokratyczna i dostepem do notatek
+- [x] **Phase 7: Polish & Optimization** - Responsywnosc, odswiezanie wiedzy, monitoring
+
+### Milestone v2.0 — Business Enablement
+
+- [ ] **Phase 8: Business Onboarding** - Profil biznesowy uzytkownika z opcjonalnym chatem AI
+- [ ] **Phase 9: Business Suggestions** - Kontekstowe sugestie biznesowe AI przy lekcjach
+- [ ] **Phase 10: Business Ideas & Lead Generation** - Zbiorcza strona pomyslow z CTA kontaktowym
 
 ## Phase Details
 
@@ -207,24 +215,68 @@ Plans:
 
 **Completed:** 2026-01-31
 
+---
+
+### Phase 8: Business Onboarding
+**Goal**: Uzytkownik moze opisac swoj kontekst biznesowy, a platforma wykorzystuje go do personalizacji nauki
+**Depends on**: Phase 7 (existing platform)
+**Requirements**: ONB-01, ONB-02, ONB-03, ONB-04, ONB-05, ONB-06
+**Success Criteria** (what must be TRUE):
+  1. Uzytkownik moze wypelnic formularz profilu biznesowego (branza, rola, cel, wielkosc firmy) i zapisac go
+  2. Uzytkownik moze opcjonalnie doprecyzowac profil w krotkim chacie z AI, a AI generuje z tego podsumowanie
+  3. Dashboard wyswietla banner zachecajacy do uzupelnienia profilu (znika po ukonczeniu onboardingu)
+  4. Uzytkownik moze edytowac profil biznesowy ze strony /profile w dowolnym momencie
+  5. Przy tworzeniu nowego kursu AI uwzglednia profil biznesowy uzytkownika w pytaniach doprecyzowujacych
+
+---
+
+### Phase 9: Business Suggestions
+**Goal**: Uzytkownik otrzymuje kontekstowe sugestie biznesowe przy lekcjach, dopasowane do jego profilu i tresci
+**Depends on**: Phase 8 (business profile needed for personalized suggestions)
+**Requirements**: SUG-01, SUG-02, SUG-03, SUG-04, SUG-05, SUG-06, SUG-07, SUG-08, SUG-09
+**Success Criteria** (what must be TRUE):
+  1. Uzytkownik moze kliknac przycisk przy lekcji i otrzymac sugestie biznesowa wygenerowana przez AI na podstawie tresci + profilu (lub ogolna bez profilu)
+  2. Sugestia wyswietla sie inline przy odpowiedniej sekcji lekcji i mozna ja przelaczac miedzy widokiem compact a hint
+  3. Sugestie sa cache'owane w DB — ponowne otwarcie lekcji nie wywoluje AI, a zmiana profilu invaliduje cache
+  4. Uzytkownik moze zapisac (bookmark) lub odrzucic (dismiss) sugestie
+  5. Generowanie sugestii jest limitowane do 5 dziennie
+
+---
+
+### Phase 10: Business Ideas & Lead Generation
+**Goal**: Uzytkownik ma jedno miejsce do przegladania wszystkich pomyslow biznesowych z mozliwoscia kontaktu
+**Depends on**: Phase 9 (suggestions must exist to aggregate)
+**Requirements**: IDEAS-01, IDEAS-02, IDEAS-03, LEAD-01, LEAD-02, LEAD-03
+**Success Criteria** (what must be TRUE):
+  1. Uzytkownik widzi w sidebarze link do strony /business-ideas z lista wszystkich zapisanych (bookmarked) sugestii
+  2. Uzytkownik moze filtrowac pomysly po kursie i widziec pelna karte kazdego pomyslu (tytul, opis, potencjal, zlozonosc)
+  3. Po zapisaniu pomyslu (bookmark) lub powrocie do niego pojawia sie CTA kontaktowe z danymi z ENV
+  4. Kazda sugestia biznesowa zawiera disclaimer o charakterze inspiracyjnym
+
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order: 0 -> 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7
+v1.0: 0 -> 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 (complete)
+v2.0: 8 -> 9 -> 10
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 0. Foundation & AI Architecture | 2/2 | ✓ Complete | 2025-01-30 |
-| 1. Auth & Basic UI | 3/3 | ✓ Complete | 2025-01-30 |
-| 2. Curriculum Generation | 7/7 | ✓ Complete | 2026-01-31 |
-| 3. Learning Materials | 5/5 | ✓ Complete | 2026-01-31 |
-| 4. Assessment System | 4/4 | ✓ Complete | 2026-01-31 |
-| 5. Notes System & Embeddings | 5/5 | ✓ Complete | 2026-01-31 |
-| 6. Mentor Chatbot | 3/3 | ✓ Complete | 2026-01-31 |
-| 7. Polish & Optimization | 4/4 | ✓ Complete | 2026-01-31 |
+| 0. Foundation & AI Architecture | 2/2 | Complete | 2025-01-30 |
+| 1. Auth & Basic UI | 3/3 | Complete | 2025-01-30 |
+| 2. Curriculum Generation | 7/7 | Complete | 2026-01-31 |
+| 3. Learning Materials | 5/5 | Complete | 2026-01-31 |
+| 4. Assessment System | 4/4 | Complete | 2026-01-31 |
+| 5. Notes System & Embeddings | 5/5 | Complete | 2026-01-31 |
+| 6. Mentor Chatbot | 3/3 | Complete | 2026-01-31 |
+| 7. Polish & Optimization | 4/4 | Complete | 2026-01-31 |
+| 8. Business Onboarding | 0/? | Pending | — |
+| 9. Business Suggestions | 0/? | Pending | — |
+| 10. Business Ideas & Lead Generation | 0/? | Pending | — |
 
-**Total:** 33/33 plans complete (100%)
+**v1.0 Total:** 33/33 plans complete (100%)
+**v2.0 Total:** 0/? plans (0%) — awaiting plan-phase
 
 ---
 *Roadmap created: 2025-01-30*
-*Last updated: 2026-02-06*
+*v2.0 phases added: 2026-03-08*
+*Last updated: 2026-03-08*

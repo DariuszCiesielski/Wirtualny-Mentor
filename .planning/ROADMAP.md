@@ -227,6 +227,13 @@ Plans:
   3. Dashboard wyswietla banner zachecajacy do uzupelnienia profilu (znika po ukonczeniu onboardingu)
   4. Uzytkownik moze edytowac profil biznesowy ze strony /profile w dowolnym momencie
   5. Przy tworzeniu nowego kursu AI uwzglednia profil biznesowy uzytkownika w pytaniach doprecyzowujacych
+**Plans**: 4 plans in 3 waves
+
+Plans:
+- [ ] 08-01-PLAN.md — DB migration, typy, schematy, DAL, prompts, provider config, shadcn Popover+Command
+- [ ] 08-02-PLAN.md — Komponent Combobox, formularz BusinessProfileForm, strona /onboarding
+- [ ] 08-03-PLAN.md — Chat AI onboardingu (API + UI), banner na dashboardzie
+- [ ] 08-04-PLAN.md — Integracja: flow /onboarding, edycja w /profile, curriculum prompt injection
 
 ---
 
@@ -269,12 +276,12 @@ v2.0: 8 -> 9 -> 10
 | 5. Notes System & Embeddings | 5/5 | Complete | 2026-01-31 |
 | 6. Mentor Chatbot | 3/3 | Complete | 2026-01-31 |
 | 7. Polish & Optimization | 4/4 | Complete | 2026-01-31 |
-| 8. Business Onboarding | 0/? | Pending | — |
+| 8. Business Onboarding | 0/4 | Planned | — |
 | 9. Business Suggestions | 0/? | Pending | — |
 | 10. Business Ideas & Lead Generation | 0/? | Pending | — |
 
 **v1.0 Total:** 33/33 plans complete (100%)
-**v2.0 Total:** 0/? plans (0%) — awaiting plan-phase
+**v2.0 Total:** 0/4+ plans (0%) — phase 8 planned
 
 ---
 *Roadmap created: 2025-01-30*

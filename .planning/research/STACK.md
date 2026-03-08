@@ -1,334 +1,211 @@
-# Technology Stack
+# Technology Stack — Business Enablement (v2.0)
 
-**Project:** Wirtualny Mentor
-**Researched:** 2026-01-30
-**Overall Confidence:** HIGH
+**Projekt:** Wirtualny Mentor
+**Badanie:** 2026-03-08
+**Wymiar:** Dodatki do stacku dla onboardingu biznesowego, sugestii AI i lead generation
+**Pewnosc ogolna:** WYSOKA
 
-## Executive Summary
+## Kluczowy wniosek
 
-Stack zaprojektowany dla platformy edukacyjnej AI z funkcjami: personalizowane curriculum, chatbot-mentor, quizy, web search i tracking postepow. Bazuje na preferencji uzytkownika (React + TypeScript + Supabase) z uzupelnieniem o sprawdzone narzedzia AI.
+**Nie trzeba instalowac ZADNYCH nowych bibliotek.** Caly modul biznesowy mozna zbudowac na istniejacym stacku. To znaczaco zmniejsza ryzyko i czas implementacji.
 
-**Kluczowa decyzja:** Next.js zamiast Vite — streaming AI, API routes, SSR dla SEO, natywna integracja z Vercel AI SDK.
-
----
-
-## Recommended Stack
-
-### Core Framework
-
-| Technology | Version | Purpose | Why | Confidence |
-|------------|---------|---------|-----|------------|
-| **Next.js** | 15.x | Full-stack React framework | Natywne wsparcie dla streaming AI (Vercel AI SDK), API routes, SSR/SSG dla SEO, edge runtime. Publiczny produkt wymaga SEO. | HIGH |
-| **React** | 19.x | UI library | Wymagane przez Next.js 15, Server Components, Suspense dla AI streaming | HIGH |
-| **TypeScript** | 5.x | Type safety | Standard w 2025/2026, lepsze DX, bledy wykrywane na etapie kompilacji | HIGH |
-
-**Dlaczego Next.js zamiast Vite (z PROJECT.md):**
-- Vite = SPA, brak SSR out-of-box. Publiczny produkt potrzebuje SEO (strony landing, dokumentacja kursow).
-- Next.js ma natywna integracje z Vercel AI SDK — 20 linii kodu vs 100+ z Vite.
-- Streaming responses (useChat hook) dziala najlepiej z Next.js API routes.
-- Deployment na Vercel (z PROJECT.md) — optymalna integracja.
-
-**Zrodla:**
-- [Vite vs Next.js 2025](https://strapi.io/blog/vite-vs-nextjs-2025-developer-framework-comparison)
-- [Vercel AI SDK docs](https://ai-sdk.dev/docs/introduction)
+Istniejacy stack (Next.js 16, React 19, Vercel AI SDK v6, Supabase, shadcn/ui, react-hook-form, Zod 4, SWR, sonner) pokrywa 100% potrzeb nowych funkcji.
 
 ---
 
-### AI Integration
+## Istniejacy stack — mapowanie na nowe funkcje
 
-| Technology | Version | Purpose | Why | Confidence |
-|------------|---------|---------|-----|------------|
-| **Vercel AI SDK** | 6.x | AI orchestration | 25+ providerow, useChat/useCompletion hooks, streaming, tool calling. Standard dla React AI apps 2025/2026. | HIGH |
-| **@ai-sdk/anthropic** | latest | Claude integration | Oficjalny provider dla AI SDK | HIGH |
-| **@ai-sdk/openai** | latest | GPT integration | Oficjalny provider dla AI SDK | HIGH |
-| **@ai-sdk/google** | latest | Gemini integration | Oficjalny provider dla AI SDK | HIGH |
+### Onboarding Wizard (formularz + opcjonalny chat AI)
 
-**Multi-Model Strategy (z PROJECT.md):**
-```
-Claude Sonnet 4.5 → Mentoring chatbot (dlugi kontekst, empatia, wsparcie)
-GPT-4.1 → Generowanie struktury curriculum (structured outputs)
-Gemini 2.5 Flash → Quizy (szybki, tani, dobry w generowaniu pytan)
-```
+| Potrzeba | Rozwiazanie z istniejacego stacku | Wersja | Dlaczego |
+|----------|-----------------------------------|--------|----------|
+| Formularz 4 pol | `react-hook-form` + `@hookform/resolvers` + `zod` | 7.71.1 / 5.2.2 / 4.3.6 | Juz w projekcie, shadcn `form.tsx` gotowy |
+| Select (branza, rola, cel, wielkosc) | shadcn `select.tsx` (Radix Select) | Juz w projekcie | Komponent UI juz istnieje |
+| Wizard (kroki 1-2-3) | Wlasny state machine (useState/useReducer) | React 19 | 3 kroki to za malo na biblioteke stepper — prosty `step` state wystarczy |
+| Chat AI doprecyzowujacy | `useChat` z `@ai-sdk/react` + streaming API route | 3.0.64 | Identyczny wzorzec jak MentorChat i InlineMentorChat |
+| Walidacja | `zod` schema + `zodResolver` | 4.3.6 | Spojny z reszta projektu |
+| Toast (powiadomienia) | `sonner` | 2.0.7 | Juz uzywany wszedzie |
 
-**Dlaczego Vercel AI SDK zamiast LangChain.js:**
-- LangChain: 101.2 kB gzipped, blokuje edge runtime, bardziej zlozony
-- Vercel AI SDK: mniejszy bundle, edge-native, purpose-built React hooks
-- Mozna polaczyc oba jesli potrzeba RAG, ale na start AI SDK wystarczy
+**Wzorzec wizarda:** Nie instalowac zadnej biblioteki stepper. Wzorzec z 3 krokami to prosty `const [step, setStep] = useState<1|2|3>(1)` z warunkowym renderowaniem. Biblioteki typu `react-step-wizard` dodaja niepotrzebna zlozonosc.
 
-**Zrodla:**
-- [Vercel AI SDK 6](https://vercel.com/blog/ai-sdk-6)
-- [LangChain vs Vercel AI SDK](https://strapi.io/blog/langchain-vs-vercel-ai-sdk-vs-openai-sdk-comparison-guide)
+### AI Business Suggestions (generowanie pomyslow)
 
----
+| Potrzeba | Rozwiazanie z istniejacego stacku | Dlaczego |
+|----------|-----------------------------------|----------|
+| Generowanie sugestii | `generateObject` z Vercel AI SDK v6 + Zod schema | Identyczny wzorzec jak quiz generation i image planner |
+| Model AI | GPT-5.2 via `openaiProvider` | Juz skonfigurowany w `providers.ts` |
+| Structured output | Zod schema dla tablicy sugestii | Sprawdzony wzorzec (quizy, planner) |
+| Inline rendering | Wlasne komponenty React | shadcn Card + Badge wystarczaja |
+| Cache/idempotencja | `input_hash` w DB (Supabase) | Brak potrzeby dodatkowego cache layer |
 
-### Web Search API
+### Agregacja pomyslow + filtrowanie
 
-| Technology | Price | Purpose | Why | Confidence |
-|------------|-------|---------|-----|------------|
-| **Tavily** | $0.008/search | RAG-optimized search | Najlepszy dla RAG, 800k+ developerow, integracja z LangChain/LlamaIndex, SOC 2 certified. Generous free tier (1000 credits/mies). | HIGH |
+| Potrzeba | Rozwiazanie z istniejacego stacku | Dlaczego |
+|----------|-----------------------------------|----------|
+| Lista z filtrem po kursie | `swr` + Supabase query | SWR juz uzyty w projekcie, filtrowanie po stronie DB |
+| UI listy | shadcn Card + Badge + Select (filtr) | Wszystkie komponenty istnieja |
+| Stany puste | Wlasne komponenty (tekst + CTA) | Proste, nie wymaga biblioteki |
 
-**Alternatywy rozwazone:**
+### Lead Generation / CTA
 
-| API | Best For | Why Not Primary |
-|-----|----------|-----------------|
-| Perplexity Sonar | Szybkosc (358ms) | Drogi dla wolumenu, zwraca przetworzone odpowiedzi |
-| Exa AI | Semantic research | Drozszy, bardziej zlozony, overkill dla edukacji |
-| Serper | Wysoki wolumen | Mniej zoptymalizowany dla RAG |
-
-**Rekomendacja:** Zacznij z Tavily. Jesli potrzeba szybszych odpowiedzi UX — dodaj Perplexity jako drugi tier.
-
-**Zrodla:**
-- [Tavily vs Exa vs Perplexity 2025](https://www.humai.blog/tavily-vs-exa-vs-perplexity-vs-you-com-the-complete-ai-search-api-comparison-2025/)
+| Potrzeba | Rozwiazanie | Dlaczego |
+|----------|-------------|----------|
+| Warunkowe CTA | Logika w komponencie (is_bookmarked check) | Czysty React, zero dodatkowych deps |
+| Dane kontaktowe | `process.env.CONTACT_*` w server component | 3 zmienne ENV, bez dodatkowej infrastruktury |
+| Mailto/tel linki | Natywne HTML `<a href="mailto:">` | Zero JS potrzebne |
 
 ---
 
-### Database & Backend
+## Rozszerzenie MODEL_CONFIG
 
-| Technology | Version | Purpose | Why | Confidence |
-|------------|---------|---------|-----|------------|
-| **Supabase** | latest | BaaS (DB, Auth, Storage) | Znany z poprzednich projektow, PostgreSQL z pgvector, Row Level Security, realtime subscriptions | HIGH |
-| **pgvector** | 0.8.x | Vector embeddings | Wbudowany w Supabase, eliminuje potrzebe osobnej vector DB (Pinecone, Weaviate) | HIGH |
-| **Supabase Auth** | latest | Authentication | Email/password, OAuth, magic links, gotowe UI komponenty | HIGH |
+Jedyna zmiana w istniejacym kodzie AI — dodac 2 klucze do `src/lib/ai/providers.ts`:
 
-**Vector Search dla RAG:**
-- pgvector z HNSW index dla accuracy
-- OpenAI text-embedding-3-small dla embeddings (tani, dobry)
-- Alternatywa: voyage-3.5-lite (lepsza jakosc, podobna cena)
-
-**Zrodla:**
-- [Supabase AI docs](https://supabase.com/docs/guides/ai)
-- [pgvector docs](https://supabase.com/docs/guides/database/extensions/pgvector)
-
----
-
-### Embeddings
-
-| Technology | Price/1M tokens | Dimensions | Purpose | Confidence |
-|------------|-----------------|------------|---------|------------|
-| **OpenAI text-embedding-3-small** | $0.02 | 1536 | Embeddings dla notatek, materialow | HIGH |
-
-**Alternatywa do rozważenia:**
-- **voyage-3.5-lite** ($0.02/1M) — 7.58% lepsza jakosc niz OpenAI small przy tej samej cenie
-- Decyzja: zacznij z OpenAI (prostsze), migruj do Voyage jesli potrzeba lepszej jakosci
-
-**Zrodla:**
-- [Embedding Models Comparison 2025](https://elephas.app/blog/best-embedding-models)
-
----
-
-### State Management
-
-| Technology | Version | Purpose | Why | Confidence |
-|------------|---------|---------|-----|------------|
-| **Zustand** | 5.x | Client state | Prosty, bez boilerplate, DevTools support, ~2KB. Idealny dla mid-size apps. | HIGH |
-| **TanStack Query** | 5.x | Server state | Caching, background refetch, optimistic updates. Standard 2025. | HIGH |
-
-**Dlaczego Zustand zamiast Redux/Jotai:**
-- Redux: za duzo boilerplate dla tego projektu
-- Jotai: atomiczny model niepotrzebny, Zustand prostszy
-- Zustand: znany pattern (jak Redux), ale minimalny kod
-
-**Zrodla:**
-- [State Management 2025](https://dev.to/hijazi313/state-management-in-2025-when-to-use-context-redux-zustand-or-jotai-2d2k)
-- [TanStack Query v5](https://tanstack.com/query/v5/docs/framework/react/overview)
-
----
-
-### UI Components
-
-| Technology | Version | Purpose | Why | Confidence |
-|------------|---------|---------|-----|------------|
-| **shadcn/ui** | latest | Base components | Copy-paste, customizable, Tailwind-based. Standard 2025. | HIGH |
-| **Tailwind CSS** | 4.x | Styling | Utility-first, szybki development, dobrze z shadcn | HIGH |
-| **shadcn-chatbot-kit** | latest | Chat UI | Gotowe komponenty chatbota na shadcn, markdown, syntax highlighting | MEDIUM |
-
-**Alternatywy dla Chat UI:**
-- assistant-ui — bardziej zaawansowane, Radix-based
-- Prompt Kit — components dla AI apps
-
-**Zrodla:**
-- [shadcn AI Components](https://www.shadcn.io/ai)
-- [shadcn-chatbot-kit](https://github.com/Blazity/shadcn-chatbot-kit)
-
----
-
-### Quiz System
-
-| Technology | Purpose | Why | Confidence |
-|------------|---------|-----|------------|
-| **Custom implementation** | Quiz engine | Brak dominujacej biblioteki, proste do zbudowania z shadcn | MEDIUM |
-| **react-quiz-component** | Alternatywa | Gotowy komponent, JSON-based, ale mniej elastyczny | LOW |
-
-**Rekomendacja:** Zbuduj wlasny quiz engine. Wymagania (adaptacyjne remediation, rozne typy pytan) przekraczaja mozliwosci gotowych bibliotek.
-
-**Struktura quizu:**
 ```typescript
-interface Quiz {
-  questions: Question[]
-  passingScore: number
-  adaptiveRemediation: boolean
-}
+export const MODEL_CONFIG = {
+  // ...istniejace (mentor, curriculum, quiz, embedding)
+  businessIdeas: openaiProvider('gpt-5.2'),    // structured output dla sugestii
+  onboardingChat: openaiProvider('gpt-5.2'),   // reuse mentor model dla chatu
+} as const;
+```
 
-interface Question {
-  type: 'single' | 'multiple' | 'text' | 'code'
-  content: string
-  options?: string[]
-  correctAnswer: string | string[]
-  explanation: string
-  remediationContent?: string // AI-generated on wrong answer
+**Dlaczego GPT-5.2 a nie GPT-4o-mini:**
+- Sugestie biznesowe wymagaja rozumienia kontekstu branzy + tresci lekcji — GPT-4o-mini moze dawac zbyt ogolne wyniki
+- Chat onboardingowy wymaga empatii i doprecyzowania — jak mentor
+- Koszt kontrolowany przez on-demand (max 5/dzien free) + cache (input_hash)
+
+---
+
+## Baza danych — nowe tabele
+
+| Tabela | Wzorzec | Ryzyko |
+|--------|---------|--------|
+| `user_business_profiles` | Identyczny jak `focus_sessions` — UUID PK, user_id FK, RLS | NISKIE |
+| `business_suggestions` | Identyczny jak `user_points_log` — UUID PK, user_id FK, UNIQUE constraint, RLS | NISKIE |
+| ALTER `wm_allowed_users` | Dodanie 2 kolumn (subscription_tier, subscription_expires_at) | NISKIE |
+
+**Hash implementacja (zero deps, natywne Web Crypto API):**
+
+```typescript
+async function computeInputHash(lessonContent: string, profileVersion: number): Promise<string> {
+  const input = `${lessonContent}::${profileVersion}`;
+  const encoder = new TextEncoder();
+  const data = encoder.encode(input);
+  const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+  return Array.from(new Uint8Array(hashBuffer))
+    .map(b => b.toString(16).padStart(2, '0'))
+    .join('');
 }
+```
+
+Web Crypto API jest natywne w Node 18+ i wszystkich nowoczesnych przegladarkach. Next.js 16 wymaga Node 18+.
+
+---
+
+## Czego NIE dodawac (i dlaczego)
+
+| Biblioteka | Dlaczego NIE | Co zamiast |
+|------------|-------------|------------|
+| `react-step-wizard` / `@mantine/stepper` | 3 kroki to za malo na dedykowana biblioteke, dodaje bundle bloat | `useState<1\|2\|3>` |
+| `@tanstack/react-query` | `swr` juz w projekcie, nie mieszac dwoch cache managerow | `swr` z `mutate()` |
+| `nanoid` / `uuid` | Supabase `gen_random_uuid()` generuje ID po stronie DB | DB-generated UUIDs |
+| `crypto-js` / `hash.js` | Web Crypto API (`crypto.subtle.digest`) jest natywne | Natywne Web Crypto |
+| `rate-limiter-flexible` / `upstash` | Rate limit 5/dzien to prosty COUNT query | `SELECT COUNT(*) WHERE created_at > now() - interval '1 day'` |
+| `zustand` / `jotai` | Stan wizarda jest lokalny (3 kroki), brak potrzeby global state | React useState/useReducer |
+| Osobna biblioteka email (nodemailer) | CTA to linki mailto/tel, nie wysylanie maili | Natywny HTML `<a>` |
+
+---
+
+## Nowe zmienne srodowiskowe
+
+```env
+# Lead generation — dane kontaktowe (MVP)
+CONTACT_EMAIL=kontakt@example.com
+CONTACT_PHONE=+48123456789
+CONTACT_FORM_URL=https://example.com/kontakt
+```
+
+**Walidacja:** Server-side check w komponencie CTA — jesli brak zmiennych, nie renderuj CTA (graceful degradation).
+
+---
+
+## Wzorce do reuse (nie implementowac od nowa)
+
+| Wzorzec | Zrodlo w kodzie | Reuse w nowym module |
+|---------|----------------|---------------------|
+| Fuzzy heading matching | `ContentRenderer` (stripHeadingNumber) | `relevant_section` w InlineSuggestion |
+| useChat + streaming | `MentorChat`, `InlineMentorChat` | OnboardingChat |
+| generateObject + Zod schema | Quiz generation, Image Planner | Business suggestions generation |
+| Fire-and-forget side effects | Gamification (`awardPoints().catch(() => {})`) | Suggestion saving po generacji |
+| DAL pattern (server actions + auth) | `focus-dal.ts`, `gamification-dal.ts` | onboarding-dal.ts, ideas-dal.ts |
+| Inline content przy h2 | `SectionImage`, `SectionNoteIndicator` | `InlineSuggestion` przy sekcji |
+| Conditional banner | (nowy, ale prosty pattern) | `OnboardingBanner` na dashboardzie |
+
+---
+
+## Integracja z istniejacym kodem
+
+### Modyfikacje istniejacych plikow
+
+| Plik | Zmiana | Ryzyko |
+|------|--------|--------|
+| `src/lib/ai/providers.ts` | Dodac `businessIdeas` i `onboardingChat` do MODEL_CONFIG | NISKIE — addytywne, 2 linie |
+| Sidebar component | Nowa pozycja "Pomysly biznesowe" | NISKIE — addytywne, 1 link |
+| `src/app/(dashboard)/page.tsx` | OnboardingBanner (conditional render) | NISKIE — addytywne, warunkowy komponent |
+| `[chapterId]/page.tsx` | Przycisk "Pokaz pomysl" + InlineSuggestion | SREDNIE — modyfikacja renderowania lekcji |
+| `src/app/(dashboard)/profile/page.tsx` | Sekcja "Profil biznesowy" | NISKIE — nowa sekcja |
+
+### Nowe pliki (struktura z design doc)
+
+```
+src/lib/onboarding/
+  onboarding-dal.ts        — CRUD profilu biznesowego (wzorzec: focus-dal.ts)
+  onboarding-prompt.ts     — system prompt dla chatu AI
+  onboarding-schema.ts     — Zod schema profilu
+
+src/lib/business-ideas/
+  ideas-dal.ts             — CRUD sugestii (wzorzec: gamification-dal.ts)
+  ideas-prompt.ts          — prompt do analizy lekcji + profilu
+  ideas-schema.ts          — Zod schema sugestii
+
+src/components/onboarding/
+  OnboardingWizard.tsx     — 3-step wizard (useState)
+  OnboardingForm.tsx       — react-hook-form + zodResolver
+  OnboardingChat.tsx       — useChat (wzorzec: InlineMentorChat)
+  OnboardingBanner.tsx     — warunkowa belka na dashboardzie
+  BusinessProfileSummary.tsx
+
+src/components/business-ideas/
+  InlineSuggestion.tsx     — compact/hint variant
+  SuggestionCard.tsx       — pelna karta pomyslu
+  IdeasList.tsx            — zbiorcza lista z filtrem (SWR)
+  ContactCTA.tsx           — warunkowe CTA (dane z ENV)
+
+src/app/api/onboarding/refine/route.ts
+src/app/api/business-ideas/generate/route.ts
+src/app/(dashboard)/onboarding/page.tsx
+src/app/(dashboard)/business-ideas/page.tsx
 ```
 
 ---
 
-### Deployment & Infrastructure
+## Ocena pewnosci
 
-| Technology | Purpose | Why | Confidence |
-|------------|---------|-----|------------|
-| **Vercel** | Hosting | Natywna integracja z Next.js, edge functions, preview deployments | HIGH |
-| **Supabase Cloud** | Database hosting | Managed PostgreSQL, automatic backups, scaling | HIGH |
-
----
-
-## Complete Installation
-
-```bash
-# Create Next.js project
-npx create-next-app@latest wirtualny-mentor --typescript --tailwind --app --src-dir
-
-cd wirtualny-mentor
-
-# AI SDK & Providers
-npm install ai @ai-sdk/anthropic @ai-sdk/openai @ai-sdk/google
-
-# Supabase
-npm install @supabase/supabase-js @supabase/ssr
-
-# State Management
-npm install zustand @tanstack/react-query
-
-# UI Components (shadcn init)
-npx shadcn@latest init
-
-# Additional UI
-npm install lucide-react
-
-# Web Search
-npm install @tavily/core
-
-# Utilities
-npm install zod date-fns
-
-# Dev dependencies
-npm install -D @types/node prettier eslint-config-prettier
-```
+| Obszar | Poziom | Uzasadnienie |
+|--------|--------|-------------|
+| Zero nowych deps | WYSOKI | Pelna analiza package.json vs design doc — wszystko pokryte |
+| MODEL_CONFIG extension | WYSOKI | Wzorzec juz dziala, addytywna zmiana |
+| Web Crypto dla hash | WYSOKI | Natywne API, Node 18+ (Next.js 16 wymaga tego) |
+| Rate limit via DB COUNT | SREDNI | Dziala dla MVP (5/dzien), przy >1000 userach moze wymagac Redis/Upstash |
+| Wizard bez stepper lib | WYSOKI | 3 kroki, prosty state, shadcn components wystarczaja |
+| SWR dla agregacji | WYSOKI | Juz uzywany w projekcie, mutate() dla odswiezania |
 
 ---
 
-## Alternatives Considered
+## Implikacje dla roadmapy
 
-| Category | Recommended | Alternative | Why Not |
-|----------|-------------|-------------|---------|
-| Framework | Next.js | Vite + React | Brak SSR, gorsze streaming AI, brak API routes |
-| AI SDK | Vercel AI SDK | LangChain.js | Wiekszy bundle, blokuje edge, bardziej zlozony |
-| Database | Supabase | Firebase | PostgreSQL > Firestore dla relacji, pgvector wbudowany |
-| Vector DB | pgvector (Supabase) | Pinecone | Dodatkowa infrastruktura, pgvector wystarczy na start |
-| Web Search | Tavily | Perplexity | Tavily tanszy, lepszy dla RAG |
-| State | Zustand | Redux Toolkit | Za duzo boilerplate |
-| State | Zustand | Jotai | Atomiczny model niepotrzebny |
-| Hosting | Vercel | Railway/Render | Vercel najlepsza integracja z Next.js |
-
----
-
-## What NOT to Use
-
-| Technology | Why Avoid |
-|------------|-----------|
-| Create React App | Deprecated, wolny, brak SSR |
-| Redux (bez Toolkit) | Za duzo boilerplate |
-| Separate vector DB (Pinecone) | Niepotrzebna zlozonosc, pgvector wystarczy |
-| Firebase | Firestore gorszy dla relacyjnych danych, brak pgvector |
-| LangChain.js (jako glowny) | Overkill, duzy bundle — uzywaj tylko jesli potrzeba zaawansowanego RAG |
-
----
-
-## Cost Estimation (Monthly)
-
-| Service | Free Tier | Estimated Cost (10K users) |
-|---------|-----------|---------------------------|
-| Vercel | Hobby free | Pro ~$20/mo |
-| Supabase | 500MB DB, 2GB storage | Pro ~$25/mo |
-| OpenAI API | — | ~$50-200/mo (zalezne od uzycia) |
-| Anthropic API | — | ~$50-200/mo |
-| Google AI | — | ~$20-50/mo |
-| Tavily | 1000 free/mo | ~$50/mo |
-| **Total** | **~$0** (MVP) | **~$200-500/mo** (10K users) |
-
----
-
-## Migration Path from Existing Stack
-
-Z PROJECT.md: "React + TypeScript + Vite + Tailwind CSS + shadcn/ui"
-
-**Wymagane zmiany:**
-1. Vite → Next.js (nowy projekt, migracja komponentow)
-2. Dodaj Vercel AI SDK
-3. Dodaj Supabase pgvector dla embeddings
-4. Dodaj Tavily dla web search
-
-**Zachowane:**
-- React + TypeScript — bez zmian
-- Tailwind CSS + shadcn/ui — bez zmian
-- Supabase — rozszerzony o pgvector
-
----
-
-## Sources
-
-### HIGH Confidence (Official Docs / Context7)
-- [Vercel AI SDK Documentation](https://ai-sdk.dev/docs/introduction)
-- [Supabase AI & Vectors](https://supabase.com/docs/guides/ai)
-- [TanStack Query v5](https://tanstack.com/query/v5/docs/framework/react/overview)
-- [Next.js Documentation](https://nextjs.org/docs)
-
-### MEDIUM Confidence (Multiple Sources Agree)
-- [Vite vs Next.js 2025](https://strapi.io/blog/vite-vs-nextjs-2025-developer-framework-comparison)
-- [LangChain vs Vercel AI SDK](https://strapi.io/blog/langchain-vs-vercel-ai-sdk-vs-openai-sdk-comparison-guide)
-- [State Management 2025](https://dev.to/hijazi313/state-management-in-2025-when-to-use-context-redux-zustand-or-jotai-2d2k)
-- [Embedding Models Comparison](https://elephas.app/blog/best-embedding-models)
-
-### LOW Confidence (Single Source / WebSearch Only)
-- shadcn-chatbot-kit — popularne, ale mniej znane niz shadcn core
-- react-quiz-component — stary, moze byc nieaktualny
-
----
-
-## Roadmap Implications
-
-### Phase 1: Foundation
-- Next.js setup, Supabase auth, basic UI (shadcn)
-- **Stack:** Next.js, Supabase, shadcn/ui, Zustand
-
-### Phase 2: AI Core
-- Vercel AI SDK setup, multi-model orchestration
-- **Stack:** AI SDK, Claude/GPT/Gemini providers
-
-### Phase 3: Content Generation
-- Curriculum generation, material creation
-- **Stack:** Structured outputs (GPT), streaming
-
-### Phase 4: Quiz System
-- Custom quiz engine, adaptive remediation
-- **Stack:** Custom components, AI grading
-
-### Phase 5: Mentor Chatbot
-- Chat UI, context management, notatki integration
-- **Stack:** useChat hook, shadcn-chatbot-kit, pgvector
-
-### Phase 6: Web Search
-- Tavily integration, knowledge refresh
-- **Stack:** Tavily API, caching strategy
-
-### Phase 7: Polish & Scale
-- Performance optimization, monitoring
-- **Stack:** Vercel Analytics, Supabase monitoring
+1. **Zero nowych instalacji npm** — caly modul biznesowy na istniejacym stacku, bez ryzyka nowych deps
+2. **Addytywne zmiany** — nowe pliki i minimalne modyfikacje istniejacych
+3. **Sprawdzone wzorce** — kazdy nowy komponent ma odpowiednik w istniejacym kodzie do skopiowania
+4. **Najwyzsze ryzyko integracji:** modyfikacja `[chapterId]/page.tsx` (inline suggestions obok tresci lekcji) — wymaga ostroznosci zeby nie zepsuc renderowania lekcji, lesson images, notatek sekcyjnych
+5. **DB migracje:** 2 nowe tabele + 1 ALTER TABLE — standardowe, niskie ryzyko
+6. **Brak blokujacych zaleznosci** — mozna zaczac od dowolnego modulu (onboarding, sugestie, lub lead gen)

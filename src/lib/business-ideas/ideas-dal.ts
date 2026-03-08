@@ -8,7 +8,11 @@
 "use server";
 
 import { createClient } from "@/lib/supabase/server";
-import type { BusinessSuggestion, DailyLimitResult } from "@/types/business-ideas";
+import type {
+  BusinessSuggestion,
+  BookmarkedSuggestionWithContext,
+  DailyLimitResult,
+} from "@/types/business-ideas";
 
 const DAILY_LIMIT = 5;
 
@@ -221,4 +225,110 @@ function getWarsawOffset(date: Date): number {
 
   // Fallback: CET (+1)
   return 60;
+}
+
+/**
+ * Get all bookmarked (non-dismissed) suggestions with course/chapter context.
+ * Optionally filter by courseId.
+ */
+export async function getBookmarkedSuggestions(
+  userId: string,
+  courseId?: string
+): Promise<BookmarkedSuggestionWithContext[]> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user || user.id !== userId) return [];
+
+  let query = supabase
+    .from("business_suggestions")
+    .select(
+      "id, title, description, business_potential, estimated_complexity, relevant_section, course_id, chapter_id, created_at, courses ( title ), chapters ( title, level_id )"
+    )
+    .eq("user_id", userId)
+    .eq("is_bookmarked", true)
+    .eq("is_dismissed", false)
+    .order("created_at", { ascending: false });
+
+  if (courseId) {
+    query = query.eq("course_id", courseId);
+  }
+
+  const { data, error } = await query;
+
+  if (error) {
+    console.error("[ideas-dal] getBookmarkedSuggestions error:", error);
+    return [];
+  }
+
+  if (!data) return [];
+
+  return data.map((row) => {
+    const course = row.courses as unknown as { title: string };
+    const chapter = row.chapters as unknown as {
+      title: string;
+      level_id: string;
+    };
+
+    return {
+      id: row.id,
+      title: row.title,
+      description: row.description,
+      business_potential: row.business_potential,
+      estimated_complexity: row.estimated_complexity as
+        | "prosty"
+        | "średni"
+        | "złożony",
+      relevant_section: row.relevant_section,
+      course_id: row.course_id,
+      chapter_id: row.chapter_id,
+      created_at: row.created_at,
+      course_title: course?.title ?? "",
+      chapter_title: chapter?.title ?? "",
+      level_id: chapter?.level_id ?? "",
+    };
+  });
+}
+
+/**
+ * Get distinct courses that have bookmarked suggestions for a user.
+ */
+export async function getCoursesWithBookmarks(
+  userId: string
+): Promise<{ id: string; title: string }[]> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user || user.id !== userId) return [];
+
+  const { data, error } = await supabase
+    .from("business_suggestions")
+    .select("course_id, courses ( id, title )")
+    .eq("user_id", userId)
+    .eq("is_bookmarked", true)
+    .eq("is_dismissed", false);
+
+  if (error) {
+    console.error("[ideas-dal] getCoursesWithBookmarks error:", error);
+    return [];
+  }
+
+  if (!data) return [];
+
+  const seen = new Set<string>();
+  const result: { id: string; title: string }[] = [];
+
+  for (const row of data) {
+    if (seen.has(row.course_id)) continue;
+    seen.add(row.course_id);
+
+    const course = row.courses as unknown as { id: string; title: string };
+    if (course) {
+      result.push({ id: course.id, title: course.title });
+    }
+  }
+
+  return result;
 }

@@ -39,3 +39,24 @@ export interface DailyLimitResult {
   remaining: number;
   allowed: boolean;
 }
+
+export interface BookmarkedSuggestionWithContext {
+  id: string;
+  title: string;
+  description: string;
+  business_potential: string;
+  estimated_complexity: "prosty" | "średni" | "złożony";
+  relevant_section: string | null;
+  course_id: string;
+  chapter_id: string;
+  created_at: string;
+  course_title: string;
+  chapter_title: string;
+  level_id: string;
+}
+
+export interface ContactInfo {
+  email: string | null;
+  phone: string | null;
+  formUrl: string | null;
+}

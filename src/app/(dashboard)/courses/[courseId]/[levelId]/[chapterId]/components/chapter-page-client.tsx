@@ -24,6 +24,7 @@ import type { SectionContent } from '@/types/materials';
 import type { Note } from '@/types/notes';
 import type { LessonImage } from '@/types/images';
 import type { BusinessSuggestion } from '@/types/business-ideas';
+import type { UIMessage } from 'ai';
 
 interface ChapterPageClientProps {
   courseId: string;
@@ -53,6 +54,8 @@ interface ChapterPageClientProps {
   initialSuggestion?: BusinessSuggestion | null;
   hasBusinessProfile?: boolean;
   profileVersion?: number;
+  existingChatSessionId?: string | null;
+  existingChatMessages?: UIMessage[];
 }
 
 export function ChapterPageClient({
@@ -76,6 +79,8 @@ export function ChapterPageClient({
   initialSuggestion,
   hasBusinessProfile = false,
   profileVersion = 0,
+  existingChatSessionId,
+  existingChatMessages,
 }: ChapterPageClientProps) {
   // Filter notes: section notes handled by ChapterContent, general notes at bottom
   const generalNotes = notes.filter((n) => !n.section_heading);
@@ -89,6 +94,8 @@ export function ChapterPageClient({
       chapterId={chapter.id}
       chapterTitle={chapter.title}
       chapterContext={chapterContext}
+      existingSessionId={existingChatSessionId}
+      existingMessages={existingChatMessages}
     >
       <ChapterPageWrapper>
         {/* Progress Bar */}

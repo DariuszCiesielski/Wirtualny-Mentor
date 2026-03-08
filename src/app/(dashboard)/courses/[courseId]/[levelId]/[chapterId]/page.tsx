@@ -13,6 +13,8 @@ import { getNotes } from "@/lib/dal/notes";
 import { getLessonImagesBySection } from "@/lib/dal/lesson-images";
 import { getSuggestion } from "@/lib/business-ideas/ideas-dal";
 import { getBusinessProfile } from "@/lib/onboarding/onboarding-dal";
+import { getChapterSession, getMessages } from "@/lib/dal/chat";
+import type { UIMessage } from "ai";
 import { notFound } from "next/navigation";
 import { ChapterPageClient } from "./components/chapter-page-client";
 
@@ -99,11 +101,28 @@ Grupa docelowa: ${course.target_audience || "Nie określono"}
     ? await getLessonImagesBySection(chapterId).catch(() => ({}))
     : {};
 
-  // Load business suggestion and profile in parallel
-  const [initialSuggestion, businessProfile] = await Promise.all([
-    getSuggestion(chapterId),
-    getBusinessProfile(),
-  ]);
+  // Load business suggestion, profile, and inline chat session in parallel
+  const [initialSuggestion, businessProfile, existingChatSession] =
+    await Promise.all([
+      getSuggestion(chapterId),
+      getBusinessProfile(),
+      getChapterSession(user.id, courseId, chapterId),
+    ]);
+
+  // Load chat messages if session exists
+  let existingChatMessages: UIMessage[] = [];
+  if (existingChatSession) {
+    try {
+      const msgs = await getMessages(existingChatSession.id);
+      existingChatMessages = msgs.map((m) => ({
+        id: m.id,
+        role: m.role as "user" | "assistant",
+        parts: [{ type: "text" as const, text: m.content }],
+      }));
+    } catch {
+      // Ignore - chat will start fresh
+    }
+  }
 
   return (
     <ChapterPageClient
@@ -134,6 +153,8 @@ Grupa docelowa: ${course.target_audience || "Nie określono"}
       initialSuggestion={initialSuggestion}
       hasBusinessProfile={!!businessProfile}
       profileVersion={businessProfile?.profile_version ?? 0}
+      existingChatSessionId={existingChatSession?.id ?? null}
+      existingChatMessages={existingChatMessages}
     />
   );
 }

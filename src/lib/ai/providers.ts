@@ -56,6 +56,9 @@ export const MODEL_CONFIG = {
 
   // Onboarding chat - lightweight structured output (Phase 8)
   onboarding: openaiProvider('gpt-4o-mini'),
+
+  // Business suggestions - structured generation (Phase 9)
+  suggestions: openaiProvider('gpt-5.2'),
 } as const;
 
 // Provider registry with all configured providers

@@ -43,6 +43,15 @@ export async function saveBusinessProfile(
   } = await supabase.auth.getUser();
   if (!user) return { success: false, error: "Unauthorized" };
 
+  // Fetch current profile to increment profile_version
+  const { data: current } = await supabase
+    .from("user_business_profiles")
+    .select("profile_version")
+    .eq("user_id", user.id)
+    .maybeSingle();
+
+  const nextVersion = ((current?.profile_version as number) ?? 0) + 1;
+
   const { error } = await supabase
     .from("user_business_profiles")
     .upsert(
@@ -54,6 +63,7 @@ export async function saveBusinessProfile(
         company_size: input.company_size || null,
         experience_summary: input.experience_summary || null,
         onboarding_completed: true,
+        profile_version: nextVersion,
       },
       { onConflict: "user_id" }
     );

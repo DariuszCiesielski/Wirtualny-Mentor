@@ -106,15 +106,15 @@ Requirements for milestone v2.0. Each maps to roadmap phases (starting from Phas
 
 ### Business Ideas Page
 
-- [ ] **IDEAS-01**: Zbiorcza strona pomysłów biznesowych w sidebarze (/business-ideas)
-- [ ] **IDEAS-02**: Filtrowanie pomysłów po kursie
-- [ ] **IDEAS-03**: Widok pełnej karty pomysłu (tytuł, opis, potencjał, złożoność)
+- [x] **IDEAS-01**: Zbiorcza strona pomysłów biznesowych w sidebarze (/business-ideas)
+- [x] **IDEAS-02**: Filtrowanie pomysłów po kursie
+- [x] **IDEAS-03**: Widok pełnej karty pomysłu (tytuł, opis, potencjał, złożoność)
 
 ### Lead Generation
 
-- [ ] **LEAD-01**: Warunkowe CTA kontaktowe (pojawia się po bookmarku lub powrocie do pomysłu)
-- [ ] **LEAD-02**: Dane kontaktowe ze zmiennych środowiskowych (CONTACT_EMAIL, CONTACT_PHONE, CONTACT_FORM_URL)
-- [ ] **LEAD-03**: Disclaimer "charakter inspiracyjny, nie rekomendacja biznesowa"
+- [x] **LEAD-01**: Warunkowe CTA kontaktowe (pojawia się po bookmarku lub powrocie do pomysłu)
+- [x] **LEAD-02**: Dane kontaktowe ze zmiennych środowiskowych (CONTACT_EMAIL, CONTACT_PHONE, CONTACT_FORM_URL)
+- [x] **LEAD-03**: Disclaimer "charakter inspiracyjny, nie rekomendacja biznesowa"
 
 ## Future Requirements
 
@@ -238,12 +238,12 @@ Which phases cover which requirements. Updated during roadmap creation.
 | SUG-07 | Phase 9 | Complete |
 | SUG-08 | Phase 9 | Complete |
 | SUG-09 | Phase 9 | Complete |
-| IDEAS-01 | Phase 10 | Pending |
-| IDEAS-02 | Phase 10 | Pending |
-| IDEAS-03 | Phase 10 | Pending |
-| LEAD-01 | Phase 10 | Pending |
-| LEAD-02 | Phase 10 | Pending |
-| LEAD-03 | Phase 10 | Pending |
+| IDEAS-01 | Phase 10 | Complete |
+| IDEAS-02 | Phase 10 | Complete |
+| IDEAS-03 | Phase 10 | Complete |
+| LEAD-01 | Phase 10 | Complete |
+| LEAD-02 | Phase 10 | Complete |
+| LEAD-03 | Phase 10 | Complete |
 
 **v1 Coverage:**
 - v1 requirements: 44 total

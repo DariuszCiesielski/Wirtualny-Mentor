@@ -272,8 +272,10 @@ Plans:
 **Plans**: 2 plans in 2 waves
 
 Plans:
-- [ ] 10-01-PLAN.md — Typy, DAL, nawigacja sidebar/mobile, ContactCTA
-- [ ] 10-02-PLAN.md — Server page /business-ideas, BusinessIdeasClient, IdeaCard
+- [x] 10-01-PLAN.md — Typy, DAL, nawigacja sidebar/mobile, ContactCTA ✓
+- [x] 10-02-PLAN.md — Server page /business-ideas, BusinessIdeasClient, IdeaCard ✓
+
+**Completed:** 2026-03-08
 
 ## Progress
 
@@ -293,12 +295,12 @@ v2.0: 8 -> 9 -> 10
 | 7. Polish & Optimization | 4/4 | Complete | 2026-01-31 |
 | 8. Business Onboarding | 4/4 | Complete | 2026-03-08 |
 | 9. Business Suggestions | 3/3 | Complete | 2026-03-08 |
-| 10. Business Ideas & Lead Generation | 0/2 | In Progress | — |
+| 10. Business Ideas & Lead Generation | 2/2 | Complete | 2026-03-08 |
 
 **v1.0 Total:** 33/33 plans complete (100%)
-**v2.0 Total:** 7/9 plans (~78%) — phases 8-9 complete, phase 10 in progress
+**v2.0 Total:** 9/9 plans (100%) — all phases complete
 
 ---
 *Roadmap created: 2025-01-30*
 *v2.0 phases added: 2026-03-08*
-*Last updated: 2026-03-08 — phase 10 planned (2 plans in 2 waves)*
+*Last updated: 2026-03-08 — phase 10 complete, milestone v2.0 done*

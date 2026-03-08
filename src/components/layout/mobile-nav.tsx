@@ -11,7 +11,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Menu, Home, BookOpen, FileText, User, ShieldCheck } from 'lucide-react';
+import { Menu, Home, BookOpen, FileText, Lightbulb, User, ShieldCheck } from 'lucide-react';
 import {
   Sheet,
   SheetContent,
@@ -39,6 +39,12 @@ const navItems = [
     label: 'Notatki',
     href: '/notes',
     icon: FileText,
+    disabled: false,
+  },
+  {
+    label: 'Pomysły biznesowe',
+    href: '/business-ideas',
+    icon: Lightbulb,
     disabled: false,
   },
   {

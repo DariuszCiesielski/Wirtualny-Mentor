@@ -9,7 +9,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, BookOpen, FileText, User, ShieldCheck } from "lucide-react";
+import { Home, BookOpen, FileText, Lightbulb, User, ShieldCheck } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useFocusContextSafe } from "@/components/focus/focus-context";
 
@@ -30,6 +30,12 @@ const navItems = [
     label: "Notatki",
     href: "/notes",
     icon: FileText,
+    disabled: false,
+  },
+  {
+    label: "Pomysły biznesowe",
+    href: "/business-ideas",
+    icon: Lightbulb,
     disabled: false,
   },
   {

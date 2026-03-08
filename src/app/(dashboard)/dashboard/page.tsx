@@ -7,6 +7,8 @@
 import { requireAuth } from "@/lib/dal/auth";
 import { getUserCourses } from "@/lib/dal/courses";
 import { getAllUserNotes } from "@/lib/dal/notes";
+import { isOnboardingCompleted } from "@/lib/onboarding/onboarding-dal";
+import { OnboardingBanner } from "@/components/onboarding/onboarding-banner";
 import {
   Card,
   CardContent,
@@ -37,9 +39,10 @@ export default async function DashboardPage() {
   const displayName =
     (user?.user_metadata?.full_name as string) || user?.email || "Użytkownik";
 
-  const [courses, recentNotes] = await Promise.all([
+  const [courses, recentNotes, onboardingCompleted] = await Promise.all([
     getUserCourses(user.id),
     getAllUserNotes(user.id, 5),
+    isOnboardingCompleted(),
   ]);
 
   const activeCourses = courses.filter((c) => c.status === "active");
@@ -48,6 +51,9 @@ export default async function DashboardPage() {
 
   return (
     <div className="space-y-5 sm:space-y-8">
+      {/* Onboarding banner */}
+      {!onboardingCompleted && <OnboardingBanner />}
+
       {/* Welcome section */}
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
         <div className="min-w-0">

@@ -30,13 +30,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
-
 import { Combobox, type ComboboxOption } from "./combobox";
 import { businessProfileSchema } from "@/lib/onboarding/schemas";
 import { saveBusinessProfile } from "@/lib/onboarding/onboarding-dal";
@@ -80,14 +73,23 @@ const COMPANY_SIZE_OPTIONS = [
 
 // --- Component ---
 
+interface ProfileData {
+  industry: string;
+  role: string;
+  business_goal: string;
+  company_size?: string;
+}
+
 interface BusinessProfileFormProps {
   initialData?: BusinessProfile | null;
   onSuccess?: () => void;
+  onSaveAndChat?: (data: ProfileData) => void;
 }
 
 export function BusinessProfileForm({
   initialData,
   onSuccess,
+  onSaveAndChat,
 }: BusinessProfileFormProps) {
   const router = useRouter();
 
@@ -103,7 +105,58 @@ export function BusinessProfileForm({
 
   // UI state
   const [loading, setLoading] = useState(false);
+  const [chatLoading, setChatLoading] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
+
+  function validateForm() {
+    setErrors({});
+
+    const formData = {
+      industry,
+      role,
+      business_goal: businessGoal,
+      company_size: companySize || undefined,
+    };
+
+    const result = businessProfileSchema.safeParse(formData);
+    if (!result.success) {
+      const fieldErrors: Record<string, string> = {};
+      for (const issue of result.error.issues) {
+        const field = issue.path[0];
+        if (field && typeof field === "string") {
+          fieldErrors[field] = issue.message;
+        }
+      }
+      setErrors(fieldErrors);
+      return null;
+    }
+
+    return result.data;
+  }
+
+  async function handleSaveAndChat() {
+    const validated = validateForm();
+    if (!validated) return;
+
+    setChatLoading(true);
+    try {
+      const response = await saveBusinessProfile(validated);
+      if (response.success) {
+        onSaveAndChat?.({
+          industry: validated.industry,
+          role: validated.role,
+          business_goal: validated.business_goal,
+          company_size: validated.company_size ?? undefined,
+        });
+      } else {
+        toast.error(response.error || "Nie udało się zapisać profilu");
+      }
+    } catch {
+      toast.error("Wystąpił nieoczekiwany błąd");
+    } finally {
+      setChatLoading(false);
+    }
+  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -244,30 +297,26 @@ export function BusinessProfileForm({
 
           {/* Actions */}
           <div className="flex flex-col sm:flex-row gap-3 pt-2">
-            <Button type="submit" disabled={loading} className="flex-1">
+            <Button type="submit" disabled={loading || chatLoading} className="flex-1">
               {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               Zapisz profil
             </Button>
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <span className="flex-1">
-                    <Button
-                      type="button"
-                      variant="secondary"
-                      disabled
-                      className="w-full"
-                    >
-                      <Sparkles className="mr-2 h-4 w-4" />
-                      Doprecyzuj z AI
-                    </Button>
-                  </span>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>Wkrótce dostępne</p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
+            {onSaveAndChat && (
+              <Button
+                type="button"
+                variant="secondary"
+                disabled={loading || chatLoading}
+                onClick={handleSaveAndChat}
+                className="flex-1"
+              >
+                {chatLoading ? (
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                ) : (
+                  <Sparkles className="mr-2 h-4 w-4" />
+                )}
+                Doprecyzuj z AI
+              </Button>
+            )}
           </div>
         </form>
       </CardContent>

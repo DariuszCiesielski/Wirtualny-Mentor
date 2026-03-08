@@ -6,8 +6,11 @@
 
 import { getUser } from "@/lib/dal/auth";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
 import { ProfileForm } from "@/components/profile/profile-form";
 import { AvatarUpload } from "@/components/profile/avatar-upload";
+import { BusinessProfileForm } from "@/components/onboarding/business-profile-form";
+import { getBusinessProfile } from "@/lib/onboarding/onboarding-dal";
 
 function getInitials(name: string | undefined, email: string): string {
   if (name) {
@@ -31,6 +34,7 @@ export default async function ProfilePage() {
   const fullName = user.user_metadata?.full_name as string | undefined;
   const avatarUrl = user.user_metadata?.avatar_url as string | undefined;
   const initials = getInitials(fullName, user.email || "U");
+  const businessProfile = await getBusinessProfile();
 
   return (
     <div className="space-y-6 max-w-2xl">
@@ -77,6 +81,18 @@ export default async function ProfilePage() {
           <p className="text-sm text-muted-foreground">{user.email}</p>
         </CardContent>
       </Card>
+
+      <Separator />
+
+      {/* Business profile section */}
+      <div>
+        <h2 className="text-2xl font-bold tracking-tight">Profil biznesowy</h2>
+        <p className="text-muted-foreground mt-2">
+          Informacje o Twoim biznesie pomagają nam dostosować kursy i sugestie
+        </p>
+      </div>
+
+      <BusinessProfileForm initialData={businessProfile} />
     </div>
   );
 }

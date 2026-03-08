@@ -29,6 +29,8 @@ import { GenerateImageButton } from './generate-image-button';
 import type { Source } from '@/types/materials';
 import type { Note } from '@/types/notes';
 import type { LessonImage } from '@/types/images';
+import type { BusinessSuggestion } from '@/types/business-ideas';
+import { InlineSuggestion } from '@/components/business-ideas/InlineSuggestion';
 
 // Import highlight.js theme (github-dark matches our dark mode)
 import 'highlight.js/styles/github-dark.css';
@@ -57,6 +59,20 @@ function findSectionImage(
     if (stripHeadingNumber(key) === stripped) return img;
   }
   return undefined;
+}
+
+/**
+ * Check if a suggestion matches a heading, with fuzzy fallback.
+ */
+function findSectionSuggestion(
+  suggestion: BusinessSuggestion | null | undefined,
+  headingText: string,
+): boolean {
+  if (!suggestion?.relevant_section) return false;
+  // Exact match
+  if (suggestion.relevant_section === headingText) return true;
+  // Fuzzy: strip numbers from both sides
+  return stripHeadingNumber(suggestion.relevant_section) === stripHeadingNumber(headingText);
 }
 
 interface ContentRendererProps {
@@ -94,6 +110,18 @@ interface ContentRendererProps {
   onDeleteImage?: (sectionHeading: string, imageId: string) => void;
   /** Sections currently being deleted */
   deletingSections?: Set<string>;
+  /** Business suggestion to render inline at matching h2 */
+  suggestion?: BusinessSuggestion | null;
+  /** Callback to bookmark suggestion */
+  onBookmarkSuggestion?: () => void;
+  /** Callback to dismiss suggestion */
+  onDismissSuggestion?: () => void;
+  /** Callback to refresh suggestion */
+  onRefreshSuggestion?: () => void;
+  /** Whether refresh button should be visible (profile version changed) */
+  showSuggestionRefresh?: boolean;
+  /** Whether user has a business profile */
+  hasBusinessProfile?: boolean;
 }
 
 /**
@@ -162,6 +190,12 @@ export function ContentRenderer({
   autoGeneratingSection,
   onDeleteImage,
   deletingSections,
+  suggestion,
+  onBookmarkSuggestion,
+  onDismissSuggestion,
+  onRefreshSuggestion,
+  showSuggestionRefresh,
+  hasBusinessProfile,
 }: ContentRendererProps) {
   // Replace citation markers [1] with markdown links to sources
   const contentWithLinks = content.replace(
@@ -218,6 +252,19 @@ export function ContentRenderer({
               />
             ) : null;
 
+            // Suggestion element (shown below image, if heading matches)
+            const hasSuggestionMatch = findSectionSuggestion(suggestion, headingText);
+            const suggestionElement = hasSuggestionMatch && suggestion ? (
+              <InlineSuggestion
+                suggestion={suggestion}
+                showRefresh={showSuggestionRefresh}
+                hasProfile={hasBusinessProfile}
+                onBookmark={onBookmarkSuggestion}
+                onDismiss={onDismissSuggestion}
+                onRefresh={onRefreshSuggestion}
+              />
+            ) : null;
+
             if (!hasSectionFeatures) {
               return (
                 <>
@@ -234,6 +281,7 @@ export function ContentRenderer({
                     )}
                   </div>
                   {imageElement}
+                  {suggestionElement}
                 </>
               );
             }
@@ -283,6 +331,7 @@ export function ContentRenderer({
                     onDelete={onDeleteNote}
                   />
                 )}
+                {suggestionElement}
               </>
             );
           },

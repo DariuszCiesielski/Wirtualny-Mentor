@@ -11,6 +11,8 @@ import { getSectionContent } from "@/lib/dal/materials";
 import { getProgress, calculateProgressPercentage } from "@/lib/dal/progress";
 import { getNotes } from "@/lib/dal/notes";
 import { getLessonImagesBySection } from "@/lib/dal/lesson-images";
+import { getSuggestion } from "@/lib/business-ideas/ideas-dal";
+import { getBusinessProfile } from "@/lib/onboarding/onboarding-dal";
 import { notFound } from "next/navigation";
 import { ChapterPageClient } from "./components/chapter-page-client";
 
@@ -97,6 +99,12 @@ Grupa docelowa: ${course.target_audience || "Nie określono"}
     ? await getLessonImagesBySection(chapterId).catch(() => ({}))
     : {};
 
+  // Load business suggestion and profile in parallel
+  const [initialSuggestion, businessProfile] = await Promise.all([
+    getSuggestion(chapterId),
+    getBusinessProfile(),
+  ]);
+
   return (
     <ChapterPageClient
       courseId={courseId}
@@ -123,6 +131,9 @@ Grupa docelowa: ${course.target_audience || "Nie określono"}
       nextChapter={nextChapter}
       canGenerateImages={canGenerateImages}
       initialImages={initialImages}
+      initialSuggestion={initialSuggestion}
+      hasBusinessProfile={!!businessProfile}
+      profileVersion={businessProfile?.profile_version ?? 0}
     />
   );
 }

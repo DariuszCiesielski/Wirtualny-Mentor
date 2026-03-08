@@ -39,10 +39,14 @@ import { Textarea } from '@/components/ui/textarea';
 import { Clock, BookOpen, AlertCircle, RotateCcw, Loader2 } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { useChapterImages } from '@/hooks/use-chapter-images';
+import { useChapterSuggestion } from '@/hooks/use-chapter-suggestion';
+import { GenerateSuggestionButton } from '@/components/business-ideas/GenerateSuggestionButton';
+import { InlineSuggestion } from '@/components/business-ideas/InlineSuggestion';
 import { toast } from 'sonner';
 import type { SectionContent } from '@/types/materials';
 import type { Note } from '@/types/notes';
 import type { LessonImage } from '@/types/images';
+import type { BusinessSuggestion } from '@/types/business-ideas';
 
 interface ChapterData {
   id: string;
@@ -69,6 +73,12 @@ interface ChapterContentProps {
   initialImages?: Record<string, LessonImage>;
   /** Course topic for image generation context */
   courseTopic?: string;
+  /** Pre-loaded business suggestion */
+  initialSuggestion?: BusinessSuggestion | null;
+  /** Whether user has a business profile */
+  hasBusinessProfile?: boolean;
+  /** Current profile version for stale check */
+  profileVersion?: number;
 }
 
 type GenerationPhase = 'idle' | 'searching' | 'generating' | 'saving' | 'complete' | 'error';
@@ -98,6 +108,9 @@ export function ChapterContent({
   canGenerateImages = false,
   initialImages,
   courseTopic,
+  initialSuggestion,
+  hasBusinessProfile = false,
+  profileVersion = 0,
 }: ChapterContentProps) {
   const [content, setContent] = useState<SectionContent | null>(initialContent || null);
   const [progress, setProgress] = useState<GenerationProgress>({
@@ -131,6 +144,23 @@ export function ChapterContent({
     canGenerateImages && contentReady,
     initialImages,
     courseTopic,
+  );
+
+  // Business suggestion
+  const {
+    suggestion,
+    isGenerating: isSuggestionGenerating,
+    remaining: suggestionRemaining,
+    generate: generateSuggestion,
+    bookmark: bookmarkSuggestionAction,
+    dismiss: dismissSuggestionAction,
+    refresh: refreshSuggestionAction,
+  } = useChapterSuggestion(chapter.id, initialSuggestion);
+
+  const showSuggestionRefresh = !!(
+    suggestion &&
+    profileVersion > 0 &&
+    suggestion.profile_version !== profileVersion
   );
 
   const isGenerating =
@@ -321,6 +351,40 @@ export function ChapterContent({
     },
     [deleteImage]
   );
+
+  // Generate business suggestion handler
+  const handleGenerateSuggestion = useCallback(() => {
+    if (!content || !courseId) return;
+    void generateSuggestion({
+      courseId,
+      content: content.content,
+      chapterTitle: chapter.title,
+      courseTopic,
+    });
+  }, [content, courseId, chapter.title, courseTopic, generateSuggestion]);
+
+  // Refresh suggestion handler
+  const handleRefreshSuggestion = useCallback(() => {
+    if (!content || !courseId) return;
+    void refreshSuggestionAction({
+      courseId,
+      content: content.content,
+      chapterTitle: chapter.title,
+      courseTopic,
+    });
+  }, [content, courseId, chapter.title, courseTopic, refreshSuggestionAction]);
+
+  // Check if suggestion has a matching h2 in content (for fallback rendering)
+  const suggestionMatchesH2 = useMemo(() => {
+    if (!suggestion?.relevant_section || !content) return false;
+    const headings = content.content.match(/^## .+$/gm) || [];
+    const section = suggestion.relevant_section;
+    const strippedSection = section.replace(/^\d+\.\s*/, '');
+    return headings.some((h) => {
+      const text = h.replace(/^## /, '');
+      return text === section || text.replace(/^\d+\.\s*/, '') === strippedSection;
+    });
+  }, [suggestion, content]);
 
   const handleRegenerate = useCallback(() => {
     const payload: RegenerationPayload = {
@@ -526,11 +590,32 @@ export function ChapterContent({
             ))}
           </div>
 
-          <Button type="button" variant="outline" size="sm" onClick={() => setIsRegenerationDialogOpen(true)}>
-            <RotateCcw className="mr-2 h-4 w-4" />
-            Regeneruj lekcję
-          </Button>
+          <div className="flex items-center gap-2">
+            <GenerateSuggestionButton
+              isGenerating={isSuggestionGenerating}
+              remaining={suggestionRemaining}
+              hasContent={!!content}
+              hasSuggestion={!!suggestion}
+              onClick={handleGenerateSuggestion}
+            />
+            <Button type="button" variant="outline" size="sm" onClick={() => setIsRegenerationDialogOpen(true)}>
+              <RotateCcw className="mr-2 h-4 w-4" />
+              Regeneruj lekcję
+            </Button>
+          </div>
         </div>
+
+        {/* Fallback: suggestion that didn't match any h2 */}
+        {suggestion && !suggestionMatchesH2 && (
+          <InlineSuggestion
+            suggestion={suggestion}
+            showRefresh={showSuggestionRefresh}
+            hasProfile={hasBusinessProfile}
+            onBookmark={bookmarkSuggestionAction}
+            onDismiss={dismissSuggestionAction}
+            onRefresh={handleRefreshSuggestion}
+          />
+        )}
 
         {/* Main content */}
         <ContentRenderer
@@ -552,6 +637,12 @@ export function ChapterContent({
           autoGeneratingSection={generatingSection?.sectionHeading}
           onDeleteImage={handleDeleteImage}
           deletingSections={deletingSections}
+          suggestion={suggestionMatchesH2 ? suggestion : null}
+          onBookmarkSuggestion={bookmarkSuggestionAction}
+          onDismissSuggestion={dismissSuggestionAction}
+          onRefreshSuggestion={handleRefreshSuggestion}
+          showSuggestionRefresh={showSuggestionRefresh}
+          hasBusinessProfile={hasBusinessProfile}
         />
 
         {/* Tools section */}

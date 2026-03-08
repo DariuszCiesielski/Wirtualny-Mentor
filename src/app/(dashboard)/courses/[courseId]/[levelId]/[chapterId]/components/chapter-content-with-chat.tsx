@@ -12,6 +12,7 @@ import { useChatContext } from './chat-context';
 import type { SectionContent } from '@/types/materials';
 import type { Note } from '@/types/notes';
 import type { LessonImage } from '@/types/images';
+import type { BusinessSuggestion } from '@/types/business-ideas';
 
 interface ChapterContentWithChatProps {
   chapter: {
@@ -28,6 +29,9 @@ interface ChapterContentWithChatProps {
   canGenerateImages?: boolean;
   initialImages?: Record<string, LessonImage>;
   courseTopic?: string;
+  initialSuggestion?: BusinessSuggestion | null;
+  hasBusinessProfile?: boolean;
+  profileVersion?: number;
 }
 
 export function ChapterContentWithChat(props: ChapterContentWithChatProps) {
@@ -37,6 +41,9 @@ export function ChapterContentWithChat(props: ChapterContentWithChatProps) {
     <ChapterContent
       {...props}
       onAskMentor={chatContext?.askMentor}
+      initialSuggestion={props.initialSuggestion}
+      hasBusinessProfile={props.hasBusinessProfile}
+      profileVersion={props.profileVersion}
     />
   );
 }

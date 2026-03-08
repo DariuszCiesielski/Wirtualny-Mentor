@@ -269,6 +269,11 @@ Plans:
   2. Użytkownik może filtrować pomysły po kursie i widzieć pełną kartę każdego pomysłu (tytuł, opis, potencjał, złożoność)
   3. Po zapisaniu pomysłu (bookmark) lub powrocie do niego pojawia się CTA kontaktowe z danymi z ENV
   4. Każda sugestia biznesowa zawiera disclaimer o charakterze inspiracyjnym
+**Plans**: 2 plans in 2 waves
+
+Plans:
+- [ ] 10-01-PLAN.md — Typy, DAL, nawigacja sidebar/mobile, ContactCTA
+- [ ] 10-02-PLAN.md — Server page /business-ideas, BusinessIdeasClient, IdeaCard
 
 ## Progress
 
@@ -288,12 +293,12 @@ v2.0: 8 -> 9 -> 10
 | 7. Polish & Optimization | 4/4 | Complete | 2026-01-31 |
 | 8. Business Onboarding | 4/4 | Complete | 2026-03-08 |
 | 9. Business Suggestions | 3/3 | Complete | 2026-03-08 |
-| 10. Business Ideas & Lead Generation | 0/? | Pending | — |
+| 10. Business Ideas & Lead Generation | 0/2 | In Progress | — |
 
 **v1.0 Total:** 33/33 plans complete (100%)
-**v2.0 Total:** 7/7+ plans (~67%) — phases 8-9 complete, phase 10 pending
+**v2.0 Total:** 7/9 plans (~78%) — phases 8-9 complete, phase 10 in progress
 
 ---
 *Roadmap created: 2025-01-30*
 *v2.0 phases added: 2026-03-08*
-*Last updated: 2026-03-08 — phase 9 complete (3/3 plans)*
+*Last updated: 2026-03-08 — phase 10 planned (2 plans in 2 waves)*

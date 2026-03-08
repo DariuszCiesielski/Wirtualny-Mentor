@@ -278,8 +278,8 @@ export async function getBookmarkedSuggestions(
       business_potential: row.business_potential,
       estimated_complexity: row.estimated_complexity as
         | "prosty"
-        | "średni"
-        | "złożony",
+        | "sredni"
+        | "zlozony",
       relevant_section: row.relevant_section,
       course_id: row.course_id,
       chapter_id: row.chapter_id,

@@ -31,8 +31,8 @@ import type {
 
 const complexityOrder: Record<string, number> = {
   prosty: 1,
-  średni: 2,
-  złożony: 3,
+  sredni: 2,
+  zlozony: 3,
 };
 
 interface BusinessIdeasClientProps {

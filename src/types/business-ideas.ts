@@ -45,7 +45,7 @@ export interface BookmarkedSuggestionWithContext {
   title: string;
   description: string;
   business_potential: string;
-  estimated_complexity: "prosty" | "średni" | "złożony";
+  estimated_complexity: "prosty" | "sredni" | "zlozony";
   relevant_section: string | null;
   course_id: string;
   chapter_id: string;

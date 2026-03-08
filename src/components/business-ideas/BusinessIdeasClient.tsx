@@ -38,12 +38,14 @@ const complexityOrder: Record<string, number> = {
 interface BusinessIdeasClientProps {
   suggestions: BookmarkedSuggestionWithContext[];
   courses: { id: string; title: string }[];
+  hasAnyCourses: boolean;
   contactInfo: ContactInfo | null;
 }
 
 export function BusinessIdeasClient({
   suggestions,
   courses,
+  hasAnyCourses,
   contactInfo,
 }: BusinessIdeasClientProps) {
   const [items, setItems] = useState(suggestions);
@@ -120,7 +122,7 @@ export function BusinessIdeasClient({
   );
 
   // Check if user has any courses at all (no courses = no suggestions possible)
-  const hasNoCourses = courses.length === 0 && suggestions.length === 0;
+  const hasNoCourses = !hasAnyCourses;
 
   // No bookmarks at all
   const hasNoBookmarks = !hasNoCourses && items.length === 0;

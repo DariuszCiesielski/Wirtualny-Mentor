@@ -292,6 +292,32 @@ export async function getBookmarkedSuggestions(
 }
 
 /**
+ * Check if user has any courses at all.
+ */
+export async function hasUserAnyCourses(
+  userId: string
+): Promise<boolean> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user || user.id !== userId) return false;
+
+  const { count, error } = await supabase
+    .from("courses")
+    .select("id", { count: "exact", head: true })
+    .eq("user_id", userId)
+    .limit(1);
+
+  if (error) {
+    console.error("[ideas-dal] hasUserAnyCourses error:", error);
+    return false;
+  }
+
+  return (count ?? 0) > 0;
+}
+
+/**
  * Get distinct courses that have bookmarked suggestions for a user.
  */
 export async function getCoursesWithBookmarks(

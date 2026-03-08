@@ -9,6 +9,7 @@ import { requireAuth } from "@/lib/dal/auth";
 import {
   getBookmarkedSuggestions,
   getCoursesWithBookmarks,
+  hasUserAnyCourses,
 } from "@/lib/business-ideas/ideas-dal";
 import { ContentContainer } from "@/components/layout/content-container";
 import { BusinessIdeasClient } from "@/components/business-ideas/BusinessIdeasClient";
@@ -17,9 +18,10 @@ import type { ContactInfo } from "@/types/business-ideas";
 export default async function BusinessIdeasPage() {
   const user = await requireAuth();
 
-  const [suggestions, courses] = await Promise.all([
+  const [suggestions, courses, hasAnyCourses] = await Promise.all([
     getBookmarkedSuggestions(user.id),
     getCoursesWithBookmarks(user.id),
+    hasUserAnyCourses(user.id),
   ]);
 
   // Read contact info from server-only env vars
@@ -35,6 +37,7 @@ export default async function BusinessIdeasPage() {
       <BusinessIdeasClient
         suggestions={suggestions}
         courses={courses}
+        hasAnyCourses={hasAnyCourses}
         contactInfo={contactInfo}
       />
     </ContentContainer>

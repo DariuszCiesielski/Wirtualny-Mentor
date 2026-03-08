@@ -53,6 +53,9 @@ export const MODEL_CONFIG = {
 
   // Embeddings for RAG (Phase 5)
   embedding: openaiProvider('text-embedding-3-small'),
+
+  // Onboarding chat - lightweight structured output (Phase 8)
+  onboarding: openaiProvider('gpt-4o-mini'),
 } as const;
 
 // Provider registry with all configured providers

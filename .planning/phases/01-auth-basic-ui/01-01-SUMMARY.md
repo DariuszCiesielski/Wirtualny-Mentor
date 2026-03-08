@@ -97,7 +97,7 @@ completed: 2025-01-30
 - Data Access Layer z cached getUser, requireAuth i verifySession
 - Middleware odswieza sesje automatycznie bez blokowania ruchu
 - shadcn/ui zainicjalizowane z 6 komponentami bazowymi
-- Dark mode dziala z persystencja i wykrywaniem preferencji systemowych
+- Dark mode działa z persystencja i wykrywaniem preferencji systemowych
 
 ## Task Commits
 
@@ -133,9 +133,9 @@ Each task was committed atomically:
 
 ## Decisions Made
 
-1. **Middleware only refreshes session** - Zgodnie z CVE-2025-29927, nie blokujemy dostepu w middleware. Autoryzacja odbywa sie w DAL blisko danych.
+1. **Middleware only refreshes session** - Zgodnie z CVE-2025-29927, nie blokujemy dostępu w middleware. Autoryzacja odbywa się w DAL blisko danych.
 
-2. **getUser() zamiast getSession()** - getSession() nie rewaliduje tokenow z serwerem. Zawsze uzywamy getUser() po stronie serwera dla bezpieczenstwa.
+2. **getUser() zamiast getSession()** - getSession() nie rewaliduje tokenów z serwerem. Zawsze używamy getUser() po stronie serwera dla bezpieczenstwa.
 
 3. **shadcn/ui New York style z Zinc** - Wybrany styl New York z paleta Zinc dla profesjonalnego wygladu. CSS variables w oklch dla lepszej interpolacji kolorow.
 
@@ -147,16 +147,16 @@ None - plan executed exactly as written.
 
 ## Issues Encountered
 
-None - wszystkie taski przeszly bez problemow.
+None - wszystkie taski przeszly bez problemów.
 
 ## User Setup Required
 
-**External services require manual configuration.** Uzytkownik musi:
+**External services require manual configuration.** Użytkownik musi:
 
 1. Utworzyc projekt Supabase na https://supabase.com/dashboard
 2. Pobrac klucze API z Project Settings -> API
 3. Wlaczyc Email auth provider w Authentication -> Providers -> Email
-4. Skopiowac .env.example do .env.local i wypelnic wartosci:
+4. Skopiowac .env.example do .env.local i wypelnic wartości:
    - `NEXT_PUBLIC_SUPABASE_URL`
    - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
    - `NEXT_PUBLIC_SITE_URL`
@@ -165,7 +165,7 @@ None - wszystkie taski przeszly bez problemow.
 
 **Gotowe do Plan 02 (Auth Forms):**
 - Klienty Supabase gotowe do uzycia w server actions
-- shadcn/ui form components dostepne (button, input, label, form)
+- shadcn/ui form components dostępne (button, input, label, form)
 - DAL functions gotowe do ochrony stron
 
 **Gotowe do Plan 03 (Protected Routes):**
@@ -173,7 +173,7 @@ None - wszystkie taski przeszly bez problemow.
 - verifySession() gotowy do uzycia w Server Actions
 
 **Potencjalne problemy:**
-- Brak skonfigurowanych kluczy Supabase - auth flows nie beda dzialac do momentu konfiguracji
+- Brak skonfigurowanych kluczy Supabase - auth flows nie będą działać do momentu konfiguracji
 
 ---
 *Phase: 01-auth-basic-ui*

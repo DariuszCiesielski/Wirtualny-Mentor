@@ -48,7 +48,7 @@ completed: 2026-01-30
 
 # Phase 2 Plan 5: Curriculum TOC View Summary
 
-**Strona kursu z pelnym spisem tresci, collapsible levels i progress indicators dla nawigacji po curriculum**
+**Strona kursu z pełnym spisem treści, collapsible levels i progress indicators dla nawigacji po curriculum**
 
 ## Performance
 
@@ -60,10 +60,10 @@ completed: 2026-01-30
 
 ## Accomplishments
 
-- Strona /courses/[courseId] wyswietla pelna strukture kursu z meta info
+- Strona /courses/[courseId] wyświetla pełna strukture kursu z meta info
 - 5 poziomow jako collapsible cards z learning outcomes
-- Rozdzialy maja progress indicators (completed/current/pending)
-- Link "Kontynuuj nauke" nawiguje do aktualnego rozdzialu
+- Rozdzialy mają progress indicators (completed/current/pending)
+- Link "Kontynuuj nauke" nawiguje do aktualnego rozdziału
 - Domyslnie rozwiniety aktualny poziom dla natychmiastowego kontekstu
 
 ## Task Commits
@@ -79,14 +79,14 @@ Each task was committed atomically:
 - `src/app/(dashboard)/courses/[courseId]/page.tsx` - Course detail page z header i TOC
 - `src/components/curriculum/curriculum-toc.tsx` - Kontener TOC z expandable state
 - `src/components/curriculum/level-card.tsx` - Collapsible level card z outcomes
-- `src/components/curriculum/chapter-list.tsx` - Lista rozdzialow z progress
+- `src/components/curriculum/chapter-list.tsx` - Lista rozdziałów z progress
 - `src/components/ui/collapsible.tsx` - Radix collapsible wrapper (shadcn)
 
 ## Decisions Made
 
-- **Default expand current level:** Uzytkownik widzi od razu gdzie jest w kursie
+- **Default expand current level:** Użytkownik widzi od razu gdzie jest w kursie
 - **level_outcomes for learning outcomes:** Uzycie relacji z bazy zamiast embedded array
-- **Progress color coding:** green=completed, primary=current, muted=pending - konsystentne w calej aplikacji
+- **Progress color coding:** green=completed, primary=current, muted=pending - konsystentne w całej aplikacji
 
 ## Deviations from Plan
 
@@ -103,8 +103,8 @@ None - no external service configuration required.
 ## Next Phase Readiness
 
 - Strona kursu gotowa do wyswietlania curriculum
-- Linki do rozdzialow (/courses/[courseId]/[levelId]/[chapterId]) przygotowane
-- Brakuje: strona rozdzialu (chapter page) dla faktycznego wyswietlania lekcji
+- Linki do rozdziałów (/courses/[courseId]/[levelId]/[chapterId]) przygotowane
+- Brakuje: strona rozdziału (chapter page) dla faktycznego wyswietlania lekcji
 - Ready for: Plan 02-06 (chapter view) i 02-07 (lesson content)
 
 ---

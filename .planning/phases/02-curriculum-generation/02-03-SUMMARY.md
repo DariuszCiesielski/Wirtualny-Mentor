@@ -52,7 +52,7 @@ completed: 2026-01-30
 
 # Phase 02 Plan 03: Topic Input & Clarifying Questions Summary
 
-**Strona /courses/new z topic input, 4-krokowym stepperem i streaming chat dla pytan doprecyzowujacych AI**
+**Strona /courses/new z topic input, 4-krokowym stepperem i streaming chat dla pytań doprecyzowujących AI**
 
 ## Performance
 
@@ -66,7 +66,7 @@ completed: 2026-01-30
 
 - TopicInput component z walidacja tematu (min 3 znaki) i opcjonalnego URL
 - Strona /courses/new z 4-krokowym wizardem (Temat -> Pytania -> Generowanie -> Podglad)
-- API endpoint /api/curriculum/clarify ze streaming structured output
+- API endpoint /api/curriculum/clarify że streaming structured output
 - ClarifyingChat component z useChat hook, message history, klikalnymi opcjami
 
 ## Task Commits
@@ -87,7 +87,7 @@ completed: 2026-01-30
 
 1. **DefaultChatTransport zamiast api prop** - Vercel AI SDK v6 zmieniło API useChat. Teraz wymaga transport object zamiast prostego api string. Uzywamy DefaultChatTransport({ api }) dla HTTP transport.
 
-2. **UIMessage.parts zamiast content** - Nowa wersja SDK uzywa parts array zamiast content string. Dodano helper getMessageText() do ekstrakcji tekstu.
+2. **UIMessage.parts zamiast content** - Nowa wersja SDK używa parts array zamiast content string. Dodano helper getMessageText() do ekstrakcji tekstu.
 
 3. **sendMessage({ text }) zamiast { content }** - Breaking change w API sendMessage - property zmieniło nazwe z content na text.
 
@@ -100,7 +100,7 @@ completed: 2026-01-30
 - **Issue:** Plan zakladal stare API useChat z `api` prop i `input`/`handleInputChange`/`handleSubmit`. SDK v6 ma inne API.
 - **Fix:** Uzyto DefaultChatTransport, sendMessage({ text }), UIMessage.parts
 - **Files modified:** src/components/curriculum/clarifying-chat.tsx
-- **Verification:** npm run build przechodzi bez bledow
+- **Verification:** npm run build przechodzi bez błędów
 - **Committed in:** e0dcf95
 
 ---
@@ -110,19 +110,19 @@ completed: 2026-01-30
 
 ## Issues Encountered
 
-- API useChat zmieniło sie znacznie w v6 (brak input/handleInputChange/handleSubmit, content -> text, UIMessage.content -> parts)
+- API useChat zmieniło się znacznie w v6 (brak input/handleInputChange/handleSubmit, content -> text, UIMessage.content -> parts)
 - Rozwiazanie: Przeczytanie typow z node_modules i dostosowanie kodu
 
 ## User Setup Required
 
 **External services require configuration:**
 - OPENAI_API_KEY wymagany dla /api/curriculum/clarify (GPT-4.1)
-- Juz skonfigurowany w .env.local jesli wczesniejsze fazy dzialaly
+- Już skonfigurowany w .env.local jeśli wczesniejsze fazy dzialaly
 
 ## Next Phase Readiness
 
-- Flow Topic -> Clarify gotowy i dzialajacy
-- Nastepny krok: integracja z curriculum generation (Plan 04)
+- Flow Topic -> Clarify gotowy i działający
+- Następny krok: integracja z curriculum generation (Plan 04)
 - ClarifyingChat wywoluje onComplete z zebranym userInfo
 - Brakuje: faktyczne generowanie curriculum po zebraniu informacji
 

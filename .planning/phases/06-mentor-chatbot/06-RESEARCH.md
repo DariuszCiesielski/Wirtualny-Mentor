@@ -6,40 +6,40 @@
 
 ## Summary
 
-Faza 6 implementuje chatbot-mentor ktory odpowiada na pytania uzytkownika metoda sokratyczna, z dostepem do notatek uzytkownika poprzez RAG (Retrieval Augmented Generation). Projekt ma juz kompletna infrastrukture: AI SDK z useChat hook, pgvector z funkcja `search_notes_semantic`, oraz wzorzec `DefaultChatTransport` uzyty w clarifying-chat.
+Faza 6 implementuje chatbot-mentor który odpowiada na pytania użytkownika metoda sokratyczna, z dostepem do notatek użytkownika poprzez RAG (Retrieval Augmented Generation). Projekt ma już kompletna infrastrukture: AI SDK z useChat hook, pgvector z funkcja `search_notes_semantic`, oraz wzorzec `DefaultChatTransport` uzyty w clarifying-chat.
 
 Kluczowe decyzje architektoniczne:
 - **Chat transport:** `DefaultChatTransport` z custom API endpoint `/api/chat/mentor`
 - **RAG integration:** Tool-based retrieval - AI wywoluje tool `searchNotes` gdy potrzebuje kontekstu
 - **Socratic prompting:** System prompt z konkretnymi instrukcjami: zadawaj pytania naprowadzajace, nie dawaj gotowych odpowiedzi
 - **Coach persona:** Wsparcie emocjonalne i motywacja w system prompt
-- **Streaming:** `streamText` + `toUIMessageStreamResponse` (istniejacy wzorzec)
+- **Streaming:** `streamText` + `toUIMessageStreamResponse` (istniejący wzorzec)
 - **Context management:** Opcjonalna persystencja historii chatu w bazie
 
-**Primary recommendation:** Uzyj tool-based RAG - AI decyduje kiedy wyszukac notatki uzytkownika. System prompt laczy role: Socratic teacher + supportive coach + RAG-aware assistant.
+**Primary recommendation:** Uzyj tool-based RAG - AI decyduje kiedy wyszukać notatki użytkownika. System prompt łączy role: Socratic teacher + supportive coach + RAG-aware assistant.
 
 ## Standard Stack
 
-### Core (juz w projekcie)
+### Core (już w projekcie)
 
 | Library | Version | Purpose | Why Standard |
 |---------|---------|---------|--------------|
-| `ai` | ^6.0.62 | `streamText`, tools, `stopWhen` | Juz uzyty w projekcie, unified streaming |
-| `@ai-sdk/react` | ^1.0.0 | `useChat` hook | Juz uzyty w clarifying-chat |
+| `ai` | ^6.0.62 | `streamText`, tools, `stopWhen` | Już uzyty w projekcie, unified streaming |
+| `@ai-sdk/react` | ^1.0.0 | `useChat` hook | Już uzyty w clarifying-chat |
 | `@ai-sdk/anthropic` | ^1.0.0 | Claude model | Claude Sonnet 4 - najlepszy dla mentoringu |
 
-### Supporting (juz w projekcie)
+### Supporting (już w projekcie)
 
 | Library | Version | Purpose | When to Use |
 |---------|---------|---------|-------------|
 | `zod` | ^3.x | Tool input validation | Definicja schematu dla searchNotes tool |
-| pgvector | built-in | Vector search | Juz skonfigurowany w Phase 5 |
+| pgvector | built-in | Vector search | Już skonfigurowany w Phase 5 |
 
 ### Chat Persistence (opcjonalne)
 
 | Library | Version | Purpose | When to Use |
 |---------|---------|---------|-------------|
-| Supabase | existing | Chat history table | Jesli chcemy persistent chat sessions |
+| Supabase | existing | Chat history table | Jeśli chcemy persistent chat sessions |
 
 **Installation:**
 ```bash
@@ -74,7 +74,7 @@ src/
 
 ### Pattern 1: Tool-Based RAG Retrieval
 
-**What:** AI uzywa tool `searchNotes` aby pobrac kontekst z notatek uzytkownika
+**What:** AI używa tool `searchNotes` aby pobrac kontekst z notatek użytkownika
 **When to use:** Zawsze dla RAG chatbota - model decyduje kiedy potrzebuje kontekstu
 **Example:**
 ```typescript
@@ -112,7 +112,7 @@ Uzyj tego narzedzia kiedy:
 
 ### Pattern 2: Socratic Method System Prompt
 
-**What:** System prompt ktory nakazuje AI stosowac metode sokratyczna
+**What:** System prompt który nakazuje AI stosowac metode sokratyczna
 **When to use:** Zawsze dla mentor chatbota - kluczowa cecha
 **Example:**
 ```typescript
@@ -255,46 +255,46 @@ export function MentorChat({ courseId, courseTitle }: MentorChatProps) {
 
 - **Context injection zamiast tools:** Nie laduj wszystkich notatek do system prompt. Uzyj tool-based retrieval - AI decyduje kiedy potrzebuje kontekstu.
 - **Gotowe odpowiedzi w system prompt:** System prompt musi byc bardzo jasny o metodzie sokratycznej. Bez tego AI wroci do dawania odpowiedzi.
-- **Brak limitu tool calls:** Bez `stopWhen` AI moze wpasc w nieskonczona petle tool calling.
+- **Brak limitu tool calls:** Bez `stopWhen` AI może wpasc w nieskonczona petle tool calling.
 - **Synchroniczne pobieranie historii:** Nie blokuj pierwszego renderu czekaniem na historie. Zaladuj asynchronicznie lub pominc dla v1.
 
 ## Don't Hand-Roll
 
 | Problem | Don't Build | Use Instead | Why |
 |---------|-------------|-------------|-----|
-| Streaming chat | Manual WebSocket/SSE | `useChat` + `streamText` | Juz przetestowane w projekcie |
+| Streaming chat | Manual WebSocket/SSE | `useChat` + `streamText` | Już przetestowane w projekcie |
 | RAG retrieval | Manual prompt injection | AI SDK tools | AI decyduje kiedy potrzebuje kontekstu |
 | Message parsing | Manual JSON extraction | `UIMessage.parts` | Standard format w AI SDK |
 | Error handling | Custom retry logic | `useChat` error state | Built-in reconnection |
 
-**Key insight:** Projekt ma juz dzialajacy chat w clarifying-chat.tsx. Mentor chat to rozszerzenie tego wzorca o tools i nowy system prompt.
+**Key insight:** Projekt ma już działający chat w clarifying-chat.tsx. Mentor chat to rozszerzenie tego wzorca o tools i nowy system prompt.
 
 ## Common Pitfalls
 
 ### Pitfall 1: AI ignoruje metode sokratyczna
 
 **What goes wrong:** AI daje gotowe odpowiedzi zamiast naprowadzac pytaniami
-**Why it happens:** System prompt jest zbyt ogolny lub AI "zapomina" o instrukcjach
+**Why it happens:** System prompt jest zbyt ogólny lub AI "zapomina" o instrukcjach
 **How to avoid:**
 1. System prompt musi byc bardzo specyficzny z przykladami
 2. Dodaj "DO NOT" sekcje: "NIGDY nie dawaj gotowej odpowiedzi"
 3. Uzyj few-shot examples w prompcie
 4. Testuj regularnie z roznymi pytaniami
-**Warning signs:** Odpowiedzi zaczynaja sie od "Odpowiedz to...", "Musisz uzyc..."
+**Warning signs:** Odpowiedzi zaczynaja się od "Odpowiedz to...", "Musisz uzyc..."
 
-### Pitfall 2: Tool calling nie dziala
+### Pitfall 2: Tool calling nie działa
 
-**What goes wrong:** AI nie uzywa searchNotes tool lub uzywa go nieprawidlowo
+**What goes wrong:** AI nie używa searchNotes tool lub używa go nieprawidlowo
 **Why it happens:** Opis tool jest niejasny, brak kontekstu courseId/userId
 **How to avoid:**
-1. Jasny `description` w tool z przykladami kiedy uzywac
+1. Jasny `description` w tool z przykladami kiedy używać
 2. Przekaz kontekst (userId, courseId) przez closure w execute
 3. Testuj z pytaniami typu "Co zapisalem o X?"
 **Warning signs:** AI odpowiada "nie mam dostepu do notatek" lub nie wywoluje tool
 
 ### Pitfall 3: Streaming timeouty
 
-**What goes wrong:** Dlugie odpowiedzi powoduja timeout
+**What goes wrong:** Długie odpowiedzi powoduja timeout
 **Why it happens:** Vercel serverless ma limit 10s (free), 60s (pro)
 **How to avoid:**
 1. `export const runtime = 'edge'` - inny model billingowy
@@ -304,22 +304,22 @@ export function MentorChat({ courseId, courseTitle }: MentorChatProps) {
 
 ### Pitfall 4: Context window overflow
 
-**What goes wrong:** Dlugie konwersacje przekraczaja limit tokenow modelu
+**What goes wrong:** Długie konwersacje przekraczaja limit tokenow modelu
 **Why it happens:** Historia rosnie bez limitu, notatki dodaja tokeny
 **How to avoid:**
 1. Limituj historie do ostatnich N wiadomosci (np. 20)
 2. Ogranicz wyniki z searchNotes (max 5, truncate content)
-3. Claude Sonnet 4 ma 200k context - duzo, ale monitoruj
-**Warning signs:** Odpowiedzi staja sie niekoherentne, bledy "context length exceeded"
+3. Claude Sonnet 4 ma 200k context - dużo, ale monitoruj
+**Warning signs:** Odpowiedzi staja się niekoherentne, błędy "context length exceeded"
 
 ### Pitfall 5: Brak persystencji chatu
 
-**What goes wrong:** Uzytkownik traci historie po refreshu
-**Why it happens:** useChat trzyma state w pamieci
+**What goes wrong:** Użytkownik traci historie po refreshu
+**Why it happens:** useChat trzyma state w pamięci
 **How to avoid:**
 1. v1: Akceptuj brak persystencji (chat per-session)
 2. v2: Dodaj tabele `chat_messages` z RLS
-3. Uzyj `initialMessages` do ladowania historii
+3. Uzyj `initialMessages` do ładowania historii
 **Warning signs:** User frustration po utracie rozmowy
 
 ## Code Examples
@@ -690,24 +690,24 @@ O czym chcesz porozmawiać?`,
 ## Open Questions
 
 1. **Chat history persistence**
-   - What we know: useChat trzyma state w pamieci, refresh = utrata historii
-   - What's unclear: Czy uzytkownik oczekuje persystencji?
+   - What we know: useChat trzyma state w pamięci, refresh = utrata historii
+   - What's unclear: Czy użytkownik oczekuje persystencji?
    - Recommendation: v1 bez persystencji (simpler), v2 dodaj tabele chat_sessions
 
 2. **Multi-course chat context**
-   - What we know: Notatki sa per-course, chat tez per-course
-   - What's unclear: Czy uzytkownik chce pytac o inne kursy?
+   - What we know: Notatki są per-course, chat też per-course
+   - What's unclear: Czy użytkownik chce pytac o inne kursy?
    - Recommendation: v1 strict per-course, later consider cross-course search
 
 3. **Tool visibility w UI**
    - What we know: AI SDK streamuje tool calls jako osobne parts
-   - What's unclear: Czy pokazywac uzytkownikowi "Przeszukuje notatki..."?
+   - What's unclear: Czy pokazywać użytkownikowi "Przeszukuje notatki..."?
    - Recommendation: Tak, dla transparentnosci - dodaj UI dla tool-call parts
 
 4. **Rate limiting**
    - What we know: Claude API ma rate limits, Vercel ma function limits
-   - What's unclear: Jakie limity nalozyc na uzytkownika?
-   - Recommendation: v1 bez limitow, monitoruj usage, dodaj pozniej jesli potrzeba
+   - What's unclear: Jakie limity nalozyc na użytkownika?
+   - Recommendation: v1 bez limitow, monitoruj usage, dodaj później jeśli potrzeba
 
 ## Sources
 
@@ -733,10 +733,10 @@ O czym chcesz porozmawiać?`,
 ## Metadata
 
 **Confidence breakdown:**
-- Standard stack: HIGH - Projekt juz ma wszystkie biblioteki, wzorce przetestowane
+- Standard stack: HIGH - Projekt już ma wszystkie biblioteki, wzorce przetestowane
 - Architecture: HIGH - Tool-based RAG to standard w AI SDK, clarifying-chat jako wzorzec
-- Socratic prompting: MEDIUM - Techniki znane, ale skutecznosc wymaga iteracji
-- Pitfalls: MEDIUM - Zidentyfikowane z dokumentacji i doswiadczenia
+- Socratic prompting: MEDIUM - Techniki znane, ale skuteczność wymaga iteracji
+- Pitfalls: MEDIUM - Zidentyfikowane z dokumentacji i doświadczenia
 
 **Research date:** 2026-01-31
 **Valid until:** 2026-03-01 (AI SDK stabilne, ale sprawdz changelog)

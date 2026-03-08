@@ -26,7 +26,7 @@ decisions:
 
 # Phase 07 Plan 02: Helicone Monitoring Integration Summary
 
-Zintegrowano Helicone dla automatycznego monitorowania kosztow i latency wszystkich AI calls przez gateway proxy pattern.
+Zintegrowano Helicone dla automatycznego monitorowania kosztów i latency wszystkich AI calls przez gateway proxy pattern.
 
 ## What Was Built
 
@@ -59,7 +59,7 @@ export function createHeliconeHeaders(options?: {
 
 **File:** `src/lib/ai/providers.ts`
 
-Zaktualizowano providery aby uzywac Helicone gateway gdy klucz jest dostepny:
+Zaktualizowano providery aby używać Helicone gateway gdy klucz jest dostępny:
 
 ```typescript
 // Factory functions zamiast default imports
@@ -114,11 +114,11 @@ HELICONE_API_KEY=
 
 ## Verification Results
 
-- [x] `npm run build` przechodzi bez bledow
+- [x] `npm run build` przechodzi bez błędów
 - [x] Helicone module eksportuje HELICONE_GATEWAYS, isHeliconeEnabled, createHeliconeHeaders
-- [x] Providers uzywaja factory functions z conditional config
+- [x] Providers używają factory functions z conditional config
 - [x] .env.example zawiera HELICONE_API_KEY
-- [x] Backward compatible - dziala bez HELICONE_API_KEY
+- [x] Backward compatible - działa bez HELICONE_API_KEY
 
 ## Deviations from Plan
 
@@ -133,7 +133,7 @@ None - plan executed exactly as written.
    HELICONE_API_KEY=sk-helicone-xxx
    ```
 4. Restart dev server
-5. Dashboard dostepny pod: https://us.helicone.ai/dashboard
+5. Dashboard dostępny pod: https://us.helicone.ai/dashboard
 
 ## Next Phase Readiness
 

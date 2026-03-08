@@ -4,7 +4,7 @@
 
 See: .planning/PROJECT.md (updated 2026-03-08)
 
-**Core value:** Kazdy moze nauczyc sie czegokolwiek dzieki spersonalizowanemu, aktualnemu programowi nauczania z praktycznymi instrukcjami krok po kroku.
+**Core value:** Każdy może nauczyć się czegokolwiek dzięki spersonalizowanemu, aktualnemu programowi nauczania z praktycznymi instrukcjami krok po kroku.
 **Current focus:** Milestone v2.0 — Business Enablement (Phase 9: Business Suggestions)
 
 ## Current Position
@@ -56,7 +56,7 @@ Recent decisions affecting current work:
 - AI: Multi-model strategy — GPT-5.2 (curriculum + mentor), GPT-4o-mini (quizy + suggestions planner), text-embedding-3-small (RAG)
 - Vercel AI SDK v6, Zod 4
 - Supabase (PostgreSQL + pgvector + RLS + Storage)
-- Tailwind CSS v4, shadcn/ui (New York, Zinc), system 6 motywow (domyslny: Szklo)
+- Tailwind CSS v4, shadcn/ui (New York, Zinc), system 6 motywów (domyślny: Szkło)
 - Auth: getUser() not getSession() (CVE-2025-29927)
 - Design doc v2.0: docs/plans/2026-03-08-business-onboarding-design.md
 - Dual review (Claude Code + Codex) — design zatwierdzony po review

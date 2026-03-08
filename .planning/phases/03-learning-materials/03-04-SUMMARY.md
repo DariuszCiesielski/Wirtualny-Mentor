@@ -56,10 +56,10 @@ completed: 2026-01-31
 
 ## Accomplishments
 - ContentRenderer renderuje markdown z GFM, syntax highlighting i XSS protection
-- Citations [n] automatycznie zamieniane na linki do zrodel z tooltip
+- Citations [n] automatycznie zamieniane na linki do źródeł z tooltip
 - Copy button na code blocks z feedback (green check)
-- SourceList numeruje zrodla z polskimi type labels
-- ToolCard wyswietla narzedzia z install command i free/paid badge
+- SourceList numeruje źródła z polskimi type labels
+- ToolCard wyświetla narzędzia z install command i free/paid badge
 
 ## Task Commits
 
@@ -71,7 +71,7 @@ Each task was committed atomically:
 
 ## Files Created/Modified
 - `src/components/materials/content-renderer.tsx` - Markdown renderer z citations, code copy, external links
-- `src/components/materials/source-list.tsx` - Numerowana lista zrodel z type badges
+- `src/components/materials/source-list.tsx` - Numerowana lista źródeł z type badges
 - `src/components/materials/tool-card.tsx` - Tool card z install command i free/paid badge
 - `package.json` - react-markdown, remark-gfm, rehype-* dependencies
 
@@ -79,7 +79,7 @@ Each task was committed atomically:
 - highlight.js github-dark theme dla spjnego dark mode
 - Citations jako markdown links z tooltip (title attr)
 - Copy button z useState dla copied feedback
-- Polish labels dla source types (Dokumentacja, Artykul, Wideo, Kurs, Oficjalne)
+- Polish labels dla source types (Dokumentacja, Artykuł, Wideo, Kurs, Oficjalne)
 
 ## Deviations from Plan
 None - plan executed exactly as written.

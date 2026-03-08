@@ -7,7 +7,7 @@ score: 7/7 success criteria verified
 
 # Phase 3: Learning Materials - Verification Report
 
-**Phase Goal:** Kazda sekcja curriculum zawiera materialy jak w podreczniku z praktycznymi instrukcjami  
+**Phase Goal:** Każda sekcja curriculum zawiera materiały jak w podreczniku z praktycznymi instrukcjami  
 **Verified:** 2026-01-31T06:39:04Z  
 **Status:** PASSED  
 **Re-verification:** No - initial verification
@@ -29,7 +29,7 @@ Wszystkie 7 Success Criteria zostały zweryfikowane poprzez sprawdzenie wspieraj
 | 3 | Materiały zawierają konkretne narzędzia z linkami URL | VERIFIED | toolSchema wymaga URL + ToolCard wyświetla linki (tool-card.tsx lines 45-51) |
 | 4 | Instrukcje instalacji są krok po kroku | VERIFIED | practicalStepSchema + prompt wymaga instalacja krok po kroku (prompts.ts line 53) |
 | 5 | Komendy mają wyjaśnienia i oczekiwane wyniki | VERIFIED | practicalStepSchema ma expectedOutput i explanation + prompt ma sekcję INTERPRETACJA WYNIKOW (prompts.ts lines 57-62) |
-| 6 | Źródła są cytowane w treściach | VERIFIED | sourceSchema + prompt wymaga KAZDY fakt poparty zrodlem + ContentRenderer zamienia [n] na linki |
+| 6 | Źródła są cytowane w treściach | VERIFIED | sourceSchema + prompt wymaga KAŻDY fakt poparty źródłem + ContentRenderer zamienia [n] na linki |
 | 7 | Angielskie materiały tłumaczone na polski | VERIFIED | TRANSLATION_PROMPT + prompt wymaga Wszystko po polsku (prompts.ts line 125) |
 
 **Score:** 7/7 success criteria verified
@@ -103,7 +103,7 @@ Citations [n] converted to clickable links via regex replacement in ContentRende
 
 Dual enforcement:
 - Schema: expectedOutput and explanation fields
-- Prompt: INTERPRETACJA WYNIKOW (OBOWIAZKOWE) section
+- Prompt: INTERPRETACJA WYNIKOW (OBOWIĄZKOWE) section
 
 ## Verification Methodology
 

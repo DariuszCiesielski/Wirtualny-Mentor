@@ -50,9 +50,9 @@ metrics:
 
 2. **ChapterContent component** - Kluczowy komponent z lazy generation pattern:
    - Przyjmuje `initialContent` z server component
-   - Jesli null -> uruchamia fetch('/api/materials/generate')
-   - Jesli nie null -> renderuje od razu bez API call
-   - Wyswietla content, metadata, tools w grid, external resources, sources
+   - Jeśli null -> uruchamia fetch('/api/materials/generate')
+   - Jeśli nie null -> renderuje od razu bez API call
+   - Wyświetla content, metadata, tools w grid, external resources, sources
 
 3. **Chapter page integration** - Zaktualizowany page.tsx:
    - Server-side call `getSectionContent(chapterId)`
@@ -84,8 +84,8 @@ Client Component (ChapterContent)
 
 ## Key Technical Decisions
 
-- **Lazy on first visit:** Content generuje sie tylko przy pierwszym wejsciu na chapter - kolejne wizyty uzywa zapisanego contentu
-- **Phase tracking:** UI pokazuje progress przez 3 fazy zamiast zwyklego spinnera
+- **Lazy on first visit:** Content generuje się tylko przy pierwszym wejściu na chapter - kolejne wizyty używa zapisanego contentu
+- **Phase tracking:** UI pokazuje progress przez 3 fazy zamiast zwykłego spinnera
 - **Tools grid:** 2 kolumny na desktop dla lepszego wykorzystania przestrzeni
 - **Suspense:** Fallback dla server-side streaming
 
@@ -119,16 +119,16 @@ Client Component (ChapterContent)
 
 **2. [Rule 1 - Bug] Nullable chapter properties**
 - **Found during:** Task 3
-- **Issue:** `chapter.description` i `chapter.estimated_minutes` moga byc null
-- **Fix:** Dodano domyslne wartosci: `description || ""`, `estimated_minutes || 15`
+- **Issue:** `chapter.description` i `chapter.estimated_minutes` mogą być null
+- **Fix:** Dodano domyślne wartości: `description || ""`, `estimated_minutes || 15`
 - **Commit:** c57a9bc
 
 ## Verification Results
 
-- [x] `npx tsc --noEmit` - brak bledow
+- [x] `npx tsc --noEmit` - brak błędów
 - [x] GeneratingState pokazuje fazy generowania
 - [x] ChapterContent implementuje lazy generation (fetch only when initialContent is null)
-- [x] Chapter page laczy wszystkie komponenty
+- [x] Chapter page łączy wszystkie komponenty
 - [x] Suspense dla streaming
 - [x] Server-client wiring jasno udokumentowany w komentarzach
 - [x] Key links verified: ChapterContent import, fetch call, getSectionContent import

@@ -44,11 +44,11 @@ completed: 2026-01-31
 
 # Phase 2 Plan 6: Progress Tracking Summary
 
-**Progress tracking i nawigacja miedzy rozdzialami kursu**
+**Progress tracking i nawigacja między rozdziałami kursu**
 
 ## Performance
 
-- **Duration:** ~8 min (przerwane + manualne ukonczenie)
+- **Duration:** ~8 min (przerwane + manualne ukończenie)
 - **Started:** 2026-01-30T22:00:00Z
 - **Completed:** 2026-01-31
 - **Tasks:** 2
@@ -56,11 +56,11 @@ completed: 2026-01-31
 
 ## Accomplishments
 
-- Strona /courses/[courseId]/[levelId]/[chapterId] z pelnym widokiem rozdzialu
-- ProgressBar pokazuje % ukonczenia, liczbe rozdzialow, aktualny poziom
-- Przycisk "Ukoncz rozdzial" zapisuje postep i redirect do nastepnego
+- Strona /courses/[courseId]/[levelId]/[chapterId] z pełnym widokiem rozdziału
+- ProgressBar pokazuje % ukończenia, liczbe rozdziałów, aktualny poziom
+- Przycisk "Ukoncz rozdział" zapisuje postęp i redirect do następnego
 - ChapterNavigation z prev/next przechodzi przez granice poziomow
-- Placeholder na content rozdzialu (do Phase 3)
+- Placeholder na content rozdziału (do Phase 3)
 
 ## Task Commits
 
@@ -76,8 +76,8 @@ completed: 2026-01-31
 ## Decisions Made
 
 - **markComplete with redirect:** Jedna akcja robi update + redirect (UX flow)
-- **ProgressBar props:** Przekazujemy wyliczone wartosci, nie raw data
-- **Prev/next across levels:** Automatyczne przeskakiwanie do nastepnego/poprzedniego poziomu
+- **ProgressBar props:** Przekazujemy wyliczone wartości, nie raw data
+- **Prev/next across levels:** Automatyczne przeskakiwanie do następnego/poprzedniego poziomu
 
 ## Deviations from Plan
 
@@ -86,8 +86,8 @@ completed: 2026-01-31
 
 ## Issues Encountered
 
-- Wave 4 przerwana bledem narzedzia - pliki utworzone ale niezacommitowane
-- TypeScript error: requireAuth() zwraca User bezposrednio, nie { user }
+- Wave 4 przerwana bledem narzędzia - pliki utworzone ale niezacommitowane
+- TypeScript error: requireAuth() zwraca User bezpośrednio, nie { user }
 
 ## User Setup Required
 
@@ -95,9 +95,9 @@ None.
 
 ## Next Phase Readiness
 
-- Progress tracking dziala end-to-end
-- Rozdzialy mozna oznaczac jako ukonczone
-- Brakuje: faktyczna tresc rozdzialu (Phase 3 Learning Materials)
+- Progress tracking działa end-to-end
+- Rozdzialy można oznaczac jako ukończone
+- Brakuje: faktyczna treść rozdziału (Phase 3 Learning Materials)
 
 ---
 *Phase: 02-curriculum-generation*

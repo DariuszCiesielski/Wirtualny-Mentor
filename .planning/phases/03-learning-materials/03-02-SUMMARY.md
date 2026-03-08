@@ -33,7 +33,7 @@ key-files:
 
 key-decisions:
   - "AI SDK v6 inputSchema zamiast parameters dla tool definition"
-  - "Prompt wymaga interpretacji wynikow dla kazdego praktycznego przykladu"
+  - "Prompt wymaga interpretacji wyników dla każdego praktycznego przykładu"
 
 patterns-established:
   - "Tool error handling z success flag pattern"
@@ -46,7 +46,7 @@ completed: 2026-01-31
 
 # Phase 3 Plan 2: AI Tools i Prompts Summary
 
-**System prompts dla grounded material generation z Tavily web search tools i wymaganiem interpretacji wynikow praktycznych**
+**System prompts dla grounded material generation z Tavily web search tools i wymaganiem interpretacji wyników praktycznych**
 
 ## Performance
 
@@ -57,9 +57,9 @@ completed: 2026-01-31
 - **Files created:** 2
 
 ## Accomplishments
-- Prompty dla AI material generation z cytatami i interpretacja wynikow
+- Prompty dla AI material generation z cytatami i interpretacja wyników
 - AI SDK tools do wyszukiwania zasobow edukacyjnych przez Tavily
-- Tools do ekstrakcji tresci z URL-i
+- Tools do ekstrakcji treści z URL-i
 - Grounding pattern zapobiegajacy halucynacjom URL-i
 
 ## Task Commits
@@ -74,7 +74,7 @@ Each task was committed atomically:
 - `src/lib/ai/materials/tools.ts` - searchResourcesTool, extractContentTool, materialGenerationTools
 
 ## Decisions Made
-- AI SDK v6 uzywa `inputSchema` zamiast `parameters` dla tool definition
+- AI SDK v6 używa `inputSchema` zamiast `parameters` dla tool definition
 - Explicit type annotations dla execute function parameters (TypeScript strictness)
 
 ## Deviations from Plan
@@ -83,16 +83,16 @@ Each task was committed atomically:
 
 **1. [Rule 3 - Blocking] Fix AI SDK v6 tool syntax**
 - **Found during:** Task 2 (AI SDK tools)
-- **Issue:** Plan uzyl `parameters` z AI SDK v5 syntax, ale projekt uzywa AI SDK v6 ktory wymaga `inputSchema`
+- **Issue:** Plan uzyl `parameters` z AI SDK v5 syntax, ale projekt używa AI SDK v6 który wymaga `inputSchema`
 - **Fix:** Zmieniono `parameters` na `inputSchema`, dodano explicit type annotations
 - **Files modified:** src/lib/ai/materials/tools.ts
-- **Verification:** `npx tsc --noEmit` przechodzi bez bledow
+- **Verification:** `npx tsc --noEmit` przechodzi bez błędów
 - **Committed in:** 9792757 (Task 2 commit)
 
 ---
 
 **Total deviations:** 1 auto-fixed (1 blocking)
-**Impact on plan:** Fix niezbedny dla kompilacji TypeScript. Brak scope creep.
+**Impact on plan:** Fix niezbędny dla kompilacji TypeScript. Brak scope creep.
 
 ## Issues Encountered
 None

@@ -316,7 +316,7 @@ src/app/(dashboard)/business-ideas/
 | `src/lib/ai/providers.ts` | Add `onboarding` + `businessIdeas` to MODEL_CONFIG | LOW — additive only |
 | `src/app/(dashboard)/layout.tsx` | Load profile, render `<OnboardingBanner />` | LOW — conditional render |
 | `src/app/(dashboard)/dashboard/page.tsx` | Load profile, render `<ProfileSummary />` card | LOW — additive card |
-| `src/components/layout/sidebar.tsx` | Add "Pomysly biznesowe" nav link | LOW — one link |
+| `src/components/layout/sidebar.tsx` | Add "Pomysły biznesowe" nav link | LOW — one link |
 | `src/app/(dashboard)/profile/page.tsx` | Add business profile section | LOW — below existing |
 | `src/lib/ai/curriculum/prompts.ts` | Inject profile context into system prompt | MEDIUM — prompt change |
 | `ContentRenderer` (chapter) | Add `SectionBusinessIdeaButton` to h2 actions | MEDIUM — existing render logic |

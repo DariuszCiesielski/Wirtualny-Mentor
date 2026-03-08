@@ -78,7 +78,7 @@ completed: 2025-01-30
 - Dashboard layout z sidebar (240px) i header (64px)
 - Sidebar z nawigacja i active state (usePathname)
 - Header z user info, theme toggle, logout
-- Strona glowna dashboardu z powitaniem
+- Strona główna dashboardu z powitaniem
 - Edycja profilu (imie z walidacja Zod)
 - Avatar upload z preview i Supabase Storage integration
 - Mock auth system dla local development bez Supabase
@@ -131,7 +131,7 @@ Each task was committed atomically:
 - **Fix:** Dodano mock auth system z toggle USE_MOCK_AUTH, mock user z id/email/name
 - **Files created:** src/lib/auth/mock-auth.ts
 - **Files modified:** src/lib/dal/auth.ts, src/app/(auth)/login/actions.ts, src/app/(auth)/sign-up/actions.ts
-- **Verification:** npm run build passes, app dziala z mock auth
+- **Verification:** npm run build passes, app działa z mock auth
 - **Committed in:** fdfcaee
 
 **2. [Rule 3 - Blocking] Logout server action**
@@ -139,13 +139,13 @@ Each task was committed atomically:
 - **Issue:** Client-side logout z supabase.auth.signOut() wymagal dodatkowej logiki
 - **Fix:** Dodano src/app/(auth)/logout/actions.ts z Server Action
 - **Files created:** src/app/(auth)/logout/actions.ts
-- **Verification:** Logout dziala poprawnie
+- **Verification:** Logout działa poprawnie
 - **Committed in:** fdfcaee
 
 ---
 
 **Total deviations:** 2 auto-fixed (2 blocking)
-**Impact on plan:** Blocking issues rozwiazane dla lepszego DX. Mock auth umozliwia development bez Supabase.
+**Impact on plan:** Blocking issues rozwiązane dla lepszego DX. Mock auth umożliwia development bez Supabase.
 
 ## Issues Encountered
 
@@ -159,9 +159,9 @@ None - plan executed successfully po rozwiazaniu blocking issues.
 
 ## Next Phase Readiness
 
-- Phase 1 complete - pelny system auth z dashboard
+- Phase 1 complete - pełny system auth z dashboard
 - Gotowe na Phase 2: Curriculum Generation
-- Dashboard skeleton przygotowany na integracje kursow i notatek
+- Dashboard skeleton przygotowany na integracje kursów i notatek
 - Wymagany user setup: Supabase Storage bucket dla avatarow
 
 ---

@@ -6,11 +6,11 @@
 
 ## Summary
 
-Phase 2 implementuje generowanie spersonalizowanych programow nauczania przez AI. Obejmuje: (1) konwersacyjny interfejs do zbierania informacji o uzytkowniku (temat, cele, doswiadczenie, dostepny czas), (2) generowanie strukturyzowanego curriculum z 5 poziomami, (3) integracje z Tavily dla aktualnych informacji, (4) persystencje kursu i postepu w bazie danych, oraz (5) UI do nawigacji po curriculum.
+Phase 2 implementuje generowanie spersonalizowanych programow nauczania przez AI. Obejmuje: (1) konwersacyjny interfejs do zbierania informacji o uzytkowniku (temat, cele, doświadczenie, dostępny czas), (2) generowanie strukturyzowanego curriculum z 5 poziomami, (3) integracje z Tavily dla aktualnych informacji, (4) persystencje kursu i postępu w bazie danych, oraz (5) UI do nawigacji po curriculum.
 
-Istniejaca infrastruktura AI z Phase 0 (Vercel AI SDK, multi-model routing) stanowi solidna baze. Kluczowe wyzwania to: zaprojektowanie schematu bazy danych dla kursow/postepu, implementacja multi-step konwersacji z AI, i streaming duzych strukturyzowanych odpowiedzi (curriculum moze miec 8k+ tokenow).
+Istniejąca infrastruktura AI z Phase 0 (Vercel AI SDK, multi-model routing) stanowi solidną bazę. Kluczowe wyzwania to: zaprojektowanie schematu bazy danych dla kursów/postępu, implementacja multi-step konwersacji z AI, i streaming duzych strukturyzowanych odpowiedzi (curriculum może mieć 8k+ tokenów).
 
-**Primary recommendation:** Uzyj Vercel AI SDK `streamText` z `Output.object()` dla generowania curriculum, `useChat` hook dla konwersacji doprecyzowujacej, i Tavily `@tavily/core` dla web search. Schemat DB w Supabase z tabelami: courses, levels, chapters, user_progress.
+**Primary recommendation:** Użyj Vercel AI SDK `streamText` z `Output.object()` dla generowania curriculum, `useChat` hook dla konwersacji doprecyzowujacej, i Tavily `@tavily/core` dla web search. Schemat DB w Supabase z tabelami: courses, levels, chapters, user_progress.
 
 ## Standard Stack
 
@@ -18,17 +18,17 @@ Istniejaca infrastruktura AI z Phase 0 (Vercel AI SDK, multi-model routing) stan
 
 | Library | Version | Purpose | Why Standard |
 |---------|---------|---------|--------------|
-| ai (Vercel AI SDK) | ^6.0.62 | Streaming, structured output, tool calling | Juz zainstalowane, unified API dla wszystkich providerow |
-| @ai-sdk/react | ^3.0.64 | useChat, useObject hooks | Juz zainstalowane, framework-agnostic React hooks |
+| ai (Vercel AI SDK) | ^6.0.62 | Streaming, structured output, tool calling | Już zainstalowane, unified API dla wszystkich providerów |
+| @ai-sdk/react | ^3.0.64 | useChat, useObject hooks | Już zainstalowane, framework-agnostic React hooks |
 | @tavily/core | latest | Web search API | Official Tavily SDK, RAG-optimized results |
-| zod | ^4.3.6 | Schema validation dla AI output | Juz zainstalowane, natywna integracja z AI SDK |
+| zod | ^4.3.6 | Schema validation dla AI output | Już zainstalowane, natywna integracja z AI SDK |
 
 ### Supporting
 
 | Library | Version | Purpose | When to Use |
 |---------|---------|---------|-------------|
 | partial-json | latest | Parsing incomplete JSON podczas streaming | Gdy streaming structured data wymaga partial rendering |
-| shadcn/ui Progress | - | Progress bar component | Juz w projekcie, rozszerz o stepper pattern |
+| shadcn/ui Progress | - | Progress bar component | Już w projekcie, rozszerz o stepper pattern |
 
 ### Alternatives Considered
 
@@ -94,9 +94,9 @@ src/
 
 ### Pattern 1: Multi-Step Clarifying Conversation
 
-**What:** Konwersacyjny flow gdzie AI zadaje pytania doprecyzowujace przed generowaniem curriculum.
+**What:** Konwersacyjny flow gdzie AI zadaje pytania doprecyzowujące przed generowaniem curriculum.
 
-**When to use:** Kiedy potrzebujemy zebrac informacje o uzytkowniku (cele, doswiadczenie, czas) przed generowaniem.
+**When to use:** Kiedy potrzebujemy zebrać informacje o uzytkowniku (cele, doświadczenie, czas) przed generowaniem.
 
 **Example:**
 ```typescript
@@ -142,7 +142,7 @@ Odpowiadaj ZAWSZE po polsku.`,
 
 ### Pattern 2: Streaming Structured Curriculum Generation
 
-**What:** Generowanie pelnego curriculum jako streaming structured object.
+**What:** Generowanie pełnego curriculum jako streaming structured object.
 
 **When to use:** Po zebraniu informacji, generujemy duzy strukturyzowany obiekt (curriculum).
 
@@ -283,9 +283,9 @@ export const extractUrlTool = tool({
 
 ### Pattern 4: Database Schema for Courses & Progress
 
-**What:** Schemat bazy danych dla kursow, poziomow, rozdzialow i postepu uzytkownika.
+**What:** Schemat bazy danych dla kursów, poziomow, rozdziałów i postępu użytkownika.
 
-**When to use:** Persystencja curriculum i sledzenie postepu.
+**When to use:** Persystencja curriculum i sledzenie postępu.
 
 **Example:**
 ```sql
@@ -401,7 +401,7 @@ CREATE INDEX idx_user_progress_user_course ON user_progress(user_id, course_id);
 
 **What:** React hook dla konwersacji z AI z automatycznym state management.
 
-**When to use:** Interfejs chatu dla pytan doprecyzowujacych.
+**When to use:** Interfejs chatu dla pytań doprecyzowujących.
 
 **Example:**
 ```typescript
@@ -490,11 +490,11 @@ export function ClarifyingChat({ topic, sourceUrl, onComplete }: ClarifyingChatP
 
 ### Anti-Patterns to Avoid
 
-- **Monolityczny prompt:** Nie generuj calego curriculum w jednym prompcie bez kontekstu. Najpierw zbierz info, potem generuj.
-- **Brak streaming:** Dla duzych odpowiedzi (8k+ tokens) zawsze uzyj streaming, inaczej UX jest fatalny.
+- **Monolityczny prompt:** Nie generuj całego curriculum w jednym prompcie bez kontekstu. Najpierw zbierz info, potem generuj.
+- **Brak streaming:** Dla duzych odpowiedzi (8k+ tokens) zawsze użyj streaming, inaczej UX jest fatalny.
 - **generateObject zamiast Output.object:** `generateObject` jest deprecated w AI SDK 6.
-- **Hardcoded levels:** Nie hardcoduj nazw poziomow w wielu miejscach, uzyj enum/const.
-- **Brak RLS:** Kazda tabela z danymi uzytkownika musi miec Row Level Security.
+- **Hardcoded levels:** Nie hardcoduj nazw poziomow w wielu miejscach, użyj enum/const.
+- **Brak RLS:** Każda tabela z danymi użytkownika musi mieć Row Level Security.
 
 ## Don't Hand-Roll
 
@@ -506,39 +506,39 @@ export function ClarifyingChat({ topic, sourceUrl, onComplete }: ClarifyingChatP
 | Progress calculation | Manual math | SQL aggregates + triggers | Database handles consistency |
 | Partial JSON streaming | Regex parsing | `partial-json` library | Handles edge cases, malformed JSON |
 
-**Key insight:** AI SDK 6 ma wbudowane wszystko do structured output i streaming. Tavily jest zoptymalizowany dla AI agents. Nie trzeba budowac wlasnych rozwiazan.
+**Key insight:** AI SDK 6 ma wbudowane wszystko do structured output i streaming. Tavily jest zoptymalizowany dla AI agents. Nie trzeba budowac własnych rozwiazan.
 
 ## Common Pitfalls
 
 ### Pitfall 1: Token Limits dla Curriculum
 
-**What goes wrong:** Curriculum z 5 poziomami, kazdym z rozdzialami i learning outcomes moze przekroczyc output token limit.
+**What goes wrong:** Curriculum z 5 poziomami, każdym z rozdziałami i learning outcomes może przekroczyc output token limit.
 
 **Why it happens:** GPT-4.1 ma 16k output limit, ale w praktyce jakoscowe odpowiedzi to ~8k.
 
 **How to avoid:**
 1. Generuj curriculum w 2 krokach: najpierw overview (poziomy + opisy), potem detale per level
 2. Ustaw `maxOutputTokens: 8192` w MODEL_CONSTRAINTS
-3. Uzyj streaming aby uzytkownik widzial postep
+3. Użyj streaming aby użytkownik widzial postęp
 
-**Warning signs:** Odpowiedz AI sie urywa, brakuje ostatnich poziomow.
+**Warning signs:** Odpowiedź AI się urywa, brakuje ostatnich poziomow.
 
 ### Pitfall 2: Race Conditions w Progress Tracking
 
-**What goes wrong:** Uzytkownik szybko klika "nastepny rozdzial" i progress sie nie zapisuje poprawnie.
+**What goes wrong:** Użytkownik szybko klika "następny rozdział" i progress się nie zapisuje poprawnie.
 
 **Why it happens:** Optymistyczne UI + wolne zapisy do DB.
 
 **How to avoid:**
-1. Uzyj optimistic updates z revalidation
+1. Użyj optimistic updates z revalidation
 2. Debounce progress updates (500ms)
-3. Uzyj Supabase real-time dla synchronizacji
+3. Użyj Supabase real-time dla synchronizacji
 
 **Warning signs:** Progress "skacze" wstecz, duplikaty w completed_chapters.
 
 ### Pitfall 3: Clarifying Questions Loop
 
-**What goes wrong:** AI zadaje w nieskonczonosc pytania, nigdy nie konczy zbierania info.
+**What goes wrong:** AI zadaje w nieskonczonosc pytania, nigdy nie kończy zbierania info.
 
 **Why it happens:** Prompt nie ma jasnych kryteriow "wystarczajacej" informacji.
 
@@ -547,30 +547,30 @@ export function ClarifyingChat({ topic, sourceUrl, onComplete }: ClarifyingChatP
 2. Ustaw max 5 tur konwersacji
 3. Po 5 turach, AI musi ustawic isComplete: true z zebranymi danymi
 
-**Warning signs:** Uzytkownik frustruje sie, opuszcza flow.
+**Warning signs:** Użytkownik frustruje się, opuszcza flow.
 
 ### Pitfall 4: Tavily Rate Limits i Koszty
 
 **What goes wrong:** Przekroczenie limitu API, nieoczekiwane koszty.
 
-**Why it happens:** Kazde generowanie curriculum wywoluje wiele search queries.
+**Why it happens:** Każde generowanie curriculum wywoluje wiele search queries.
 
 **How to avoid:**
-1. Cache wynikow Tavily (15 min TTL)
+1. Cache wyników Tavily (15 min TTL)
 2. Limit do 3-5 queries per curriculum generation
-3. Uzyj `search_depth: 'basic'` dla szybszych, tanszych wynikow
+3. Użyj `search_depth: 'basic'` dla szybszych, tanszych wyników
 4. Monitoruj usage w Tavily dashboard
 
 **Warning signs:** 429 errors, rosnace koszty.
 
 ### Pitfall 5: UI Messages vs Model Messages
 
-**What goes wrong:** Persistence nie dziala, wiadomosci sie gubią.
+**What goes wrong:** Persistence nie działa, wiadomosci się gubią.
 
 **Why it happens:** AI SDK 5+ rozroznia UIMessage i ModelMessage.
 
 **How to avoid:**
-1. Uzyj `onFinish` callback dla persistence (dostaje UIMessage[])
+1. Użyj `onFinish` callback dla persistence (dostaje UIMessage[])
 2. Waliduj messages przed zaladowaniem z DB (`validateUIMessages`)
 3. Generuj message ID server-side dla persistence
 
@@ -818,26 +818,26 @@ export async function getUserCourses(userId: string) {
 | Schema per endpoint | Centralized Zod schemas | Best practice | Single source of truth |
 
 **Deprecated/outdated:**
-- `generateObject()` - deprecated w AI SDK 6, uzyj `Output.object()` z `streamText`
-- `useCompletion` for structured data - uzyj `useChat` z output schema lub `useObject`
+- `generateObject()` - deprecated w AI SDK 6, użyj `Output.object()` z `streamText`
+- `useCompletion` for structured data - użyj `useChat` z output schema lub `useObject`
 - Manual message type conversion - AI SDK 5+ robi to automatycznie
 
 ## Open Questions
 
 1. **Multi-step curriculum generation**
-   - What we know: Duze curriculum moze przekroczyc token limit
+   - What we know: Duże curriculum może przekroczyc token limit
    - What's unclear: Czy lepiej generowac all-at-once z wiekszym limitem, czy level-by-level?
-   - Recommendation: Zacznij od all-at-once z 8k limit, jesli nie dziala, refactor na level-by-level
+   - Recommendation: Zacznij od all-at-once z 8k limit, jeśli nie działa, refactor na level-by-level
 
 2. **Tavily vs built-in model search**
-   - What we know: Claude i GPT maja web search capabilities
+   - What we know: Claude i GPT mają web search capabilities
    - What's unclear: Czy Tavily jest lepszy niz native model search?
-   - Recommendation: Uzyj Tavily dla kontroli (RAG-optimized, caching), ale przetestuj obie opcje
+   - Recommendation: Użyj Tavily dla kontroli (RAG-optimized, caching), ale przetestuj obie opcje
 
 3. **Curriculum update/regeneration**
-   - What we know: User moze chciec zmodyfikowac wygenerowane curriculum
-   - What's unclear: Czy regenerowac cale, czy tylko czesci?
-   - Recommendation: MVP bez edycji, pozniej dodaj regeneration per level
+   - What we know: User może chciec zmodyfikowac wygenerowane curriculum
+   - What's unclear: Czy regenerować całe, czy tylko części?
+   - Recommendation: MVP bez edycji, później dodaj regeneration per level
 
 ## Sources
 

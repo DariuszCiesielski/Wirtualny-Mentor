@@ -47,7 +47,7 @@ key-files:
 
 key-decisions:
   - "Server Component + Client Form pattern: rozdziela searchParams (server) od useActionState (client)"
-  - "Kazdy form jako osobny komponent (login-form.tsx) dla reusability i testing"
+  - "Każdy form jako osobny komponent (login-form.tsx) dla reusability i testing"
   - "NEXT_PUBLIC_SITE_URL dla email redirect URLs (bez hardcode localhost)"
   - "Zod validation w Server Actions z flatten().fieldErrors dla per-field errors"
 
@@ -55,7 +55,7 @@ patterns-established:
   - "Auth form pattern: Page (server) -> Form (client) -> Action (server)"
   - "Error display: rounded-md bg-destructive/10 border border-destructive/20"
   - "Success message: rounded-md bg-green-500/10 border border-green-500/20"
-  - "Redirect logged users: getUser() check na poczatku strony"
+  - "Redirect logged users: getUser() check na początku strony"
 
 # Metrics
 duration: 18min
@@ -80,12 +80,12 @@ completed: 2025-01-30
 - Login/sign-up pages z walidacja Zod i error handling
 - Password reset flow (forgot -> check-email -> update)
 - Email confirmation route handler (verifyOtp dla recovery i email)
-- Redirect zalogowanych uzytkownikow z /login i /sign-up na /dashboard
+- Redirect zalogowanych użytkowników z /login i /sign-up na /dashboard
 - Wiadomosci sukcesu po zmianie hasla
 
 ## Task Commits
 
-Kazdy task commitowany atomicznie:
+Każdy task commitowany atomicznie:
 
 1. **Task 1: Auth layout i login/sign-up pages** - `c077027` (feat)
 2. **Task 2: Password reset i email confirmation** - `958b8c4` (feat)
@@ -113,9 +113,9 @@ Kazdy task commitowany atomicznie:
 
 ## Decisions Made
 
-1. **Server Component + Client Form pattern** - Rozdzielenie stron na Server Component (obslugi searchParams, redirect check) i Client Component (formularz z useActionState). Unika hydration issues z useSearchParams.
+1. **Server Component + Client Form pattern** - Rozdzielenie stron na Server Component (obsługi searchParams, redirect check) i Client Component (formularz z useActionState). Unika hydration issues z useSearchParams.
 
-2. **Per-field error handling** - Uzycie Zod flatten().fieldErrors dla wyswietlania bledow pod kazdym polem, nie tylko globalny error.
+2. **Per-field error handling** - Uzycie Zod flatten().fieldErrors dla wyswietlania błędów pod każdym polem, nie tylko globalny error.
 
 3. **NEXT_PUBLIC_SITE_URL** - Wszystkie email redirect URLs uzywaja env variable zamiast hardcoded localhost dla production-readiness.
 
@@ -125,7 +125,7 @@ Kazdy task commitowany atomicznie:
 
 **1. [Rule 3 - Blocking] Next.js hydration error z useSearchParams**
 - **Found during:** Task 1 (Login page)
-- **Issue:** Build failed - useSearchParams() musi byc w Suspense boundary
+- **Issue:** Build failed - useSearchParams() musi być w Suspense boundary
 - **Fix:** Rozdzielenie na Server Component (page.tsx) + Client Component (login-form.tsx)
 - **Files modified:** src/app/(auth)/login/page.tsx, src/app/(auth)/login/login-form.tsx
 - **Verification:** npm run build passes
@@ -155,7 +155,7 @@ None - po naprawieniu hydration issue wszystko dzialalo zgodnie z planem.
 
 - Auth pages kompletne i gotowe do testowania
 - Wymagany dashboard route (/dashboard) - Plan 03
-- Email templates w Supabase moga wymagac customizacji (defaultowe sa po angielsku)
+- Email templates w Supabase mogą wymagać customizacji (defaultowe są po angielsku)
 
 ---
 *Phase: 01-auth-basic-ui*

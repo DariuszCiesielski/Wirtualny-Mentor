@@ -8,7 +8,7 @@ gaps: []
 
 # Phase 5: Notes System & Embeddings Verification Report
 
-**Phase Goal:** Uzytkownik moze tworzyc notatki podczas nauki, ktore sa wektoryzowane dla chatbota
+**Phase Goal:** Użytkownik może tworzyć notatki podczas nauki, które są wektoryzowane dla chatbota
 
 **Verified:** 2026-01-31T10:05:00Z
 
@@ -22,11 +22,11 @@ gaps: []
 
 | # | Truth | Status | Evidence |
 |---|-------|--------|----------|
-| 1 | Uzytkownik moze tworzyc notatki podczas nauki | VERIFIED | NoteEditor zintegrowany z chapter page, createNoteAction dziala |
-| 2 | Uzytkownik moze przegladac i edytowac zapisane notatki | VERIFIED | NotesList renderuje notatki, NoteCard ma inline edit |
-| 3 | Notatki sa powiazane z konkretna lekcja/sekcja | VERIFIED | chapter_id foreign key, getNotes filtruje po chapterId |
-| 4 | Notatki sa przeszukiwalne (full-text search) | VERIFIED | searchNotesFulltext w DAL, notes-search.tsx wired do notes page |
-| 5 | Notatki sa embedowane w pgvector dla RAG | VERIFIED | generateEmbedding w createNote/updateNote, HNSW index |
+| 1 | Użytkownik może tworzyć notatki podczas nauki | VERIFIED | NoteEditor zintegrowany z chapter page, createNoteAction działa |
+| 2 | Użytkownik może przeglądać i edytować zapisane notatki | VERIFIED | NotesList renderuje notatki, NoteCard ma inline edit |
+| 3 | Notatki są powiązane z konkretną lekcją/sekcja | VERIFIED | chapter_id foreign key, getNotes filtruje po chapterId |
+| 4 | Notatki są przeszukiwalne (full-text search) | VERIFIED | searchNotesFulltext w DAL, notes-search.tsx wired do notes page |
+| 5 | Notatki są embedowane w pgvector dla RAG | VERIFIED | generateEmbedding w createNote/updateNote, HNSW index |
 
 **Score:** 5/5 truths verified (100%)
 
@@ -64,9 +64,9 @@ gaps: []
 
 | Requirement | Status |
 |-------------|--------|
-| NOTE-01: Uzytkownik moze tworzyc notatki | SATISFIED |
-| NOTE-02: Uzytkownik moze przegladac/edytowac | SATISFIED |
-| NOTE-03: Notatki powiazane z lekcja | SATISFIED |
+| NOTE-01: Użytkownik może tworzyć notatki | SATISFIED |
+| NOTE-02: Użytkownik może przeglądać/edytować | SATISFIED |
+| NOTE-03: Notatki powiązane z lekcją | SATISFIED |
 | NOTE-04: Notatki przeszukiwalne | SATISFIED |
 | NOTE-05: Notatki embedowane dla RAG | SATISFIED |
 
@@ -76,9 +76,9 @@ gaps: []
 
 All success criteria met:
 
-1. **Tworzenie notatek** — NoteEditor na stronie rozdzialu, embedding generowany synchronicznie
-2. **Przegladanie/edycja** — NotesList z inline edit, delete confirmation
-3. **Powiazanie z lekcja** — chapter_id foreign key, filtrowanie w getNotes
+1. **Tworzenie notatek** — NoteEditor na stronie rozdziału, embedding generowany synchronicznie
+2. **Przeglądanie/edycja** — NotesList z inline edit, delete confirmation
+3. **Powiązanie z lekcją** — chapter_id foreign key, filtrowanie w getNotes
 4. **Wyszukiwanie full-text** — searchNotesFulltext + UI na /courses/[courseId]/notes
 5. **Embedowania dla RAG** — halfvec(1536), HNSW index, search_notes_semantic RPC
 

@@ -8,7 +8,7 @@ gaps: []
 
 # Phase 4: Assessment System Verification Report
 
-**Phase Goal:** Uzytkownik jest testowany z wiedzy przez quizy i testy, z adaptacyjna remediacja przy bledach
+**Phase Goal:** Użytkownik jest testowany z wiedzy przez quizy i testy, z adaptacyjna remediacja przy błędach
 **Verified:** 2026-01-31T09:30:00Z
 **Status:** PASSED
 **Re-verification:** Yes - gaps fixed
@@ -19,13 +19,13 @@ gaps: []
 
 | # | Truth | Status | Evidence |
 |---|-------|--------|----------|
-| 1 | Po sekcjach pojawiaja sie krotkie quizy sprawdzajace zrozumienie | VERIFIED | Quiz page exists, chapter page shows "Sprawdz wiedze - Quiz" button after completion |
-| 2 | Na koncu kazdego poziomu jest test koncowy | VERIFIED | Level test page at /courses/[courseId]/[levelId]/test, LevelTestContainer shows intro with outcomes |
-| 3 | Uzytkownik musi zdac test, zeby odblokowac nastepny poziom | VERIFIED | submit API auto-unlocks on pass, level-card shows lock status |
-| 4 | Uzytkownik moze reczenie przeskoczyc poziom | VERIFIED | SkipLevelModal component, /api/level/skip endpoint works |
-| 5 | Bledne odpowiedzi wywoluja dodatkowe materialy remediacyjne | VERIFIED | QuizResults fetches remediation on fail, shows RemediationContent button |
-| 6 | Uzytkownik moze powtorzyc test po przerobeniu remediacji | VERIFIED | RemediationContent has retry button, QuizContainer handles RETRY action |
-| 7 | Feedback na odpowiedzi wyjasnia dlaczego poprawna/bledna | VERIFIED | QuizFeedback shows explanation, wrongExplanations map per option |
+| 1 | Po sekcjach pojawiają się krótkie quizy sprawdzajace zrozumienie | VERIFIED | Quiz page exists, chapter page shows "Sprawdz wiedze - Quiz" button after completion |
+| 2 | Na koncu każdego poziomu jest test końcowy | VERIFIED | Level test page at /courses/[courseId]/[levelId]/test, LevelTestContainer shows intro with outcomes |
+| 3 | Użytkownik musi zdac test, żeby odblokowac następny poziom | VERIFIED | submit API auto-unlocks on pass, level-card shows lock status |
+| 4 | Użytkownik może ręcznie przeskoczyć poziom | VERIFIED | SkipLevelModal component, /api/level/skip endpoint works |
+| 5 | Bledne odpowiedzi wywoluja dodatkowe materiały remediacyjne | VERIFIED | QuizResults fetches remediation on fail, shows RemediationContent button |
+| 6 | Użytkownik może powtórzyć test po przerobeniu remediacji | VERIFIED | RemediationContent has retry button, QuizContainer handles RETRY action |
+| 7 | Feedback na odpowiedzi wyjaśnia dlaczego poprawna/błędna | VERIFIED | QuizFeedback shows explanation, wrongExplanations map per option |
 
 **Score:** 7/7 truths verified
 
@@ -86,7 +86,7 @@ gaps: []
 **Gap 2: Remediation Not Wired (QUIZ-05)** - FIXED
 - QuizResults now imports RemediationContent
 - Fetches remediation from /api/quiz/remediation on failure
-- Shows "Przejrzyj material uzupelniajacy" button
+- Shows "Przejrzyj materiał uzupelniajacy" button
 - RemediationContent displays with concepts, hints, suggested review
 - Commit: 21293ff
 

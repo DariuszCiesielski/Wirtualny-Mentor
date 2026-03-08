@@ -7,7 +7,7 @@ score: 5/5 must-haves verified
 
 # Phase 8: Business Onboarding Verification Report
 
-**Phase Goal:** Uzytkownik moze opisac swoj kontekst biznesowy, a platforma wykorzystuje go do personalizacji nauki
+**Phase Goal:** Użytkownik może opisać swój kontekst biznesowy, a platforma wykorzystuje go do personalizacji nauki
 **Verified:** 2026-03-08
 **Status:** passed
 **Re-verification:** No — initial verification
@@ -18,11 +18,11 @@ score: 5/5 must-haves verified
 
 | # | Truth | Status | Evidence |
 |---|-------|--------|----------|
-| 1 | Uzytkownik moze wypelnic formularz profilu biznesowego (branza, rola, cel, wielkosc firmy) i zapisac go | VERIFIED | `BusinessProfileForm` w `src/components/onboarding/business-profile-form.tsx` (325 linii) — 4 pola (industry Combobox, role Combobox, business_goal Textarea, company_size Select), walidacja Zod, `saveBusinessProfile` DAL call z toast feedback |
-| 2 | Uzytkownik moze opcjonalnie doprecyzowac profil w krotkim chacie z AI, a AI generuje z tego podsumowanie | VERIFIED | `OnboardingChat` w `src/components/onboarding/onboarding-chat.tsx` (302 linii) — useChat + DefaultChatTransport do `/api/onboarding/chat`, structured output z `onboardingChatSchema` (question, isComplete, experience_summary), auto-finish po 5 turach lub isComplete=true, "Przejdz dalej bez chatu" skip option |
-| 3 | Dashboard wyswietla banner zachecajacy do uzupelnienia profilu (znika po ukonczeniu onboardingu) | VERIFIED | `OnboardingBanner` w `src/components/onboarding/onboarding-banner.tsx` (50 linii) — warunkowe renderowanie `{!onboardingCompleted && <OnboardingBanner />}` w `dashboard/page.tsx`, session-based dismiss (useState), link do /onboarding |
-| 4 | Uzytkownik moze edytowac profil biznesowy ze strony /profile w dowolnym momencie | VERIFIED | `profile/page.tsx` zawiera sekcje "Profil biznesowy" z `<BusinessProfileForm initialData={businessProfile} />` — prefill z `getBusinessProfile()`, reuse tego samego formularza |
-| 5 | Przy tworzeniu nowego kursu AI uwzglednia profil biznesowy uzytkownika w pytaniach doprecyzowujacych | VERIFIED | `clarify/route.ts` (linia 79-96) — appends business context do system prompt; `generate/route.ts` (linia 139-170) — dodaje business context section do user prompt. Oba gracefully skip gdy brak profilu |
+| 1 | Użytkownik może wypełnić formularz profilu biznesowego (branża, rola, cel, wielkość firmy) i zapisać go | VERIFIED | `BusinessProfileForm` w `src/components/onboarding/business-profile-form.tsx` (325 linii) — 4 pola (industry Combobox, role Combobox, business_goal Textarea, company_size Select), walidacja Zod, `saveBusinessProfile` DAL call z toast feedback |
+| 2 | Użytkownik może opcjonalnie doprecyzować profil w krótkim chacie z AI, a AI generuje z tego podsumowanie | VERIFIED | `OnboardingChat` w `src/components/onboarding/onboarding-chat.tsx` (302 linii) — useChat + DefaultChatTransport do `/api/onboarding/chat`, structured output z `onboardingChatSchema` (question, isComplete, experience_summary), auto-finish po 5 turach lub isComplete=true, "Przejdź dalej bez chatu" skip option |
+| 3 | Dashboard wyświetla banner zachęcający do uzupełnienia profilu (znika po ukończeniu onboardingu) | VERIFIED | `OnboardingBanner` w `src/components/onboarding/onboarding-banner.tsx` (50 linii) — warunkowe renderowanie `{!onboardingCompleted && <OnboardingBanner />}` w `dashboard/page.tsx`, session-based dismiss (useState), link do /onboarding |
+| 4 | Użytkownik może edytować profil biznesowy ze strony /profile w dowolnym momencie | VERIFIED | `profile/page.tsx` zawiera sekcję "Profil biznesowy" z `<BusinessProfileForm initialData={businessProfile} />` — prefill z `getBusinessProfile()`, reuse tego samego formularza |
+| 5 | Przy tworzeniu nowego kursu AI uwzględnia profil biznesowy użytkownika w pytaniach doprecyzowujących | VERIFIED | `clarify/route.ts` (linia 79-96) — appends business context do system prompt; `generate/route.ts` (linia 139-170) — dodaje business context section do user prompt. Oba gracefully skip gdy brak profilu |
 
 **Score:** 5/5 truths verified
 
@@ -34,7 +34,7 @@ score: 5/5 must-haves verified
 | `src/types/onboarding.ts` | TS types | VERIFIED | BusinessProfile interface (10 pól) + BusinessProfileInput type |
 | `src/lib/onboarding/schemas.ts` | Zod schemas | VERIFIED | businessProfileSchema (walidacja formularza) + onboardingChatSchema (structured output AI), import z `zod/v4` |
 | `src/lib/onboarding/prompts.ts` | AI prompt | VERIFIED | ONBOARDING_CHAT_SYSTEM_PROMPT z placeholders {industry}, {role}, {goal} |
-| `src/lib/onboarding/onboarding-dal.ts` | DAL server actions | VERIFIED | 3 server actions: getBusinessProfile, saveBusinessProfile (upsert), isOnboardingCompleted. Wszystkie uzywaja `getUser()` (NIE getSession) |
+| `src/lib/onboarding/onboarding-dal.ts` | DAL server actions | VERIFIED | 3 server actions: getBusinessProfile, saveBusinessProfile (upsert), isOnboardingCompleted. Wszystkie używają `getUser()` (NIE getSession) |
 | `src/lib/ai/providers.ts` | Model config | VERIFIED | `onboarding: openaiProvider('gpt-4o-mini')` w MODEL_CONFIG |
 | `src/components/onboarding/combobox.tsx` | Reusable combobox | VERIFIED | 158 linii — Popover+Command, allowCustom, manual filtering |
 | `src/components/onboarding/business-profile-form.tsx` | Profile form | VERIFIED | 325 linii — 4 pola, Zod validation, saveBusinessProfile, onSaveAndChat callback |
@@ -64,17 +64,17 @@ score: 5/5 must-haves verified
 | Requirement | Status | Blocking Issue |
 |-------------|--------|----------------|
 | ONB-01: Formularz profilu biznesowego | SATISFIED | — |
-| ONB-02: Chat AI doprecyzowujacy | SATISFIED | — |
+| ONB-02: Chat AI doprecyzowujący | SATISFIED | — |
 | ONB-03: AI generuje experience_summary | SATISFIED | — |
 | ONB-04: Banner na dashboardzie | SATISFIED | — |
 | ONB-05: Edycja z /profile | SATISFIED | — |
-| ONB-06: Profil wplywa na generowanie kursow | SATISFIED | — |
+| ONB-06: Profil wpływa na generowanie kursów | SATISFIED | — |
 
 ### Anti-Patterns Found
 
 | File | Line | Pattern | Severity | Impact |
 |------|------|---------|----------|--------|
-| — | — | — | — | Brak anti-patterns. Zadnych TODO/FIXME/placeholder/stub patterns w kodzie onboardingu |
+| — | — | — | — | Brak anti-patterns. Żadnych TODO/FIXME/placeholder/stub patterns w kodzie onboardingu |
 
 ### Critical Patterns Verified
 
@@ -89,24 +89,24 @@ score: 5/5 must-haves verified
 ### Human Verification Required
 
 ### 1. Full Onboarding Flow
-**Test:** Zaloguj sie, przejdz do /onboarding, wypelnij formularz, kliknij "Doprecyzuj z AI", odpowiedz na 2-3 pytania AI, zakoncz
+**Test:** Zaloguj się, przejdź do /onboarding, wypełnij formularz, kliknij "Doprecyzuj z AI", odpowiedz na 2-3 pytania AI, zakończ
 **Expected:** Profil zapisany, AI generuje experience_summary, przekierowanie na done screen
-**Why human:** Wymaga interakcji z AI streaming, nie da sie zweryfikowac programistycznie
+**Why human:** Wymaga interakcji z AI streaming, nie da się zweryfikować programistycznie
 
 ### 2. Banner Visibility Logic
-**Test:** Nowy user widzi banner na dashboardzie, po ukonczeniu onboardingu banner znika
-**Expected:** Banner wyswietlony dla nowych userow, ukryty po ukonczeniu onboardingu
-**Why human:** Wymaga dwoch stanow usera (z i bez profilu)
+**Test:** Nowy user widzi banner na dashboardzie, po ukończeniu onboardingu banner znika
+**Expected:** Banner wyświetlony dla nowych userów, ukryty po ukończeniu onboardingu
+**Why human:** Wymaga dwóch stanów usera (z i bez profilu)
 
 ### 3. Profile Edit from /profile
-**Test:** Po ukonczeniu onboardingu, przejdz do /profile, zmien dane w sekcji "Profil biznesowy", zapisz
-**Expected:** Formularz prefilled danymi, zapis dziala, toast "Profil zapisany"
-**Why human:** Wymaga istniejacego profilu i interakcji z formularzem
+**Test:** Po ukończeniu onboardingu, przejdź do /profile, zmień dane w sekcji "Profil biznesowy", zapisz
+**Expected:** Formularz prefilled danymi, zapis działa, toast "Profil zapisany"
+**Why human:** Wymaga istniejącego profilu i interakcji z formularzem
 
 ### 4. Business Context in Curriculum
-**Test:** Wypelnij profil biznesowy, utworz nowy kurs — sprawdz czy pytania AI uwzgledniaja branze/role
-**Expected:** AI zadaje pytania kontekstowe do branzy/roli usera
-**Why human:** Wymaga oceny jakosci pytan AI w kontekscie biznesowym
+**Test:** Wypełnij profil biznesowy, utwórz nowy kurs — sprawdź czy pytania AI uwzględniają branżę/rolę
+**Expected:** AI zadaje pytania kontekstowe do branży/roli usera
+**Why human:** Wymaga oceny jakości pytań AI w kontekście biznesowym
 
 ---
 

@@ -327,7 +327,7 @@ Phase 7 (Polish) → wymaga wszystkich poprzednich
 
 | Area | Confidence | Notes |
 |------|------------|-------|
-| Stack | HIGH | Oficjalne dokumentacje Vercel AI SDK, Supabase, Next.js. Multi-source agreement dla wyboru Tavily vs konkurencja. |
+| Stack | HIGH | Oficjalne dokumentację Vercel AI SDK, Supabase, Next.js. Multi-source agreement dla wyboru Tavily vs konkurencja. |
 | Features | MEDIUM | Oparte na multiple WebSearch sources (360Learning, Khanmigo, Disco). Table stakes zweryfikowane przez statystyki (79% L&D używa AI, 60% edukatorów używa AI do quizów). Differentiators oparte na successful products (Khanmigo dla sokratycznej metody). |
 | Architecture | MEDIUM-HIGH | Oficjalne docs dla Vercel AI SDK RAG patterns i Supabase pgvector. Layered architecture zweryfikowana przez multiple sources. Database schema oparte na standard e-learning patterns. |
 | Pitfalls | MEDIUM-HIGH | Koszty tokenów i halucynacje zweryfikowane multiple authoritative sources (Duke University, OpenAI, research papers). Latencja RAG zweryfikowana przez technical benchmarks. Pedagogiczne pitfalls zweryfikowane przez NPR, edukacyjne research. |

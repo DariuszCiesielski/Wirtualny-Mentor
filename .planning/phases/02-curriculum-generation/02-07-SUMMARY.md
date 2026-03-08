@@ -44,11 +44,11 @@ completed: 2026-01-31
 
 # Phase 2 Plan 7: Multi-Course Dashboard Summary
 
-**Lista kursow uzytkownika z progress info i mozliwoscia tworzenia nowych**
+**Lista kursów użytkownika z progress info i możliwością tworzenia nowych**
 
 ## Performance
 
-- **Duration:** ~8 min (przerwane + manualne ukonczenie)
+- **Duration:** ~8 min (przerwane + manualne ukończenie)
 - **Started:** 2026-01-30T22:00:00Z
 - **Completed:** 2026-01-31
 - **Tasks:** 2
@@ -56,7 +56,7 @@ completed: 2026-01-31
 
 ## Accomplishments
 
-- Strona /courses wyswietla wszystkie kursy uzytkownika w gridzie
+- Strona /courses wyświetla wszystkie kursy użytkownika w gridzie
 - CourseCard z progress bar, badge statusu, szacowany czas
 - Empty state zacheca do utworzenia pierwszego kursu
 - formatDistanceToNow dla polskich dat (X min temu, Xh temu, X dni temu)
@@ -77,7 +77,7 @@ completed: 2026-01-31
 
 - **Responsive grid:** 1 col mobile → 3 cols desktop
 - **Progress bar in card:** Tylko dla status='active'
-- **Status badges:** draft/generating/active/completed/archived z roznymi wariantami
+- **Status badges:** draft/generating/active/completed/archived z różnymi wariantami
 
 ## Deviations from Plan
 
@@ -86,7 +86,7 @@ completed: 2026-01-31
 
 ## Issues Encountered
 
-- Wave 4 przerwana bledem narzedzia
+- Wave 4 przerwana bledem narzędzia
 - Blad TypeScript: `{ user } = await requireAuth()` → `user = await requireAuth()`
 
 ## User Setup Required
@@ -95,8 +95,8 @@ None.
 
 ## Next Phase Readiness
 
-- Uzytkownik moze zarzadzac wieloma kursami
-- Nawigacja do kursow z sidebar dziala
+- Użytkownik może zarzadzac wieloma kursami
+- Nawigacja do kursów z sidebar działa
 - Gotowe do Phase 3 (Learning Materials) i Phase 4 (Quizzes)
 
 ---

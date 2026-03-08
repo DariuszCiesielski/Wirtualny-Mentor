@@ -6,15 +6,15 @@
 
 ## Summary
 
-Faza 1 implementuje system autentykacji uzytkownikow (rejestracja, logowanie, reset hasla, profil) oraz podstawowy interfejs uzytkownika z dark mode. Badanie potwierdza, ze Supabase Auth z pakietem `@supabase/ssr` jest standardowym rozwiazaniem dla Next.js App Router w 2026, oferujac cookie-based authentication z pelnym wsparciem dla Server Components.
+Faza 1 implementuje system autentykacji użytkowników (rejestracja, logowanie, reset hasla, profil) oraz podstawowy interfejs użytkownika z dark mode. Badanie potwierdza, że Supabase Auth z pakietem `@supabase/ssr` jest standardowym rozwiązaniem dla Next.js App Router w 2026, oferujac cookie-based authentication z pełnym wsparciem dla Server Components.
 
 Kluczowe odkrycia:
-1. **Supabase UI Blocks**: Supabase oferuje gotowe bloki autentykacji zbudowane na shadcn/ui, ktore mozna zainstalowac jednym poleceniem. Zawieraja kompletne strony: login, sign-up, forgot-password, confirm, update-password.
-2. **Tailwind CSS v4**: Projekt uzywa Tailwind v4 z nowa skladnia (brak tailwind.config.js). Dark mode wymaga konfiguracji w globals.css zamiast w pliku konfiguracyjnym.
-3. **Middleware ograniczenia**: CVE-2025-29927 pokazalo, ze middleware NIE powinno byc jedynym miejscem weryfikacji sesji. Rekomendowany jest Data Access Layer (DAL) pattern z weryfikacja sesji blisko danych.
-4. **Next.js 16**: Projekt uzywa Next.js 16.1.6 (nowszy niz w dokumentacji), co jest w pelni kompatybilne z @supabase/ssr.
+1. **Supabase UI Blocks**: Supabase oferuje gotowe bloki autentykacji zbudowane na shadcn/ui, które można zainstalowac jednym poleceniem. Zawieraja kompletne strony: login, sign-up, forgot-password, confirm, update-password.
+2. **Tailwind CSS v4**: Projekt używa Tailwind v4 z nowa skladnia (brak tailwind.config.js). Dark mode wymaga konfiguracji w globals.css zamiast w pliku konfiguracyjnym.
+3. **Middleware ograniczenia**: CVE-2025-29927 pokazalo, że middleware NIE powinno być jedynym miejscem weryfikacji sesji. Rekomendowany jest Data Access Layer (DAL) pattern z weryfikacja sesji blisko danych.
+4. **Next.js 16**: Projekt używa Next.js 16.1.6 (nowszy niz w dokumentacji), co jest w pelni kompatybilne z @supabase/ssr.
 
-**Primary recommendation:** Uzyj Supabase password-based-auth block jako bazy, zintegruj z shadcn/ui, dodaj next-themes dla dark mode z manual toggle.
+**Primary recommendation:** Użyj Supabase password-based-auth block jako bazy, zintegruj z shadcn/ui, dodaj next-themes dla dark mode z manual toggle.
 
 ## Standard Stack
 
@@ -27,21 +27,21 @@ Kluczowe odkrycia:
 | **shadcn/ui** | latest | UI components | Standard 2026, Tailwind-based, copy-paste ownership |
 | **next-themes** | 0.4.x | Theme switching | De facto standard dla dark mode w Next.js |
 | **react-hook-form** | 7.x | Form management | Standard z shadcn/ui, minimal re-renders |
-| **zod** | 4.x | Schema validation | Juz zainstalowany (z Phase 0), TypeScript-first |
+| **zod** | 4.x | Schema validation | Już zainstalowany (z Phase 0), TypeScript-first |
 
 ### Supporting
 
 | Library | Version | Purpose | When to Use |
 |---------|---------|---------|-------------|
 | **lucide-react** | latest | Icons | Ikony dla UI, standard z shadcn/ui |
-| **@radix-ui/react-avatar** | latest | Avatar component | Dla profilowego zdjecia uzytkownika |
+| **@radix-ui/react-avatar** | latest | Avatar component | Dla profilowego zdjecia użytkownika |
 | **sharp** | latest | Image processing | Resizing avatarow przed uploadem do Storage |
 
 ### Alternatives Considered
 
 | Instead of | Could Use | Tradeoff |
 |------------|-----------|----------|
-| Supabase Auth | NextAuth.js/Auth.js | NextAuth wymaga wiecej konfiguracji, Supabase Auth zintegrowany z RLS |
+| Supabase Auth | NextAuth.js/Auth.js | NextAuth wymaga więcej konfiguracji, Supabase Auth zintegrowany z RLS |
 | Supabase Auth | Clerk | Clerk drogi na skale, Supabase darmowy do 50k MAU |
 | react-hook-form | TanStack Form | TanStack nowszy ale mniej dokumentacji, react-hook-form standard z shadcn |
 | next-themes | Manual CSS | next-themes rozwiazuje FOUC, persistence, system preference |
@@ -124,7 +124,7 @@ src/
 ### Pattern 1: Supabase Client Factory
 
 **What:** Osobne klienty dla browser i server z prawidlowym cookie management
-**When to use:** Kazda interakcja z Supabase
+**When to use:** Każda interakcja z Supabase
 **Example:**
 
 ```typescript
@@ -177,7 +177,7 @@ export async function createClient() {
 ### Pattern 2: Data Access Layer (DAL) for Auth
 
 **What:** Centralizacja logiki weryfikacji sesji blisko danych
-**When to use:** Kazda chroniona strona/akcja zamiast middleware-only
+**When to use:** Każda chroniona strona/akcja zamiast middleware-only
 **Example:**
 
 ```typescript
@@ -225,7 +225,7 @@ export async function verifySession() {
 
 ### Pattern 3: Middleware for Session Refresh Only
 
-**What:** Middleware odswiezajace sesje, NIE blokujace dostepu
+**What:** Middleware odswiezajace sesje, NIE blokujące dostępu
 **When to use:** Globalnie, ale autoryzacja w DAL
 **Example:**
 
@@ -355,7 +355,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 ### Pattern 5: Protected Page with DAL
 
 **What:** Strona chroniona z weryfikacja sesji w komponencie
-**When to use:** Kazda strona wymagajaca logowania
+**When to use:** Każda strona wymagajaca logowania
 **Example:**
 
 ```typescript
@@ -378,35 +378,35 @@ export default async function DashboardPage() {
 
 ### Anti-Patterns to Avoid
 
-- **Auth w middleware jako jedyne zabezpieczenie:** CVE-2025-29927 pokazalo ze middleware mozna ominac. Zawsze weryfikuj sesje w DAL.
-- **getSession() zamiast getUser():** getSession() nie rewaliduje tokenow. Zawsze uzywaj getUser() po stronie serwera.
-- **Przechowywanie sesji w localStorage:** Vulnerable na XSS. Uzywaj cookie-based auth z @supabase/ssr.
-- **Hardcoded redirect URLs:** Uzywaj zmiennych srodowiskowych dla site URL i redirect URLs.
-- **Brak email verification:** Zawsze weryfikuj email przed pelnym dostepem do aplikacji.
+- **Auth w middleware jako jedyne zabezpieczenie:** CVE-2025-29927 pokazalo że middleware można ominac. Zawsze weryfikuj sesje w DAL.
+- **getSession() zamiast getUser():** getSession() nie rewaliduje tokenów. Zawsze używaj getUser() po stronie serwera.
+- **Przechowywanie sesji w localStorage:** Vulnerable na XSS. Używaj cookie-based auth z @supabase/ssr.
+- **Hardcoded redirect URLs:** Używaj zmiennych środowiskowych dla site URL i redirect URLs.
+- **Brak email verification:** Zawsze weryfikuj email przed pełnym dostępem do aplikacji.
 
 ## Don't Hand-Roll
 
 | Problem | Don't Build | Use Instead | Why |
 |---------|-------------|-------------|-----|
-| Auth forms | Custom login/signup forms | Supabase password-based-auth block | Kompletne, przetestowane, obsluguje edge cases |
+| Auth forms | Custom login/signup forms | Supabase password-based-auth block | Kompletne, przetestowane, obsługuje edge cases |
 | Session management | Manual JWT handling | @supabase/ssr | Cookie rotation, refresh tokens, PKCE flow |
 | Theme switching | CSS-only dark mode | next-themes | FOUC prevention, localStorage persistence, system preference |
 | Form validation | Manual validation | react-hook-form + zod | Declarative, type-safe, integrated z shadcn/ui |
 | Avatar upload | Manual file handling | Supabase Storage + signed URLs | Automatic resizing, CDN, permissions |
 | Password hashing | bcrypt/argon2 | Supabase Auth | Server-side, secure by default |
 
-**Key insight:** Supabase Auth + shadcn/ui blocks daja 90% funkcjonalnosci auth out-of-box. Pisanie custom rozwiazania to strata czasu i zrodlo bledow bezpieczenstwa.
+**Key insight:** Supabase Auth + shadcn/ui blocks daja 90% funkcjonalności auth out-of-box. Pisanie custom rozwiązania to strata czasu i źródło błędów bezpieczenstwa.
 
 ## Common Pitfalls
 
 ### Pitfall 1: Middleware-Only Auth (CVE-2025-29927)
 
-**What goes wrong:** Atakujacy omija middleware wysylajac specjalny header `x-middleware-subrequest`, uzyskujac dostep do chronionych stron.
-**Why it happens:** Next.js middleware moze byc pominiete w self-hosted deployments (przed patchem).
+**What goes wrong:** Atakujacy omija middleware wysylajac specjalny header `x-middleware-subrequest`, uzyskujac dostęp do chronionych stron.
+**Why it happens:** Next.js middleware może być pominiete w self-hosted deployments (przed patchem).
 **How to avoid:**
-1. Upgrade do Next.js >= 15.2.3 (projekt uzywa 16.1.6 - OK)
+1. Upgrade do Next.js >= 15.2.3 (projekt używa 16.1.6 - OK)
 2. Zawsze weryfikuj sesje w DAL blisko danych, nie tylko w middleware
-3. Middleware powinno tylko odswiazac sesje, nie blokowac dostepu
+3. Middleware powinno tylko odswiazac sesje, nie blokowac dostępu
 **Warning signs:** Auth check tylko w middleware.ts, brak weryfikacji w page components.
 
 ### Pitfall 2: getSession() vs getUser() Confusion
@@ -414,49 +414,49 @@ export default async function DashboardPage() {
 **What goes wrong:** getSession() zwraca stale dane z localStorage, nie weryfikuje tokena z serwerem.
 **Why it happens:** getSession() jest szybkie (lokalne), getUser() robi request do serwera.
 **How to avoid:**
-1. Zawsze uzywaj `supabase.auth.getUser()` po stronie serwera
+1. Zawsze używaj `supabase.auth.getUser()` po stronie serwera
 2. `getSession()` OK tylko do szybkiego sprawdzenia client-side (np. warunkowe renderowanie)
 3. Dla krytycznych operacji zawsze getUser()
 **Warning signs:** "User authenticated but data fetch returns 401", stale session data.
 
 ### Pitfall 3: Email Rate Limiting in Development
 
-**What goes wrong:** Supabase default SMTP ma limit 2 emaili/godzine. Sign-up i password reset przestaja dzialac.
+**What goes wrong:** Supabase default SMTP ma limit 2 emaili/godzine. Sign-up i password reset przestaja działać.
 **Why it happens:** Domyslny Supabase email service jest rate-limited.
 **How to avoid:**
-1. Development: Uzyj Inbucket (lokalne testowanie emaili) lub Resend free tier
+1. Development: Użyj Inbucket (lokalne testowanie emaili) lub Resend free tier
 2. Production: Skonfiguruj custom SMTP (Resend, SendGrid, Mailgun)
 3. Wlacz "Confirm Email" wylaczone w dev dla szybszego testowania
 **Warning signs:** Signup emaile nie przychodza, "Too many requests" errors.
 
 ### Pitfall 4: Missing Redirect URL Configuration
 
-**What goes wrong:** Password reset link prowadzi do bledu lub nieskonczonej petli.
+**What goes wrong:** Password reset link prowadzi do błędu lub nieskonczonej petli.
 **Why it happens:** Supabase wymaga whitelist redirect URLs w dashboard.
 **How to avoid:**
 1. Dodaj wszystkie redirect URLs w Supabase Dashboard > Auth > URL Configuration
 2. Ustaw Site URL poprawnie (localhost dla dev, production domain dla prod)
-3. Uzywaj ABSOLUTE URLs w redirectTo parameter (nie relative)
+3. Używaj ABSOLUTE URLs w redirectTo parameter (nie relative)
 **Warning signs:** "Invalid redirect URL" error, redirect do innej strony.
 
 ### Pitfall 5: Tailwind v4 Dark Mode Configuration
 
-**What goes wrong:** Dark mode nie dziala mimo uzycia next-themes.
+**What goes wrong:** Dark mode nie działa mimo uzycia next-themes.
 **Why it happens:** Tailwind v4 nie ma tailwind.config.js z darkMode option. Wymaga konfiguracji w CSS.
 **How to avoid:**
 1. Dodaj `@custom-variant dark (&:where(.dark, .dark *));` w globals.css
 2. Zdefiniuj CSS variables dla :root i .dark
-3. Uzywaj `attribute="class"` w ThemeProvider
+3. Używaj `attribute="class"` w ThemeProvider
 **Warning signs:** Theme toggle zmienia localStorage ale nie zmienia stylow.
 
 ### Pitfall 6: Avatar Upload Storage Trigger Bug
 
-**What goes wrong:** Pierwsza zmiana avatara dziala, kolejne nie aktualizuja URL lub tworza duplikaty.
-**Why it happens:** Znany bug w Supabase storage trigger - delete_old_avatar nie dziala poprawnie.
+**What goes wrong:** Pierwsza zmiana avatara działa, kolejne nie aktualizuja URL lub tworza duplikaty.
+**Why it happens:** Znany bug w Supabase storage trigger - delete_old_avatar nie działa poprawnie.
 **How to avoid:**
-1. Generuj unique filename przy kazdym uplaodzie (np. z timestamp)
-2. Manualnie usun stary plik przed uploadem nowego
-3. Uzywaj user_metadata zamiast osobnej tabeli profiles dla avatar URL (prostsze)
+1. Generuj unique filename przy każdym uplaodzie (np. z timestamp)
+2. Manualnie usuń stary plik przed uploadem nowego
+3. Używaj user_metadata zamiast osobnej tabeli profiles dla avatar URL (prostsze)
 **Warning signs:** Stary avatar nadal widoczny, rosnaca liczba plikow w storage.
 
 ## Code Examples
@@ -678,16 +678,16 @@ export function ThemeToggle() {
 | JWT in localStorage | Cookie-based sessions | Standard 2024+ | Better security, SSR support |
 
 **Deprecated/outdated:**
-- **@supabase/auth-helpers-nextjs**: Zastapiony przez @supabase/ssr - nie uzywac
-- **getSession() dla auth checks**: Uzywaj getUser() - rewaliduje token
+- **@supabase/auth-helpers-nextjs**: Zastapiony przez @supabase/ssr - nie używać
+- **getSession() dla auth checks**: Używaj getUser() - rewaliduje token
 - **Middleware jako jedyne zabezpieczenie**: CVE-2025-29927 - dodaj weryfikacje w DAL
 
 ## Open Questions
 
 1. **Supabase Publishable Key vs Anon Key**
    - What we know: Supabase zmienia nazewnictwo kluczy na "publishable key"
-   - What's unclear: Czy trzeba zmienic istniejace klucze? Czy stare anon key nadal dzialaja?
-   - Recommendation: Uzywaj NEXT_PUBLIC_SUPABASE_ANON_KEY (kompatybilne wstecz), sprawdz dokumentacje Supabase przy konfiguracji.
+   - What's unclear: Czy trzeba zmienic istniejące klucze? Czy stare anon key nadal działają?
+   - Recommendation: Używaj NEXT_PUBLIC_SUPABASE_ANON_KEY (kompatybilne wstecz), sprawdź dokumentację Supabase przy konfiguracji.
 
 2. **Email Templates w Supabase**
    - What we know: Trzeba skonfigurowac custom email templates dla confirm i recovery
@@ -696,8 +696,8 @@ export function ThemeToggle() {
 
 3. **Sharp na Vercel Edge**
    - What we know: Sharp wymaga native binaries
-   - What's unclear: Czy dziala na Vercel Serverless? Edge Runtime na pewno nie.
-   - Recommendation: Uzyj Node.js runtime dla route z avatar upload, nie Edge. Alternatywnie: client-side resize z canvas API.
+   - What's unclear: Czy działa na Vercel Serverless? Edge Runtime na pewno nie.
+   - Recommendation: Użyj Node.js runtime dla route z avatar upload, nie Edge. Alternatywnie: client-side resize z canvas API.
 
 ## Sources
 
@@ -714,7 +714,7 @@ export function ThemeToggle() {
 - [NotebookLM Design](https://jasonspielman.com/notebooklm) - UI inspiration, three-panel layout
 
 ### Tertiary (LOW confidence)
-- Avatar upload storage trigger bug - wymaga walidacji z wlasnym kodem
+- Avatar upload storage trigger bug - wymaga walidacji z własnym kodem
 - Sharp na Vercel - wymaga testow
 
 ## Metadata
@@ -722,8 +722,8 @@ export function ThemeToggle() {
 **Confidence breakdown:**
 - Standard stack: HIGH - oficjalna dokumentacja Supabase i shadcn/ui
 - Architecture (DAL pattern): HIGH - oficjalny Next.js guide, potwierdzone przez CVE
-- Dark mode (Tailwind v4): MEDIUM - nowa skladnia, mniej przykladow
-- Pitfalls: HIGH - potwierdzone przez wiele zrodel, CVE
+- Dark mode (Tailwind v4): MEDIUM - nowa skladnia, mniej przykładów
+- Pitfalls: HIGH - potwierdzone przez wiele źródeł, CVE
 
 **Research date:** 2026-01-30
-**Valid until:** 60 dni (auth patterns stabilne, ale sprawdz Supabase changelog)
+**Valid until:** 60 dni (auth patterns stabilne, ale sprawdź Supabase changelog)

@@ -23,7 +23,7 @@ decisions:
     reason: "cmdk's built-in filter doesn't support adding custom items dynamically"
   - id: "08-02-D2"
     decision: "Tooltip component added via shadcn CLI for disabled AI button"
-    reason: "Required for 'Wkrotce dostepne' tooltip on disabled Doprecyzuj z AI button"
+    reason: "Required for 'Wkrótce dostępne' tooltip on disabled Doprecyzuj z AI button"
 metrics:
   duration: "~3 min"
   completed: "2026-03-08"
@@ -31,7 +31,7 @@ metrics:
 
 # Phase 08 Plan 02: Business Profile Form Summary
 
-Formularz profilu biznesowego z reusable Combobox i strona /onboarding -- 4 pola (branza, rola, cel, wielkosc firmy) z walidacja Zod i integracja z DAL.
+Formularz profilu biznesowego z reusable Combobox i strona /onboarding -- 4 pola (branża, rola, cel, wielkość firmy) z walidacją Zod i integracją z DAL.
 
 ## Tasks Completed
 
@@ -44,7 +44,7 @@ Formularz profilu biznesowego z reusable Combobox i strona /onboarding -- 4 pola
 
 ### Task 1: Combobox
 - Popover + Command composition with search filtering (shouldFilter=false, manual filter)
-- `allowCustom` prop shows "Uzyj: {search}" button when no match found
+- `allowCustom` prop shows "Użyj: {search}" button when no match found
 - Also shows custom option at end of filtered list when partial matches exist
 - Check icon for selected option, ChevronsUpDown trigger icon
 - Width synced to trigger via `--radix-popover-trigger-width`
@@ -54,7 +54,7 @@ Formularz profilu biznesowego z reusable Combobox i strona /onboarding -- 4 pola
 - Both Comboboxes have allowCustom=true with predefined Polish industry/role options
 - Zod validation via businessProfileSchema from schemas.ts
 - saveBusinessProfile DAL call on submit with sonner toast feedback
-- "Doprecyzuj z AI" button rendered disabled with tooltip "Wkrotce dostepne" (plan 03)
+- "Doprecyzuj z AI" button rendered disabled with tooltip "Wkrótce dostępne" (plan 03)
 - Server component page calls getBusinessProfile() for edit pre-fill
 - initialData prop enables both create and edit flows
 

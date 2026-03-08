@@ -32,13 +32,13 @@ key-files:
     - package.json
 
 key-decisions:
-  - "Lazy initialization Tavily client dla unikniecia bledow build-time"
-  - "5 poziomow curriculum: Poczatkujacy, Srednio zaawansowany, Zaawansowany, Master, Guru"
+  - "Lazy initialization Tavily client dla unikniecia błędów build-time"
+  - "5 poziomow curriculum: Początkujący, Średnio zaawansowany, Zaawansowany, Master, Guru"
   - "Prompty w jezyku polskim"
 
 patterns-established:
-  - "Lazy initialization: Inicjalizacja klienta API przy pierwszym uzyciu zamiast na poziomie modulu"
-  - "Curriculum structure: 5 poziomow z 3-7 learning outcomes i 3-10 rozdzialami kazdy"
+  - "Lazy initialization: Inicjalizacja klienta API przy pierwszym uzyciu zamiast na poziomie modułu"
+  - "Curriculum structure: 5 poziomow z 3-7 learning outcomes i 3-10 rozdziałami każdy"
 
 # Metrics
 duration: 8min
@@ -79,9 +79,9 @@ completed: 2026-01-30
 
 ## Decisions Made
 
-1. **Lazy initialization Tavily client** - Klient Tavily inicjalizowany przy pierwszym wywolaniu funkcji zamiast na poziomie modulu. Zapobiega bledom build-time gdy TAVILY_API_KEY nie jest ustawiony.
+1. **Lazy initialization Tavily client** - Klient Tavily inicjalizowany przy pierwszym wywołaniu funkcji zamiast na poziomie modułu. Zapobiega bledom build-time gdy TAVILY_API_KEY nie jest ustawiony.
 
-2. **5 poziomow curriculum** - Ustalona struktura: Poczatkujacy, Srednio zaawansowany, Zaawansowany, Master, Guru. Schema wymaga dokladnie 5 poziomow (.length(5)).
+2. **5 poziomow curriculum** - Ustalona struktura: Początkujący, Średnio zaawansowany, Zaawansowany, Master, Guru. Schema wymaga dokładnie 5 poziomow (.length(5)).
 
 3. **Prompty po polsku** - Wszystkie system prompts napisane w jezyku polskim zgodnie z zalozeniami projektu.
 
@@ -91,10 +91,10 @@ completed: 2026-01-30
 
 **1. [Rule 3 - Blocking] Lazy initialization Tavily client**
 - **Found during:** Task 1 (build verification)
-- **Issue:** Tavily SDK wyrzucal blad przy build-time gdy TAVILY_API_KEY nie byl ustawiony - inicjalizacja na poziomie modulu wykonywala sie podczas kompilacji
+- **Issue:** Tavily SDK wyrzucal błąd przy build-time gdy TAVILY_API_KEY nie byl ustawiony - inicjalizacja na poziomie modułu wykonywala się podczas kompilacji
 - **Fix:** Zmieniono na lazy initialization - getTavilyClient() tworzy klienta przy pierwszym uzyciu
 - **Files modified:** src/lib/tavily/client.ts
-- **Verification:** npm run build przechodzi bez bledow
+- **Verification:** npm run build przechodzi bez błędów
 - **Committed in:** 5e9d9a8
 
 ---
@@ -104,11 +104,11 @@ completed: 2026-01-30
 
 ## Issues Encountered
 
-None - po naprawie lazy initialization build przeszedl bez problemow.
+None - po naprawie lazy initialization build przeszedl bez problemów.
 
 ## User Setup Required
 
-**External services require manual configuration.** Uzytkownik musi:
+**External services require manual configuration.** Użytkownik musi:
 
 1. Utworzyc konto na https://tavily.com
 2. Skopiowac API key z dashboard
@@ -117,7 +117,7 @@ None - po naprawie lazy initialization build przeszedl bez problemow.
    TAVILY_API_KEY=your_tavily_api_key
    ```
 
-TAVILY_API_KEY jest juz w `.env.example` (dodany w Phase 0).
+TAVILY_API_KEY jest już w `.env.example` (dodany w Phase 0).
 
 ## Next Phase Readiness
 

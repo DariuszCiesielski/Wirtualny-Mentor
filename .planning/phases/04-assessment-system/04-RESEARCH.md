@@ -6,22 +6,22 @@
 
 ## Summary
 
-System oceny (quizow i testow) dla platformy edukacyjnej wymaga kilku kluczowych komponentow: generowania pytan przez AI, bazy danych do przechowywania pytan/odpowiedzi/prob, logiki adaptacyjnej dla remediacji oraz UI do rozwiazywania quizow z natychmiastowym feedbackiem.
+System oceny (quizów i testow) dla platformy edukacyjnej wymaga kilku kluczowych komponentów: generowania pytań przez AI, bazy danych do przechowywania pytań/odpowiedzi/prob, logiki adaptacyjnej dla remediacji oraz UI do rozwiązywania quizów z natychmiastowym feedbackiem.
 
-Projekt juz posiada infrastrukture AI (Vercel AI SDK z `generateObject` + Zod schemas), wzorzec lazy generation oraz strukture bazy danych z poziomami i rozdzialami. Phase 4 rozszerza te wzorce o tabele quizow/testow, schematy Zod dla pytan generowanych przez AI i logike odblokowywania poziomow.
+Projekt już posiada infrastrukture AI (Vercel AI SDK z `generateObject` + Zod schemas), wzorzec lazy generation oraz strukture bazy danych z poziomami i rozdzialami. Phase 4 rozszerza te wzorce o tabele quizów/testow, schematy Zod dla pytań generowanych przez AI i logike odblokowywania poziomów.
 
 Kluczowe rekomendacje:
-1. Uzyc `generateObject` z Zod schema dla generowania pytan (wzorzec z Phase 3)
-2. Typy pytan: MCQ (multiple choice) jako podstawa, z opcja short answer
-3. Lazy generation: generowac quizy przy pierwszym dostepie do rozdzialu/poziomu
-4. JSONB dla elastycznej struktury pytan i odpowiedzi
-5. Feedback natychmiastowy z wyjasnieniami "dlaczego poprawna/bledna"
+1. Uzyc `generateObject` z Zod schema dla generowania pytań (wzorzec z Phase 3)
+2. Typy pytań: MCQ (multiple choice) jako podstawa, z opcja short answer
+3. Lazy generation: generować quizy przy pierwszym dostepie do rozdziału/poziomu
+4. JSONB dla elastycznej struktury pytań i odpowiedzi
+5. Feedback natychmiastowy z wyjasnieniami "dlaczego poprawna/błędna"
 
-**Primary recommendation:** Wykorzystac istniejacy wzorzec lazy generation z Phase 3 - quizy generowane on-demand z uzyciem `generateObject` i zapisywane w JSONB kolumnach z wersjonowaniem.
+**Primary recommendation:** Wykorzystac istniejący wzorzec lazy generation z Phase 3 - quizy generowane on-demand z uzyciem `generateObject` i zapisywane w JSONB kolumnach z wersjonowaniem.
 
 ## Standard Stack
 
-Projekt juz uzywa tych bibliotek - nie trzeba dodawac nowych:
+Projekt już używa tych bibliotek - nie trzeba dodawac nowych:
 
 ### Core (Already in Project)
 | Library | Version | Purpose | Why Standard |
@@ -45,7 +45,7 @@ Projekt juz uzywa tych bibliotek - nie trzeba dodawac nowych:
 | Complex adaptive algorithms | Rule-based remediation | Complexity vs clarity - start simple |
 
 **Installation:**
-Nie wymaga nowych pakietow - wszystko dostepne w projekcie.
+Nie wymaga nowych pakietow - wszystko dostępne w projekcie.
 
 ## Architecture Patterns
 
@@ -78,7 +78,7 @@ src/
 
 ### Pattern 1: AI Quiz Generation with Zod Schema
 
-**What:** Generowanie quizow przez AI z uzyciem `generateObject` i Zod schema (taki sam wzorzec jak materials w Phase 3).
+**What:** Generowanie quizów przez AI z uzyciem `generateObject` i Zod schema (taki sam wzorzec jak materials w Phase 3).
 
 **When to use:** Przy pierwszym dostepie do quizu lub regeneracji.
 
@@ -143,7 +143,7 @@ Requirements:
 
 **What:** Zarzadzanie stanem quizu z uzyciem prostego state machine pattern.
 
-**When to use:** W komponencie quiz-container dla flow rozwiazywania quizu.
+**When to use:** W komponencie quiz-container dla flow rozwiązywania quizu.
 
 **Example:**
 ```typescript
@@ -178,9 +178,9 @@ function quizReducer(state: QuizState, action: QuizAction): QuizState {
 
 ### Pattern 3: Level Unlocking Logic
 
-**What:** Logika odblokowywania poziomow po zdaniu testu koncowego.
+**What:** Logika odblokowywania poziomów po zdaniu testu końcowego.
 
-**When to use:** Po zakonczeniu testu koncowego poziomu.
+**When to use:** Po zakończeniu testu końcowego poziomu.
 
 **Example:**
 ```typescript
@@ -218,9 +218,9 @@ async function processTestCompletion(
 
 ### Pattern 4: Remediation Flow
 
-**What:** Dodatkowe materialy przy blednych odpowiedziach.
+**What:** Dodatkowe materiały przy błędnych odpowiedziach.
 
-**When to use:** Gdy uzytkownik odpowie blednie lub nie zda testu.
+**When to use:** Gdy użytkownik odpowie blednie lub nie zda testu.
 
 **Example:**
 ```typescript

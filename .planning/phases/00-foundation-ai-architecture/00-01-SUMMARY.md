@@ -9,8 +9,8 @@ requires: []
 provides:
   - Next.js 15 aplikacja z AI SDK 6
   - Typy TypeScript dla AI orchestration
-  - Struktura katalogow dla warstwy AI
-  - Template zmiennych srodowiskowych
+  - Struktura katalogów dla warstwy AI
+  - Template zmiennych środowiskowych
 affects: [01-orchestration-routing, 02-curriculum-generation]
 
 # Tech tracking
@@ -42,14 +42,14 @@ key-files:
   modified: []
 
 key-decisions:
-  - "Zod v4 dla walidacji schematow (wymaga z.record(key, value) syntax)"
-  - "Struktura katalogow: lib/ai dla utilities, services/ai dla API calls"
-  - "Multi-provider setup od poczatku (Anthropic, OpenAI, Google)"
+  - "Zod v4 dla walidacji schematów (wymaga z.record(key, value) syntax)"
+  - "Struktura katalogów: lib/ai dla utilities, services/ai dla API calls"
+  - "Multi-provider setup od początku (Anthropic, OpenAI, Google)"
 
 patterns-established:
-  - "AI types w src/types/ai.ts - centralne miejsce dla typow AI"
-  - "Zod schemas eksportowane obok interfejsow dla runtime validation"
-  - ".env.example jako template - wyjatkowany w .gitignore"
+  - "AI types w src/types/ai.ts - centralne miejsce dla typów AI"
+  - "Zod schemas eksportowane obok interfejsów dla runtime validation"
+  - ".env.example jako template - wyjątkowany w .gitignore"
 
 # Metrics
 duration: 15min
@@ -73,15 +73,15 @@ completed: 2025-01-30
 - Projekt Next.js 15 z TypeScript, Tailwind CSS 4, ESLint
 - AI SDK 6 z providerami: Anthropic, OpenAI, Google
 - Kompletne typy TypeScript: AITask, CostLog, ModelConfig, Curriculum
-- Schematy Zod dla runtime validation wszystkich typow AI
-- Struktura katalogow przygotowana na orchestration layer
+- Schematy Zod dla runtime validation wszystkich typów AI
+- Struktura katalogów przygotowana na orchestration layer
 
 ## Task Commits
 
 Each task was committed atomically:
 
-1. **Task 1: Utworzenie projektu Next.js 15 z zaleznosciami AI** - `940283c` (feat)
-2. **Task 2: Struktura katalogow i typy dla warstwy AI** - `65c4c1d` (feat)
+1. **Task 1: Utworzenie projektu Next.js 15 z zależnościami AI** - `940283c` (feat)
+2. **Task 2: Struktura katalogów i typy dla warstwy AI** - `65c4c1d` (feat)
 
 ## Files Created/Modified
 
@@ -90,7 +90,7 @@ Each task was committed atomically:
 - `src/app/layout.tsx` - Root layout z Tailwind
 - `src/app/globals.css` - Tailwind CSS base styles
 - `src/types/ai.ts` - Kompletne typy i schematy Zod dla AI
-- `.env.example` - Template zmiennych srodowiskowych
+- `.env.example` - Template zmiennych środowiskowych
 - `src/lib/ai/.gitkeep` - Placeholder dla AI utilities
 - `src/services/ai/.gitkeep` - Placeholder dla AI services
 - `src/hooks/.gitkeep` - Placeholder dla React hooks
@@ -102,9 +102,9 @@ Each task was committed atomically:
 
 ## Decisions Made
 
-1. **Zod v4 syntax:** `z.record()` wymaga dwoch argumentow (key, value) - naprawione podczas weryfikacji
-2. **Struktura katalogow:** Oddzielne foldery dla lib (utilities) i services (API calls) - skalowalne dla przyszlych planow
-3. **Multi-provider od poczatku:** Wszystkie trzy providery zainstalowane, typy przygotowane na model routing
+1. **Zod v4 syntax:** `z.record()` wymaga dwóch argumentów (key, value) - naprawione podczas weryfikacji
+2. **Struktura katalogów:** Oddzielne foldery dla lib (utilities) i services (API calls) - skalowalne dla przyszłych planów
+3. **Multi-provider od początku:** Wszystkie trzy providery zainstalowane, typy przygotowane na model routing
 
 ## Deviations from Plan
 
@@ -112,10 +112,10 @@ Each task was committed atomically:
 
 **1. [Rule 3 - Blocking] Nazwa katalogu z polskimi znakami**
 - **Found during:** Task 1 (create-next-app)
-- **Issue:** Katalog "Wirtualny mentor" zawieral spacje i polskie znaki, npm odmawial tworzenia projektu
+- **Issue:** Katalog "Wirtualny mentor" zawierał spacje i polskie znaki, npm odmawiał tworzenia projektu
 - **Fix:** Utworzono projekt w katalogu tymczasowym i przeniesiono pliki
 - **Files modified:** Wszystkie pliki projektu
-- **Verification:** Build i dev server dzialaja poprawnie
+- **Verification:** Build i dev server działają poprawnie
 - **Committed in:** 940283c
 
 **2. [Rule 1 - Bug] Zod v4 z.record() syntax**
@@ -123,18 +123,18 @@ Each task was committed atomically:
 - **Issue:** Zod v4 wymaga `z.record(keySchema, valueSchema)`, nie `z.record(valueSchema)`
 - **Fix:** Zmiana na `z.record(z.string(), z.unknown())`
 - **Files modified:** src/types/ai.ts
-- **Verification:** npm run build przechodzi bez bledow
+- **Verification:** npm run build przechodzi bez błędów
 - **Committed in:** 65c4c1d
 
 ---
 
 **Total deviations:** 2 auto-fixed (1 blocking, 1 bug)
-**Impact on plan:** Obie poprawki niezbedne dla dzialania projektu. Bez scope creep.
+**Impact on plan:** Obie poprawki niezbędne dla działania projektu. Bez scope creep.
 
 ## Issues Encountered
 
-- create-next-app nie akceptuje katalogow ze spacjami/polskimi znakami - rozwiazane przez utworzenie w tymczasowym katalogu
-- Warning o multiple lockfiles (root ~/package-lock.json) - nie blokuje buildu, do rozwiazania w przyszlosci
+- create-next-app nie akceptuje katalogów ze spacjami/polskimi znakami - rozwiązane przez utworzenie w tymczasowym katalogu
+- Warning o multiple lockfiles (root ~/package-lock.json) - nie blokuje buildu, do rozwiązania w przyszłości
 
 ## User Setup Required
 
@@ -142,14 +142,14 @@ None - no external service configuration required at this phase.
 
 ## Next Phase Readiness
 
-- Projekt gotowy na implementacje AI orchestration (Plan 02)
+- Projekt gotowy na implementację AI orchestration (Plan 02)
 - Typy AI zdefiniowane i eksportowane
-- Providery zainstalowane, wymagaja tylko kluczy API w .env.local
-- Struktura katalogow przygotowana na routing layer
+- Providery zainstalowane, wymagają tylko kluczy API w .env.local
+- Struktura katalogów przygotowana na routing layer
 
 ### Blockers/Concerns
 
-- Warning o multiple lockfiles - moze wymagac konfiguracji turbopack.root
+- Warning o multiple lockfiles - może wymagać konfiguracji turbopack.root
 - Klucze API wymagane przed testowaniem AI (Anthropic, OpenAI, Google)
 
 ---

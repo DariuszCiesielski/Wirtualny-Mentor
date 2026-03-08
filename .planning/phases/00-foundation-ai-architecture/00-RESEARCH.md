@@ -6,13 +6,13 @@
 
 ## Summary
 
-Faza 0 ustanawia fundament techniczny dla platformy Wirtualny Mentor: projekt Next.js 15 z App Router, Vercel AI SDK 6 z multi-model orchestration, oraz monitoring kosztow. Badanie potwierdza, ze Vercel AI SDK 6 jest standardem dla aplikacji AI w React/Next.js w 2026 roku, oferujac unified API dla 20+ providerow, natywne streaming responses, oraz nowy Agent abstraction.
+Faza 0 ustanawia fundament techniczny dla platformy Wirtualny Mentor: projekt Next.js 15 z App Router, Vercel AI SDK 6 z multi-model orchestration, oraz monitoring kosztów. Badanie potwierdza, że Vercel AI SDK 6 jest standardem dla aplikacji AI w React/Next.js w 2026 roku, oferujac unified API dla 20+ providerów, natywne streaming responses, oraz nowy Agent abstraction.
 
-Kluczowe odkrycie: AI SDK 6 domyslnie uzywa Vercel AI Gateway, ktory zapewnia dostep do setek modeli przez jeden klucz API bez markup na tokenach. Mozna rowniez uzyc BYOK (Bring Your Own Key) dla wlasnych kluczy API od Anthropic, OpenAI i Google bez dodatkowych kosztow.
+Kluczowe odkrycie: AI SDK 6 domyslnie używa Vercel AI Gateway, który zapewnia dostęp do setek modeli przez jeden klucz API bez markup na tokenach. Można również uzyc BYOK (Bring Your Own Key) dla własnych kluczy API od Anthropic, OpenAI i Google bez dodatkowych kosztów.
 
-Krytyczne dla tej fazy jest zbudowanie model tiering strategy od poczatku - koszty tokenow eksploduja 500-1000% bez odpowiedniej strategii. Trzeba zaprojektowac routing modeli (Claude dla mentoringu, GPT dla structured outputs, Gemini dla quizow) oraz monitoring kosztow per-feature.
+Krytyczne dla tej fazy jest zbudowanie model tiering strategy od początku - koszty tokenów eksploduja 500-1000% bez odpowiedniej strategii. Trzeba zaprojektowac routing modeli (Claude dla mentoringu, GPT dla structured outputs, Gemini dla quizów) oraz monitoring kosztów per-feature.
 
-**Primary recommendation:** Uzyj Vercel AI Gateway jako domyslnego providera z BYOK dla produkcji. Zbuduj warstwe AI orchestration z explicit model routing od pierwszego dnia.
+**Primary recommendation:** Użyj Vercel AI Gateway jako domyslnego providera z BYOK dla produkcji. Zbuduj warstwę AI orchestration z explicit model routing od pierwszego dnia.
 
 ## Standard Stack
 
@@ -21,7 +21,7 @@ Krytyczne dla tej fazy jest zbudowanie model tiering strategy od poczatku - kosz
 | Library | Version | Purpose | Why Standard |
 |---------|---------|---------|--------------|
 | **Next.js** | 15.x | Full-stack React framework | App Router z streaming support, Server Components, natywna integracja z Vercel AI SDK |
-| **ai** | 6.x | Vercel AI SDK Core | Unified API dla 25+ providerow, streaming, tool calling, agents. Standard 2026 dla React AI apps |
+| **ai** | 6.x | Vercel AI SDK Core | Unified API dla 25+ providerów, streaming, tool calling, agents. Standard 2026 dla React AI apps |
 | **@ai-sdk/react** | 6.x | React hooks dla AI | useChat, useCompletion, useObject - streaming UI hooks |
 | **React** | 19.x | UI library | Wymagane przez Next.js 15, Server Components, Suspense |
 | **TypeScript** | 5.x | Type safety | Standard w 2026, type-safe AI SDK integration |
@@ -30,10 +30,10 @@ Krytyczne dla tej fazy jest zbudowanie model tiering strategy od poczatku - kosz
 
 | Library | Version | Purpose | When to Use |
 |---------|---------|---------|-------------|
-| **Vercel AI Gateway** | (wbudowany w ai) | Unified model access | Domyslny - 20+ providerow, jeden klucz API |
-| **@ai-sdk/anthropic** | latest | Direct Anthropic access | BYOK mode - wlasny klucz Claude |
-| **@ai-sdk/openai** | latest | Direct OpenAI access | BYOK mode - wlasny klucz GPT |
-| **@ai-sdk/google** | latest | Direct Google AI access | BYOK mode - wlasny klucz Gemini |
+| **Vercel AI Gateway** | (wbudowany w ai) | Unified model access | Domyslny - 20+ providerów, jeden klucz API |
+| **@ai-sdk/anthropic** | latest | Direct Anthropic access | BYOK mode - własny klucz Claude |
+| **@ai-sdk/openai** | latest | Direct OpenAI access | BYOK mode - własny klucz GPT |
+| **@ai-sdk/google** | latest | Direct Google AI access | BYOK mode - własny klucz Gemini |
 
 ### Supporting
 
@@ -46,8 +46,8 @@ Krytyczne dla tej fazy jest zbudowanie model tiering strategy od poczatku - kosz
 
 | Instead of | Could Use | Tradeoff |
 |------------|-----------|----------|
-| Vercel AI SDK | LangChain.js | LangChain wiekszy bundle (101kB), blokuje edge runtime. Uzywaj tylko jesli potrzebujesz zaawansowanego RAG |
-| Vercel AI Gateway | Direct API calls | Gateway daje automatic failover, load balancing, spend monitoring. Direct calls wiecej kontroli |
+| Vercel AI SDK | LangChain.js | LangChain wiekszy bundle (101kB), blokuje edge runtime. Używaj tylko jeśli potrzebujesz zaawansowanego RAG |
+| Vercel AI Gateway | Direct API calls | Gateway daje automatic failover, load balancing, spend monitoring. Direct calls więcej kontroli |
 | BYOK na Vercel | OpenRouter | OpenRouter 5% markup, Vercel 0% markup |
 
 **Installation:**
@@ -106,7 +106,7 @@ src/
 
 ### Pattern 1: Provider Registry for Multi-Model
 
-**What:** Centralizacja konfiguracji providerow i modeli w jednym miejscu
+**What:** Centralizacja konfiguracji providerów i modeli w jednym miejscu
 **When to use:** Zawsze przy multi-model strategy
 **Example:**
 
@@ -184,7 +184,7 @@ export const runtime = 'edge';
 ### Pattern 3: Model Routing Orchestrator
 
 **What:** Centralna klasa/funkcja do wyboru modelu na podstawie zadania
-**When to use:** Kazde wywolanie AI przechodzi przez orchestrator
+**When to use:** Każde wywołanie AI przechodzi przez orchestrator
 **Example:**
 
 ```typescript
@@ -343,36 +343,36 @@ export function MentorChat() {
 
 ### Anti-Patterns to Avoid
 
-- **Hardcoded models:** Nie pisz `model: 'anthropic/claude-sonnet-4.5'` bezposrednio w route handlers. Uzywaj MODEL_CONFIG.
-- **Brak cost trackingu:** Kazde wywolanie AI musi logowac zuzycie tokenow od pierwszego dnia.
-- **Synchroniczne wywolania dla dlugich odpowiedzi:** Zawsze uzywaj streamText dla odpowiedzi >100 tokenow.
+- **Hardcoded models:** Nie pisz `model: 'anthropic/claude-sonnet-4.5'` bezpośrednio w route handlers. Używaj MODEL_CONFIG.
+- **Brak cost trackingu:** Każde wywołanie AI musi logowac zużycie tokenów od pierwszego dnia.
+- **Synchroniczne wywołania dla długich odpowiedzi:** Zawsze używaj streamText dla odpowiedzi >100 tokenów.
 - **API keys w kodzie:** Zawsze .env.local, nigdy commity z kluczami.
-- **Jeden model do wszystkiego:** Projektuj model routing od poczatku, nie "pozniej zoptymalizujemy".
+- **Jeden model do wszystkiego:** Projektuj model routing od początku, nie "później zoptymalizujemy".
 
 ## Don't Hand-Roll
 
 | Problem | Don't Build | Use Instead | Why |
 |---------|-------------|-------------|-----|
-| Streaming SSE | Manual ReadableStream | AI SDK streamText | Zlozone edge cases, reconnection, chunk encoding |
-| Provider abstraction | Custom wrappers | AI SDK provider registry | 25+ providerow, testowane, unified API |
+| Streaming SSE | Manual ReadableStream | AI SDK streamText | Złożone edge cases, reconnection, chunk encoding |
+| Provider abstraction | Custom wrappers | AI SDK provider registry | 25+ providerów, testowane, unified API |
 | Chat state management | Custom useState hooks | useChat from @ai-sdk/react | Handles streaming, errors, optimistic updates |
 | Token counting | Manual estimation | AI SDK usage object | Accurate per-model, returned by all functions |
 | Retry logic | Custom retry wrapper | AI Gateway failover | Automatic, cross-provider, no code needed |
 
-**Key insight:** AI SDK 6 rozwiazuje 90% problemow integracji AI. Pisanie custom wrapperow to strata czasu i zrodlo bugow.
+**Key insight:** AI SDK 6 rozwiazuje 90% problemów integracji AI. Pisanie custom wrapperow to strata czasu i źródło bugow.
 
 ## Common Pitfalls
 
 ### Pitfall 1: Eksplozja Kosztow Tokenow
 
 **What goes wrong:** Koszty API rosna 500-1000% przy skalowaniu. Startup zaczal od $15k/mies, a w 3 miesiacu placil $60k.
-**Why it happens:** Tokeny output kosztuja 3-10x wiecej niz input. Uzywanie premium models do prostych zadan. Brak cachowania.
+**Why it happens:** Tokeny output kosztuja 3-10x więcej niz input. Uzywanie premium models do prostych zadań. Brak cachowania.
 **How to avoid:**
-1. Zdefiniuj MODEL_CONFIG z poczatku - tanie modele dla prostych zadan
-2. Loguj kazde wywolanie z tokenami (orchestrator pattern powyzej)
+1. Zdefiniuj MODEL_CONFIG z początku - tanie modele dla prostych zadań
+2. Loguj każde wywołanie z tokenami (orchestrator pattern powyżej)
 3. Ustaw budget alerts w providerach AI (OpenAI: Limits page, Anthropic: Cost & Usage reports)
-4. Weekly review kosztow per-feature
-**Warning signs:** Brak cost trackingu, jeden model wszedzie, rosna koszty bez wzrostu userow.
+4. Weekly review kosztów per-feature
+**Warning signs:** Brak cost trackingu, jeden model wszędzie, rosna koszty bez wzrostu userow.
 
 ### Pitfall 2: Vercel Serverless Duration Costs
 
@@ -386,12 +386,12 @@ export function MentorChat() {
 
 ### Pitfall 3: AI Gateway vs BYOK Confusion
 
-**What goes wrong:** Nie wiadomo kiedy uzywac Vercel AI Gateway vs wlasnych kluczy API.
-**Why it happens:** AI SDK 6 domyslnie uzywa Gateway (wymaga AI_GATEWAY_API_KEY), ale mozna tez uzyc BYOK.
+**What goes wrong:** Nie wiadomo kiedy używać Vercel AI Gateway vs własnych kluczy API.
+**Why it happens:** AI SDK 6 domyslnie używa Gateway (wymaga AI_GATEWAY_API_KEY), ale można tez uzyc BYOK.
 **How to avoid:**
 1. Development: AI Gateway z free $5/mies credits
-2. Production: BYOK z wlasnymi kluczami (zero markup, pelna kontrola budzetow)
-3. Ustaw zmienne srodowiskowe dla obu:
+2. Production: BYOK z wlasnymi kluczami (zero markup, pełna kontrola budzetow)
+3. Ustaw zmienne środowiskowe dla obu:
    - `AI_GATEWAY_API_KEY` dla Gateway
    - `ANTHROPIC_API_KEY`, `OPENAI_API_KEY`, `GOOGLE_GENERATIVE_AI_API_KEY` dla BYOK
 **Warning signs:** "API key not configured" errors, nieoczekiwane charges.
@@ -401,9 +401,9 @@ export function MentorChat() {
 **What goes wrong:** AI zwraca tekst zamiast oczekiwanego JSON, aplikacja crashuje.
 **Why it happens:** generateText zwraca string. Parsowanie JSON bez walidacji.
 **How to avoid:**
-1. Zawsze uzywaj generateObject z Zod schema dla structured data
+1. Zawsze używaj generateObject z Zod schema dla structured data
 2. Zdefiniuj schemas w typach (types/ai.ts)
-3. Uzyj "strict mode" dla tool inputs
+3. Użyj "strict mode" dla tool inputs
 **Warning signs:** JSON.parse errors w logach, inconsistent AI responses.
 
 ## Code Examples
@@ -514,25 +514,25 @@ export async function generateCurriculum(topic: string): Promise<Curriculum> {
 | useReducer for chat state | useChat hook | AI SDK 4+ | Built-in streaming, errors, status |
 
 **Deprecated/outdated:**
-- **LangChain.js jako glowny SDK**: Nadal ma sens dla zaawansowanego RAG, ale dla standardowych aplikacji AI SDK jest lzejszy i prostszy
+- **LangChain.js jako główny SDK**: Nadal ma sens dla zaawansowanego RAG, ale dla standardowych aplikacji AI SDK jest lzejszy i prostszy
 - **Manual fetch dla AI APIs**: AI SDK abstracts all provider differences
 - **AI SDK 4.x patterns**: v5/v6 zmieniły API (convertToModelMessages, toUIMessageStreamResponse)
 
 ## Open Questions
 
 1. **AI Gateway vs BYOK dla produkcji**
-   - What we know: AI Gateway ma zero markup, BYOK tez zero markup. Oba dzialaja.
-   - What's unclear: Czy AI Gateway ma ukryte ograniczenia przy duzej skali? TrueFoundry sugeruje ze Vercel serverless jest drogi dla heavy AI.
-   - Recommendation: Zacznij z AI Gateway, monitoruj koszty, migruj do BYOK jesli potrzeba wiecej kontroli.
+   - What we know: AI Gateway ma zero markup, BYOK tez zero markup. Oba działają.
+   - What's unclear: Czy AI Gateway ma ukryte ograniczenia przy duzej skali? TrueFoundry sugeruje że Vercel serverless jest drogi dla heavy AI.
+   - Recommendation: Zacznij z AI Gateway, monitoruj koszty, migruj do BYOK jeśli potrzeba więcej kontroli.
 
 2. **Edge Runtime vs Node.js Runtime**
    - What we know: Edge ma inny billing model na Vercel, lepszy dla streaming.
-   - What's unclear: Czy wszystkie AI SDK funkcje dzialaja na edge? Czy sa limity?
-   - Recommendation: Uzyj edge dla streaming routes, node dla ciezszych operacji.
+   - What's unclear: Czy wszystkie AI SDK funkcje działają na edge? Czy są limity?
+   - Recommendation: Użyj edge dla streaming routes, node dla ciezszych operacji.
 
 3. **AI SDK 6 Agent abstraction**
    - What we know: Nowa abstrakcja dla reusable agents z tool loops.
-   - What's unclear: Czy warto uzywac dla mentora chatbota czy standardowy streamText wystarczy?
+   - What's unclear: Czy warto używać dla mentora chatbota czy standardowy streamText wystarczy?
    - Recommendation: Zacznij z streamText, rozważ Agent gdy potrzeba multi-step tool calling.
 
 ## Sources
@@ -557,8 +557,8 @@ export async function generateCurriculum(topic: string): Promise<Curriculum> {
 **Confidence breakdown:**
 - Standard stack: HIGH - oficjalna dokumentacja AI SDK 6, verified
 - Architecture: HIGH - oparte na oficjalnych przykladach i best practices
-- Cost monitoring: MEDIUM - providerzy maja dashboards, ale szczegoly implementacji wymagaja eksperymentow
-- Pitfalls: HIGH - potwierdzone przez wiele zrodel, PITFALLS.md projektu
+- Cost monitoring: MEDIUM - providerzy mają dashboards, ale szczegóły implementacji wymagają eksperymentow
+- Pitfalls: HIGH - potwierdzone przez wiele źródeł, PITFALLS.md projektu
 
 **Research date:** 2026-01-30
-**Valid until:** 30 dni (AI SDK aktywnie rozwijany, sprawdz changelog przed wiekszymi zmianami)
+**Valid until:** 30 dni (AI SDK aktywnie rozwijany, sprawdź changelog przed wiekszymi zmianami)

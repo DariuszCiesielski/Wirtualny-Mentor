@@ -68,23 +68,23 @@ Kluczowe cechy:
 ### Task 2: TypeScript Types i Zod Schemas
 
 **src/types/materials.ts:**
-- `Source` - zrodlo z anti-hallucination tracking
+- `Source` - źródło z anti-hallucination tracking
 - `KeyConcept` - termin z definicja
 - `PracticalStep` - krok instrukcji
-- `Tool` - narzedzie do nauki
-- `ExternalResource` - zewnetrzny zasob
-- `SectionContent` - glowny typ (camelCase)
+- `Tool` - narzędzie do nauki
+- `ExternalResource` - zewnętrzny zasob
+- `SectionContent` - główny typ (camelCase)
 - `SectionContentRow` - database row (snake_case)
 
 **src/lib/ai/materials/schemas.ts:**
-- `sourceSchema` - walidacja zrodel
+- `sourceSchema` - walidacja źródeł
 - `keyConceptSchema` - walidacja pojec
-- `practicalStepSchema` - walidacja krokow
-- `toolSchema` - walidacja narzedzi
+- `practicalStepSchema` - walidacja kroków
+- `toolSchema` - walidacja narzędzi
 - `externalResourceSchema` - walidacja zasobow
-- `sectionContentSchema` - pelna walidacja dla AI generation
+- `sectionContentSchema` - pełna walidacja dla AI generation
 
-Schemas maja `.describe()` dla AI generation guidance.
+Schemas mają `.describe()` dla AI generation guidance.
 
 ## Decisions Made
 
@@ -107,9 +107,9 @@ Schemas maja `.describe()` dla AI generation guidance.
 ## Verification Results
 
 - [x] Migration file istnieje w supabase/migrations/
-- [x] `npx tsc --noEmit` przechodzi bez bledow
-- [x] Typy mozna importowac z @/types/materials
-- [x] Schemas mozna importowac z @/lib/ai/materials/schemas
+- [x] `npx tsc --noEmit` przechodzi bez błędów
+- [x] Typy można importowac z @/types/materials
+- [x] Schemas można importowac z @/lib/ai/materials/schemas
 
 ## Commits
 
@@ -120,7 +120,7 @@ Schemas maja `.describe()` dla AI generation guidance.
 
 ## Next Phase Readiness
 
-Plan 03-02 moze:
+Plan 03-02 może:
 - Uzywac typow z `@/types/materials`
 - Uzywac schemas z `@/lib/ai/materials/schemas`
 - Zapisywac dane do tabeli `section_content` (po uruchomieniu migration)

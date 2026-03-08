@@ -72,11 +72,11 @@ None - plan executed exactly as written.
 
 - [x] Sidebar ukryty na mobile (<1024px)
 - [x] Hamburger menu widoczny na mobile
-- [x] Drawer otwiera sie z lewej strony
-- [x] Wszystkie navItems dostepne w drawer
-- [x] Content pelna szerokosc na mobile
+- [x] Drawer otwiera się z lewej strony
+- [x] Wszystkie navItems dostępne w drawer
+- [x] Content pełna szerokość na mobile
 - [x] Touch targets min 44x44px (min-h-11)
-- [x] `npm run build` przechodzi bez bledow
+- [x] `npm run build` przechodzi bez błędów
 
 ## Technical Details
 

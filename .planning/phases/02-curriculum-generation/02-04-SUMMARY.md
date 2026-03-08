@@ -62,8 +62,8 @@ completed: 2026-01-30
 
 - Endpoint /api/curriculum/generate z streaming structured output
 - Web search dla aktualnych info i oficjalnych standardow nauczania (Tavily)
-- CurriculumGenerator z real-time streaming progress dla kazdego z 5 poziomow
-- CurriculumPreview z accordion, learning outcomes, rozdzialami i czasem
+- CurriculumGenerator z real-time streaming progress dla każdego z 5 poziomow
+- CurriculumPreview z accordion, learning outcomes, rozdziałami i czasem
 - saveCurriculum server action integrujacy AI output z baza danych
 - Pelny flow: generate -> preview -> save -> redirect
 
@@ -88,7 +88,7 @@ Each task was committed atomically:
 
 - **streamObject zamiast streamText**: AI SDK v6 streamObject daje structured JSON output z schema validation
 - **Manual buffer parsing**: Streaming JSON wymaga partial parsing dla real-time UI - dodano recovery dla incomplete JSON
-- **Graceful TAVILY_API_KEY handling**: Endpoint dziala bez Tavily (graceful degradation)
+- **Graceful TAVILY_API_KEY handling**: Endpoint działa bez Tavily (graceful degradation)
 - **Transform function**: AI schema (camelCase) -> DB schema (snake_case) w saveCurriculum
 
 ## Deviations from Plan
@@ -98,12 +98,12 @@ Each task was committed atomically:
 **1. [Rule 3 - Blocking] Usunieto maxTokens parameter**
 - **Found during:** Task 1
 - **Issue:** streamObject nie akceptuje maxTokens w AI SDK v6
-- **Fix:** Usunieto parametr - domyslny limit wystarczajacy
+- **Fix:** Usunieto parametr - domyślny limit wystarczający
 - **Committed in:** ce534eb
 
 **2. [Rule 3 - Blocking] Poprawiono Zod v4 error handling**
 - **Found during:** Task 1
-- **Issue:** error.errors nie istnieje w Zod v4, uzywa error.issues
+- **Issue:** error.errors nie istnieje w Zod v4, używa error.issues
 - **Fix:** Zmieniono na error.issues
 - **Committed in:** ce534eb
 
@@ -116,7 +116,7 @@ Each task was committed atomically:
 ---
 
 **Total deviations:** 3 auto-fixed (3 blocking)
-**Impact on plan:** Wszystkie auto-fixy niezbedne dla poprawnego buildu. Brak scope creep.
+**Impact on plan:** Wszystkie auto-fixy niezbędne dla poprawnego buildu. Brak scope creep.
 
 ## Issues Encountered
 
@@ -124,7 +124,7 @@ None - plan executed with minor API adjustments.
 
 ## User Setup Required
 
-None - wykorzystuje istniejace TAVILY_API_KEY i OPENAI_API_KEY z poprzednich planow.
+None - wykorzystuje istniejące TAVILY_API_KEY i OPENAI_API_KEY z poprzednich planow.
 
 ## Next Phase Readiness
 

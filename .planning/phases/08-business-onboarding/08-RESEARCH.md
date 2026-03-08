@@ -6,24 +6,24 @@
 
 ## Summary
 
-Faza 8 dodaje profil biznesowy uzytkownika (formularz + opcjonalny chat AI) i integruje go z generowaniem kursow. Caly stos technologiczny juz istnieje w projekcie — nie potrzeba zadnych nowych bibliotek. Wzorce DAL (server actions), chat AI (useChat + streamText), schema Zod, migracje SQL z RLS sa dobrze ustalone i nalezy je powtorzyc.
+Faza 8 dodaje profil biznesowy użytkownika (formularz + opcjonalny chat AI) i integruje go z generowaniem kursów. Cały stos technologiczny już istnieje w projekcie — nie potrzeba żadnych nowych bibliotek. Wzorce DAL (server actions), chat AI (useChat + streamText), schema Zod, migracje SQL z RLS są dobrze ustalone i należy je powtórzyć.
 
-Kluczowe odkrycia: (1) shadcn/ui NIE ma komponentu Combobox — trzeba go zbudowac z Popover + Command, ale w projekcie brakuje obu komponentow (trzeba je dodac przez `npx shadcn@latest add`), (2) ClarifyingChat to idealny wzorzec dla onboarding chatu — ten sam pattern useChat + streamText + structured output, (3) curriculum injection jest prosty — wystarczy dodac kontekst biznesowy do promptu w `/api/curriculum/clarify` i `/api/curriculum/generate`.
+Kluczowe odkrycia: (1) shadcn/ui NIE ma komponentu Combobox — trzeba go zbudować z Popover + Command, ale w projekcie brakuje obu komponentów (trzeba je dodać przez `npx shadcn@latest add`), (2) ClarifyingChat to idealny wzorzec dla onboarding chatu — ten sam pattern useChat + streamText + structured output, (3) curriculum injection jest prosty — wystarczy dodać kontekst biznesowy do promptu w `/api/curriculum/clarify` i `/api/curriculum/generate`.
 
-**Primary recommendation:** Zbudowac modul `src/lib/onboarding/` wedlug wzorca focus/gamification, uzyc istniejacego patternu ClarifyingChat dla chatu AI onboardingu, dodac komponent Combobox (Popover+Command z shadcn/ui).
+**Primary recommendation:** Zbudować moduł `src/lib/onboarding/` według wzorca focus/gamification, użyć istniejącego patternu ClarifyingChat dla chatu AI onboardingu, dodać komponent Combobox (Popover+Command z shadcn/ui).
 
 ## Standard Stack
 
-### Core (juz w projekcie — zero nowych dependencies)
+### Core (już w projekcie — zero nowych dependencies)
 | Library | Version | Purpose | Why Standard |
 |---------|---------|---------|--------------|
-| Supabase (PostgREST + RLS) | existing | Tabela `user_business_profiles` | Wszystkie dane uzytkownika sa w Supabase |
+| Supabase (PostgREST + RLS) | existing | Tabela `user_business_profiles` | Wszystkie dane użytkownika są w Supabase |
 | Vercel AI SDK v6 (`ai`, `@ai-sdk/react`) | existing | Chat AI onboardingu (useChat + streamText) | Ten sam pattern co ClarifyingChat |
 | Zod 4 (`zod/v4`) | existing | Walidacja formularza + schema structured output | Standard projektu |
 | shadcn/ui | existing | Formularz (Input, Textarea, Select, Label, Button, Card) | Standard UI |
 | Server Actions (`"use server"`) | existing | DAL dla CRUD profilu biznesowego | Wzorzec z focus-dal.ts, gamification-dal.ts |
 
-### Supporting (wymaga dodania komponentow shadcn/ui)
+### Supporting (wymaga dodania komponentów shadcn/ui)
 | Component | Purpose | How to Add |
 |-----------|---------|------------|
 | Popover | Dropdown dla Combobox | `npx shadcn@latest add popover` |
@@ -32,7 +32,7 @@ Kluczowe odkrycia: (1) shadcn/ui NIE ma komponentu Combobox — trzeba go zbudow
 ### Alternatives Considered
 | Instead of | Could Use | Tradeoff |
 |------------|-----------|----------|
-| Combobox (Popover+Command) | Zwykly Select | Select nie pozwala na free-text "Inne" — wymaganie CONTEXT.md |
+| Combobox (Popover+Command) | Zwykły Select | Select nie pozwala na free-text "Inne" — wymaganie CONTEXT.md |
 | Nowy `/api/onboarding/chat` | Reuse `/api/curriculum/clarify` | Osobny endpoint jest czystszy — inny system prompt, inny schema |
 | Tabela DB `user_business_profiles` | user_metadata w Supabase Auth | user_metadata jest ograniczona (brak query, brak RLS) |
 
@@ -51,13 +51,13 @@ src/
 │   ├── schemas.ts               # Zod schemas: formularz + AI chat response
 │   └── prompts.ts               # System prompt dla onboarding chatu
 ├── components/onboarding/
-│   ├── business-profile-form.tsx # Formularz 4 pol (client component)
-│   ├── onboarding-chat.tsx       # Chat AI doprecyzowujacy (client component)
+│   ├── business-profile-form.tsx # Formularz 4 pól (client component)
+│   ├── onboarding-chat.tsx       # Chat AI doprecyzowujący (client component)
 │   ├── onboarding-banner.tsx     # Banner na dashboardzie (client component — useState dismiss)
 │   └── combobox.tsx              # Reusable Combobox (Popover + Command)
 ├── app/(dashboard)/
 │   ├── onboarding/page.tsx       # Dedykowana strona onboardingu
-│   └── profile/page.tsx          # Rozszerzony o sekcje "Profil biznesowy"
+│   └── profile/page.tsx          # Rozszerzony o sekcję "Profil biznesowy"
 ├── app/api/onboarding/
 │   └── chat/route.ts             # API endpoint dla onboarding chatu
 └── types/
@@ -65,8 +65,8 @@ src/
 ```
 
 ### Pattern 1: DAL Server Actions (wzorzec z gamification-dal.ts)
-**What:** Kazda operacja na danych jest server action z `"use server"`, tworzaca klienta Supabase i weryfikujaca auth.
-**When to use:** Kazdy CRUD na `user_business_profiles`.
+**What:** Każda operacja na danych jest server action z `"use server"`, tworzącą klienta Supabase i weryfikującą auth.
+**When to use:** Każdy CRUD na `user_business_profiles`.
 **Example:**
 ```typescript
 // src/lib/onboarding/onboarding-dal.ts
@@ -116,7 +116,7 @@ export async function saveBusinessProfile(
 
 ### Pattern 2: Onboarding Chat (wzorzec z ClarifyingChat)
 **What:** useChat z DefaultChatTransport, structured output (streamText + Output.object), parsowanie JSON z message parts.
-**When to use:** Opcjonalny chat AI po wypelnieniu formularza.
+**When to use:** Opcjonalny chat AI po wypełnieniu formularza.
 **Example:**
 ```typescript
 // src/app/api/onboarding/chat/route.ts
@@ -145,7 +145,7 @@ export async function POST(req: Request) {
 ```
 
 ### Pattern 3: Curriculum Prompt Injection
-**What:** Dodanie kontekstu biznesowego do system promptu i user promptu w generowaniu kursow.
+**What:** Dodanie kontekstu biznesowego do system promptu i user promptu w generowaniu kursów.
 **When to use:** W `/api/curriculum/clarify` i `/api/curriculum/generate`.
 **Example:**
 ```typescript
@@ -154,28 +154,28 @@ let systemPrompt = CLARIFYING_SYSTEM_PROMPT;
 
 // Inject business profile context (if exists)
 if (businessProfile) {
-  systemPrompt += `\n\nKONTEKST BIZNESOWY UZYTKOWNIKA:
-- Branza: ${businessProfile.industry}
+  systemPrompt += `\n\nKONTEKST BIZNESOWY UŻYTKOWNIKA:
+- Branża: ${businessProfile.industry}
 - Rola: ${businessProfile.role}
 - Cel biznesowy: ${businessProfile.business_goal}
 ${businessProfile.experience_summary ? `- Podsumowanie: ${businessProfile.experience_summary}` : ""}
 
 DODATKOWE ZASADY:
-- Zadaj 1-2 pytania doprecyzowujace w kontekscie biznesowym uzytkownika
-- Proponuj praktyczne przyklady z branzy ${businessProfile.industry}`;
+- Zadaj 1-2 pytania doprecyzowujące w kontekście biznesowym użytkownika
+- Proponuj praktyczne przykłady z branży ${businessProfile.industry}`;
 }
 
 // W /api/curriculum/generate/route.ts — rozszerzenie user prompt
 const businessContext = businessProfile
-  ? `\n## Kontekst biznesowy uzytkownika:\n- Branza: ${businessProfile.industry}\n- Rola: ${businessProfile.role}\n- Cel: ${businessProfile.business_goal}\n${businessProfile.experience_summary || ""}\n\nDostosuj przyklady i case studies do branzy uzytkownika.`
+  ? `\n## Kontekst biznesowy użytkownika:\n- Branża: ${businessProfile.industry}\n- Rola: ${businessProfile.role}\n- Cel: ${businessProfile.business_goal}\n${businessProfile.experience_summary || ""}\n\nDostosuj przykłady i case studies do branży użytkownika.`
   : "";
 ```
 
 ### Anti-Patterns to Avoid
-- **NIE uzywaj user_metadata do profilu biznesowego:** user_metadata jest do prostych danych (name, avatar). Profil biznesowy to structured data — uzywaj osobnej tabeli z RLS.
+- **NIE używaj user_metadata do profilu biznesowego:** user_metadata jest do prostych danych (name, avatar). Profil biznesowy to structured data — używaj osobnej tabeli z RLS.
 - **NIE twórz wizarda wielokrokowego:** Decyzja z CONTEXT.md — jeden ekran z 4 polami, nie wizard.
 - **NIE persystuj dismiss bannera w DB:** useState wystarczy (CONTEXT.md).
-- **NIE uzywaj upsert z partial index:** PostgREST problem znany z lesson-images. Tutaj upsert z `onConflict: "user_id"` jest bezpieczny bo UNIQUE jest na calej kolumnie.
+- **NIE używaj upsert z partial index:** PostgREST problem znany z lesson-images. Tutaj upsert z `onConflict: "user_id"` jest bezpieczny bo UNIQUE jest na całej kolumnie.
 
 ## Don't Hand-Roll
 
@@ -183,48 +183,48 @@ const businessContext = businessProfile
 |---------|-------------|-------------|-----|
 | Combobox (select + free-text) | Custom dropdown | shadcn/ui Popover + Command | Accessible, keyboard navigation, search built-in |
 | Chat AI z structured output | Custom fetch + SSE parsing | useChat + streamText + Output.object | Wzorzec z ClarifyingChat, przetestowany w projekcie |
-| Formularz z walidacja | Custom validation | Zod 4 schema + useActionState | Wzorzec z profile-form.tsx |
+| Formularz z walidacją | Custom validation | Zod 4 schema + useActionState | Wzorzec z profile-form.tsx |
 | RLS policies | Application-level auth checks | Supabase RLS (auth.uid() = user_id) | Defense in depth, wzorzec z focus_sessions |
 
-**Key insight:** Caly stos jest juz w projekcie. Kazdy pattern (DAL, chat, formularz, migracja) ma dzialajacy precedens do skopiowania.
+**Key insight:** Cały stos jest już w projekcie. Każdy pattern (DAL, chat, formularz, migracja) ma działający precedens do skopiowania.
 
 ## Common Pitfalls
 
 ### Pitfall 1: Brak Popover i Command w projekcie
-**What goes wrong:** Projekt NIE MA jeszcze komponentow Popover i Command (sprawdzone w `src/components/ui/`). Combobox wymaga obu.
-**Why it happens:** shadcn/ui nie ma gotowego "Combobox" — trzeba zlozyc z czesci.
-**How to avoid:** Dodaj `npx shadcn@latest add popover command` PRZED implementacja formularza.
+**What goes wrong:** Projekt NIE MA jeszcze komponentów Popover i Command (sprawdzone w `src/components/ui/`). Combobox wymaga obu.
+**Why it happens:** shadcn/ui nie ma gotowego "Combobox" — trzeba złożyć z części.
+**How to avoid:** Dodaj `npx shadcn@latest add popover command` PRZED implementacją formularza.
 **Warning signs:** Import error na `@/components/ui/popover`.
 
 ### Pitfall 2: Zod v4 import path
-**What goes wrong:** Uzywanie `import { z } from "zod"` zamiast `import { z } from "zod/v4"`.
-**Why it happens:** Stare nawyki, AI asystent moze zasugerowac zly import.
-**How to avoid:** Sprawdz istniejace pliki — `profile/actions.ts` uzywa `zod/v4`. Trzymaj sie tego.
+**What goes wrong:** Używanie `import { z } from "zod"` zamiast `import { z } from "zod/v4"`.
+**Why it happens:** Stare nawyki, AI asystent może zasugerować zły import.
+**How to avoid:** Sprawdź istniejące pliki — `profile/actions.ts` używa `zod/v4`. Trzymaj się tego.
 **Warning signs:** Brak metod specyficznych dla Zod 4 (np. inne flatten API).
 
 ### Pitfall 3: Revalidation paths po zapisie profilu
-**What goes wrong:** Dashboard banner nie znika po zapisie profilu jesli brakuje revalidatePath.
-**Why it happens:** Next.js cache — server component dashboardu nie odswiezy sie bez revalidacji.
+**What goes wrong:** Dashboard banner nie znika po zapisie profilu jeśli brakuje revalidatePath.
+**Why it happens:** Next.js cache — server component dashboardu nie odświeży się bez rewalidacji.
 **How to avoid:** W `saveBusinessProfile` dodaj `revalidatePath("/dashboard")` i `revalidatePath("/onboarding")` i `revalidatePath("/profile")`.
-**Warning signs:** Banner nadal sie wyswietla mimo ukonczonego onboardingu.
+**Warning signs:** Banner nadal się wyświetla mimo ukończonego onboardingu.
 
 ### Pitfall 4: Chat completion detection
-**What goes wrong:** Chat nie konczy sie prawidlowo, uzytkownik musi recznie zakonczyc.
+**What goes wrong:** Chat nie kończy się prawidłowo, użytkownik musi ręcznie zakończyć.
 **Why it happens:** AI nie ustawia `isComplete: true` w structured output.
-**How to avoid:** Dodaj max turns limit (3-5) i przycisk "Przejdz dalej" po N turach (wzorzec z ClarifyingChat, linia 263).
-**Warning signs:** Nieskonczony loop pytanie-odpowiedz.
+**How to avoid:** Dodaj max turns limit (3-5) i przycisk "Przejdź dalej" po N turach (wzorzec z ClarifyingChat, linia 263).
+**Warning signs:** Nieskończony loop pytanie-odpowiedź.
 
 ### Pitfall 5: Onboarding page wymaga auth
-**What goes wrong:** Strona /onboarding dostepna bez logowania.
-**Why it happens:** Strona jest w `(dashboard)` layout ktory wymaga auth, ale trzeba pamietac o tym.
-**How to avoid:** Umiesc /onboarding w `app/(dashboard)/onboarding/` — layout automatycznie wymaga requireAllowedUser().
+**What goes wrong:** Strona /onboarding dostępna bez logowania.
+**Why it happens:** Strona jest w `(dashboard)` layout który wymaga auth, ale trzeba pamiętać o tym.
+**How to avoid:** Umieść /onboarding w `app/(dashboard)/onboarding/` — layout automatycznie wymaga requireAllowedUser().
 **Warning signs:** N/A — layout to zapewnia.
 
 ## Code Examples
 
 ### Database Migration
 ```sql
--- user_business_profiles: profil biznesowy dla personalizacji kursow
+-- user_business_profiles: profil biznesowy dla personalizacji kursów
 CREATE TABLE user_business_profiles (
   id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id         UUID NOT NULL UNIQUE REFERENCES auth.users(id) ON DELETE CASCADE,
@@ -289,9 +289,9 @@ export type BusinessProfileInput = z.infer<typeof businessProfileSchema>;
 
 // Schema dla structured output z onboarding chatu
 export const onboardingChatSchema = z.object({
-  question: z.string().describe("Pytanie do uzytkownika o kontekst biznesowy"),
-  isComplete: z.boolean().describe("Czy zebrano wystarczajaco informacji"),
-  experience_summary: z.string().describe("Podsumowanie profilu biznesowego (2-3 zdania, puste jesli nie gotowe)"),
+  question: z.string().describe("Pytanie do użytkownika o kontekst biznesowy"),
+  isComplete: z.boolean().describe("Czy zebrano wystarczająco informacji"),
+  experience_summary: z.string().describe("Podsumowanie profilu biznesowego (2-3 zdania, puste jeśli nie gotowe)"),
 });
 
 export type OnboardingChatResponse = z.infer<typeof onboardingChatSchema>;
@@ -325,13 +325,13 @@ export function OnboardingBanner() {
       <div className="flex items-start gap-3 pr-8">
         <Briefcase className="h-5 w-5 text-primary mt-0.5 shrink-0" />
         <div>
-          <p className="font-medium text-sm">Uzupelnij profil biznesowy</p>
+          <p className="font-medium text-sm">Uzupełnij profil biznesowy</p>
           <p className="text-sm text-muted-foreground mt-1">
-            Pomoz AI lepiej dopasowac kursy do Twojej branzy i celow.
+            Pomóż AI lepiej dopasować kursy do Twojej branży i celów.
           </p>
           <Button asChild variant="link" size="sm" className="px-0 mt-1">
             <Link href="/onboarding">
-              Uzupelnij profil
+              Uzupełnij profil
               <ArrowRight className="h-3 w-3 ml-1" />
             </Link>
           </Button>
@@ -372,7 +372,7 @@ interface ComboboxProps {
   placeholder?: string;
   searchPlaceholder?: string;
   emptyMessage?: string;
-  allowCustom?: boolean; // Umozliwia wpisanie wlasnej wartosci
+  allowCustom?: boolean; // Umożliwia wpisanie własnej wartości
 }
 
 export function Combobox({
@@ -420,7 +420,7 @@ export function Combobox({
                     setSearch("");
                   }}
                 >
-                  Uzyj: &quot;{search}&quot;
+                  Użyj: &quot;{search}&quot;
                 </button>
               ) : (
                 emptyMessage
@@ -458,26 +458,26 @@ export function Combobox({
 
 | Old Approach | Current Approach | When Changed | Impact |
 |--------------|------------------|--------------|--------|
-| useChat z `api` string | useChat z `DefaultChatTransport` | AI SDK v6 | ClarifyingChat juz uzywa nowego patternu |
-| `z` from `"zod"` | `z` from `"zod/v4"` | Zod 4 | profile/actions.ts uzywa v4, trzymaj konsekwentnie |
-| `getSession()` | `getUser()` | CVE-2025-29927 | Wszystkie DAL pliki uzywaja getUser(), nigdy getSession() |
+| useChat z `api` string | useChat z `DefaultChatTransport` | AI SDK v6 | ClarifyingChat już używa nowego patternu |
+| `z` from `"zod"` | `z` from `"zod/v4"` | Zod 4 | profile/actions.ts używa v4, trzymaj konsekwentnie |
+| `getSession()` | `getUser()` | CVE-2025-29927 | Wszystkie DAL pliki używają getUser(), nigdy getSession() |
 
 ## Open Questions
 
 1. **Model AI dla onboarding chatu**
-   - What we know: GPT-5.2 jest uzywany dla curriculum i mentora, GPT-4o-mini dla quizow
+   - What we know: GPT-5.2 jest używany dla curriculum i mentora, GPT-4o-mini dla quizów
    - What's unclear: Czy onboarding chat potrzebuje GPT-5.2 czy wystarczy GPT-4o-mini?
-   - Recommendation: Uzyj GPT-4o-mini (tani, szybki, wystarczajacy do 3-5 pytan profilowych). Dodaj nowy klucz w MODEL_CONFIG: `onboarding: openaiProvider('gpt-4o-mini')`.
+   - Recommendation: Użyj GPT-4o-mini (tani, szybki, wystarczający do 3-5 pytań profilowych). Dodaj nowy klucz w MODEL_CONFIG: `onboarding: openaiProvider('gpt-4o-mini')`.
 
-2. **Czy /onboarding i /profile powinny wspoldzielic komponent formularza?**
-   - What we know: CONTEXT.md mowi "ta sama tresc dostepna z /profile"
-   - What's unclear: Czy to doslowalnie ten sam komponent czy osobne instancje
-   - Recommendation: Jeden komponent `BusinessProfileForm` uzywany w obu miejscach. Props `initialData` do edycji vs tworzenia.
+2. **Czy /onboarding i /profile powinny współdzielić komponent formularza?**
+   - What we know: CONTEXT.md mówi "ta sama treść dostępna z /profile"
+   - What's unclear: Czy to dosłownie ten sam komponent czy osobne instancje
+   - Recommendation: Jeden komponent `BusinessProfileForm` używany w obu miejscach. Props `initialData` do edycji vs tworzenia.
 
-3. **Jak przekazac profil biznesowy do API clarify/generate?**
-   - What we know: Oba endpointy nie przyjmuja teraz profilu biznesowego
-   - What's unclear: Czy przekazywac z frontendu (body request) czy ladowac server-side po auth?
-   - Recommendation: Ladowac server-side w API route (getBusinessProfile z DAL, na podstawie zalogowanego usera). Zero zmian w interfejsie frontendu — API same dodaja kontekst.
+3. **Jak przekazać profil biznesowy do API clarify/generate?**
+   - What we know: Oba endpointy nie przyjmują teraz profilu biznesowego
+   - What's unclear: Czy przekazywać z frontendu (body request) czy ładować server-side po auth?
+   - Recommendation: Ładować server-side w API route (getBusinessProfile z DAL, na podstawie zalogowanego usera). Zero zmian w interfejsie frontendu — API same dodają kontekst.
 
 ## Sources
 
@@ -486,7 +486,7 @@ export function Combobox({
 - Codebase analysis: `src/components/curriculum/clarifying-chat.tsx` (useChat pattern)
 - Codebase analysis: `src/app/api/curriculum/clarify/route.ts`, `src/app/api/curriculum/generate/route.ts` (prompt injection points)
 - Codebase analysis: `src/app/(dashboard)/profile/` (actions.ts, page.tsx — existing profile pattern)
-- Codebase analysis: `src/components/ui/` (lista komponentow — brak Popover, Command)
+- Codebase analysis: `src/components/ui/` (lista komponentów — brak Popover, Command)
 - Codebase analysis: `supabase/migrations/` (wzorzec migracji z RLS)
 - CONTEXT.md: Locked decisions (formularz 4 pola, chat AI, banner useState, combobox)
 

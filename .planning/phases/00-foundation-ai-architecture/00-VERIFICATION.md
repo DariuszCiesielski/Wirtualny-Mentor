@@ -7,7 +7,7 @@ score: 9/9 must-haves verified
 
 # Phase 0: Foundation & AI Architecture - Verification Report
 
-**Phase Goal:** Infrastruktura AI gotowa do obslugi wielu modeli z monitoringiem kosztow
+**Phase Goal:** Infrastruktura AI gotowa do obsługi wielu modeli z monitoringiem kosztów
 
 **Verified:** 2026-01-30T14:37:42+01:00
 
@@ -21,15 +21,15 @@ score: 9/9 must-haves verified
 
 | # | Truth | Status | Evidence |
 |---|-------|--------|----------|
-| 1 | Projekt Next.js 15 uruchamia sie na localhost:3000 | ✓ VERIFIED | package.json zawiera next@16.1.6, struktura src/app/ istnieje, SUMMARY potwierdza działanie |
+| 1 | Projekt Next.js 15 uruchamia się na localhost:3000 | ✓ VERIFIED | package.json zawiera next@16.1.6, struktura src/app/ istnieje, SUMMARY potwierdza działanie |
 | 2 | AI SDK 6 zainstalowany z provider packages | ✓ VERIFIED | npm list pokazuje ai@6.0.62, @ai-sdk/anthropic, @ai-sdk/openai, @ai-sdk/google zainstalowane |
 | 3 | Prosty endpoint AI zwraca streaming response | ✓ VERIFIED | src/app/api/test-ai/route.ts istnieje, używa streamText(), SUMMARY potwierdza działanie streaming |
-| 4 | Struktura katalogow gotowa na service layer i AI orchestration | ✓ VERIFIED | src/lib/ai/, src/services/ai/, src/hooks/ istnieją z plikami |
+| 4 | Struktura katalogów gotowa na service layer i AI orchestration | ✓ VERIFIED | src/lib/ai/, src/services/ai/, src/hooks/ istnieją z plikami |
 | 5 | Cost monitoring setup (alerty budzectowe w providerach AI) | ✓ VERIFIED | orchestrator.ts zawiera logUsage(), COST_PER_MILLION, logi w konsoli potwierdzone w SUMMARY |
-| 6 | MODEL_CONFIG routuje rozne zadania do roznych modeli | ✓ VERIFIED | providers.ts definiuje MODEL_CONFIG z 4 modelami (mentor->Claude, curriculum->GPT, quiz->Gemini, embedding->OpenAI) |
-| 7 | Provider registry obsluguje trzy providery | ✓ VERIFIED | providers.ts zawiera registry z anthropic, openai, google |
+| 6 | MODEL_CONFIG routuje różne zadania do różnych modeli | ✓ VERIFIED | providers.ts definiuje MODEL_CONFIG z 4 modelami (mentor->Claude, curriculum->GPT, quiz->Gemini, embedding->OpenAI) |
+| 7 | Provider registry obsługuje trzy providery | ✓ VERIFIED | providers.ts zawiera registry z anthropic, openai, google |
 | 8 | Typy TypeScript dla AI zdefiniowane | ✓ VERIFIED | src/types/ai.ts eksportuje AITask, CostLog, ModelConfig, Curriculum z Zod schemas |
-| 9 | Logi w konsoli pokazuja zuzycie tokenow | ✓ VERIFIED | orchestrator.ts loguje [AI COST] z inputTokens, outputTokens, SUMMARY potwierdza działanie |
+| 9 | Logi w konsoli pokazuja zużycie tokenów | ✓ VERIFIED | orchestrator.ts loguje [AI COST] z inputTokens, outputTokens, SUMMARY potwierdza działanie |
 
 **Score:** 9/9 truths verified (100%)
 
@@ -98,9 +98,9 @@ None. All verification automated successfully.
 ### Plan 00-01: Next.js 15 Project Setup
 
 **Must-haves from plan:**
-- Projekt Next.js 15 uruchamia sie na localhost:3000 ✓
+- Projekt Next.js 15 uruchamia się na localhost:3000 ✓
 - AI SDK 6 zainstalowany z provider packages ✓
-- Struktura katalogow gotowa na AI orchestration ✓
+- Struktura katalogów gotowa na AI orchestration ✓
 - Typy TypeScript dla AI zdefiniowane ✓
 
 **Artifacts verified:**
@@ -135,9 +135,9 @@ None. All verification automated successfully.
 
 **Must-haves from plan:**
 - Endpoint /api/test-ai zwraca streaming response ✓
-- Logi w konsoli pokazuja zuzycie tokenow (inputTokens, outputTokens) ✓
-- MODEL_CONFIG routuje rozne zadania do roznych modeli ✓
-- Provider registry obsluguje trzy providery (anthropic, openai, google) ✓
+- Logi w konsoli pokazuja zużycie tokenów (inputTokens, outputTokens) ✓
+- MODEL_CONFIG routuje różne zadania do różnych modeli ✓
+- Provider registry obsługuje trzy providery (anthropic, openai, google) ✓
 
 **Artifacts verified:**
 1. src/lib/ai/providers.ts - SUBSTANTIVE (43 lines)
@@ -196,10 +196,10 @@ Infrastruktura AI jest w pełni gotowa do obsługi wielu modeli z monitoringiem 
 5. **Cost monitoring działa** - logUsage() loguje tokeny i koszt do konsoli, COST_PER_MILLION zdefiniowane
 
 **All success criteria met:**
-- [x] Projekt Next.js dziala lokalnie z podstawowa strona
+- [x] Projekt Next.js działa lokalnie z podstawowa strona
 - [x] Vercel AI SDK skonfigurowany z Claude, GPT i Gemini providerami
 - [x] Prosty endpoint AI zwraca streaming response
-- [x] Struktura katalogow gotowa na service layer i AI orchestration
+- [x] Struktura katalogów gotowa na service layer i AI orchestration
 - [x] Cost monitoring setup (alerty budzectowe w providerach AI)
 
 **Quality:**

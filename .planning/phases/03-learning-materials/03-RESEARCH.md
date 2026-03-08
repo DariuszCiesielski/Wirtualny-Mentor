@@ -6,11 +6,11 @@
 
 ## Summary
 
-Phase 3 implementuje generowanie materialow edukacyjnych w stylu podrecznika dla kazdej sekcji curriculum. Kluczowe wyzwania to: (1) generowanie dlugich, strukturyzowanych tresci z AI z cytatami zrodel, (2) integracja Tavily dla aktualnych linkow i zasobow, (3) fact-checking/grounding aby zapobiec halucynacjom, (4) tlumaczenie materialow anglojezycznych na polski, oraz (5) renderowanie markdown z syntax highlighting dla kodu.
+Phase 3 implementuje generowanie materiałów edukacyjnych w stylu podręcznika dla każdej sekcji curriculum. Kluczowe wyzwania to: (1) generowanie długich, strukturyzowanych treści z AI z cytatami źródeł, (2) integracja Tavily dla aktualnych linków i zasobow, (3) fact-checking/grounding aby zapobiec halucynacjom, (4) tłumaczenie materiałów anglojęzycznych na polski, oraz (5) renderowanie markdown z syntax highlighting dla kodu.
 
-Istniejaca infrastruktura (Tavily client, AI orchestrator, streamObject) stanowi solidna baze. Glowne rozszerzenia to: nowa tabela `section_content` dla przechowywania wygenerowanych materialow, schemat Zod dla structured content z cytatami, komponent markdown renderer, oraz prompty specjalizowane dla generowania tresci edukacyjnych.
+Istniejąca infrastruktura (Tavily client, AI orchestrator, streamObject) stanowi solidną bazę. Główne rozszerzenia to: nowa tabela `section_content` dla przechowywania wygenerowanych materiałów, schemat Zod dla structured content z cytatami, komponent markdown renderer, oraz prompty specjalizowane dla generowania treści edukacyjnych.
 
-**Primary recommendation:** Uzyj streamText z Tavily web search jako tool dla grounded generation. Kazda sekcja generowana osobno on-demand (lazy generation). Content przechowywany jako markdown w JSONB z metadanymi o zrodlach. react-markdown + rehype-highlight dla renderowania.
+**Primary recommendation:** Użyj streamText z Tavily web search jako tool dla grounded generation. Każda sekcja generowana osobno on-demand (lazy generation). Content przechowywany jako markdown w JSONB z metadanymi o źródłach. react-markdown + rehype-highlight dla renderowania.
 
 ## Standard Stack
 
@@ -18,11 +18,11 @@ Istniejaca infrastruktura (Tavily client, AI orchestrator, streamObject) stanowi
 
 | Library | Version | Purpose | Why Standard |
 |---------|---------|---------|--------------|
-| ai (Vercel AI SDK) | ^6.0.62 | Streaming text generation, tool calling | Juz zainstalowane, unified API |
-| @tavily/core | ^0.7.1 | Web search dla linkow i grounding | Juz zainstalowane, RAG-optimized |
+| ai (Vercel AI SDK) | ^6.0.62 | Streaming text generation, tool calling | Już zainstalowane, unified API |
+| @tavily/core | ^0.7.1 | Web search dla linków i grounding | Już zainstalowane, RAG-optimized |
 | react-markdown | ^9.x | Renderowanie markdown w React | Standard dla markdown w React, 12M+ weekly downloads |
 | remark-gfm | ^4.x | GitHub Flavored Markdown (tabele, checkboxy) | Rozszerzenie react-markdown dla tabel i list |
-| rehype-highlight | ^7.x | Syntax highlighting dla code blocks | Lekki, highlight.js based, 37 jezykow |
+| rehype-highlight | ^7.x | Syntax highlighting dla code blocks | Lekki, highlight.js based, 37 języków |
 
 ### Supporting
 
@@ -37,9 +37,9 @@ Istniejaca infrastruktura (Tavily client, AI orchestrator, streamObject) stanowi
 | Instead of | Could Use | Tradeoff |
 |------------|-----------|----------|
 | react-markdown | @mdx-js/react | MDX jest overkill dla read-only content |
-| rehype-highlight | react-syntax-highlighter | react-syntax-highlighter jest ciezszy (Prism full bundle) |
-| Tavily search | OpenAI web_search tool | Tavily daje wiecej kontroli, RAG-optimized results |
-| GPT dla tlumaczen | DeepL API | GPT wystarczajaco dobry dla edukacyjnego contentu, mniej API keys |
+| rehype-highlight | react-syntax-highlighter | react-syntax-highlighter jest cięższy (Prism full bundle) |
+| Tavily search | OpenAI web_search tool | Tavily daje więcej kontroli, RAG-optimized results |
+| GPT dla tłumaczeń | DeepL API | GPT wystarczająco dobry dla edukacyjnego contentu, mniej API keys |
 
 **Installation:**
 ```bash
@@ -82,9 +82,9 @@ src/
 
 ### Pattern 1: Grounded Content Generation with Citations
 
-**What:** Generowanie tresci edukacyjnej z inline citations i source tracking.
+**What:** Generowanie treści edukacyjnej z inline citations i source tracking.
 
-**When to use:** Dla kazdej sekcji gdzie wymagana jest weryfikowalnosc (MAT-07, KNOW-04).
+**When to use:** Dla każdej sekcji gdzie wymagana jest weryfikowalność (MAT-07, KNOW-04).
 
 **Example:**
 ```typescript
@@ -157,9 +157,9 @@ export type Source = z.infer<typeof sourceSchema>;
 
 ### Pattern 2: Web Search Tool for Grounding
 
-**What:** Tavily jako tool dla AI aby wyszukiwac aktualne informacje podczas generowania.
+**What:** Tavily jako tool dla AI aby wyszukiwać aktualne informacje podczas generowania.
 
-**When to use:** Podczas generowania kazdej sekcji - AI decyduje kiedy potrzebuje zewnetrznych danych.
+**When to use:** Podczas generowania każdej sekcji - AI decyduje kiedy potrzebuje zewnętrznych danych.
 
 **Example:**
 ```typescript
@@ -230,9 +230,9 @@ export const materialGenerationTools = {
 
 ### Pattern 3: Streaming Content Generation with Multi-Step Tool Calling
 
-**What:** Generowanie tresci sekcji z mozliwoscia wielokrotnego wywolania narzedzi.
+**What:** Generowanie treści sekcji z możliwością wielokrotnego wywołania narzędzi.
 
-**When to use:** Endpoint generowania materialow - AI moze wyszukac, ekstrakcja, nastepnie generowac.
+**When to use:** Endpoint generowania materiałów - AI może wyszukac, ekstrakcja, następnie generowac.
 
 **Example:**
 ```typescript
@@ -308,7 +308,7 @@ WYMAGANIA:
 
 **What:** Komponent do renderowania wygenerowanego markdown z code highlighting i custom styling.
 
-**When to use:** Wyswietlanie materialow w UI.
+**When to use:** Wyświetlanie materiałów w UI.
 
 **Example:**
 ```typescript
@@ -398,9 +398,9 @@ export function ContentRenderer({ content, sources = [], className }: ContentRen
 
 ### Pattern 5: Database Schema for Section Content
 
-**What:** Rozszerzenie schematu DB o przechowywanie wygenerowanych materialow.
+**What:** Rozszerzenie schematu DB o przechowywanie wygenerowanych materiałów.
 
-**When to use:** Persystencja wygenerowanych tresci dla kazdego rozdzialu.
+**When to use:** Persystencja wygenerowanych treści dla każdego rozdziału.
 
 **Example:**
 ```sql
@@ -481,9 +481,9 @@ CREATE TRIGGER update_section_content_updated_at
 
 ### Pattern 6: Lazy Content Generation
 
-**What:** Generowanie materialow on-demand gdy uzytkownik otwiera rozdzial.
+**What:** Generowanie materiałów on-demand gdy użytkownik otwiera rozdział.
 
-**When to use:** Zamiast generowac wszystkie materialy z gory - oszczedza koszty i czas.
+**When to use:** Zamiast generowac wszystkie materiały z gory - oszczedza koszty i czas.
 
 **Example:**
 ```typescript
@@ -551,11 +551,11 @@ export async function getOrGenerateContent(
 
 ### Anti-Patterns to Avoid
 
-- **Pre-generating all content:** Nie generuj wszystkich materialow przy tworzeniu kursu - kosztowne i wolne. Uzyj lazy generation.
-- **No source tracking:** Nie generuj tresci bez sledzenia zrodel - uniemozliwia weryfikacje (MAT-07 failure).
-- **Raw HTML without sanitization:** Nigdy nie uzyj `rehype-raw` bez `rehype-sanitize` - XSS vulnerability.
+- **Pre-generating all content:** Nie generuj wszystkich materiałów przy tworzeniu kursu - kosztowne i wolne. Użyj lazy generation.
+- **No source tracking:** Nie generuj treści bez sledzenia źródeł - uniemozliwia weryfikacje (MAT-07 failure).
+- **Raw HTML without sanitization:** Nigdy nie użyj `rehype-raw` bez `rehype-sanitize` - XSS vulnerability.
 - **Single-step generation:** Nie probuj generowac contentu w jednym kroku bez web search - prowadzi do halucynacji.
-- **Storing rendered HTML:** Przechowuj markdown, nie HTML - latwiej edytowac i regenerowac.
+- **Storing rendered HTML:** Przechowuj markdown, nie HTML - łatwiej edytować i regenerować.
 
 ## Don't Hand-Roll
 
@@ -568,46 +568,46 @@ export async function getOrGenerateContent(
 | Content sanitization | Allowlist regex | rehype-sanitize | OWASP-compliant, updated |
 | Polish translation | Custom ML model | AI model prompt | Quality, context-aware |
 
-**Key insight:** Generowanie tresci edukacyjnej wymaga grounding w zewnetrznych zrodlach. Tavily + multi-step tool calling daje AI mozliwosc weryfikacji informacji przed generowaniem. Bez tego halucynacje sa nieuniknione (17-33% rate nawet w RAG systemach wg Stanford).
+**Key insight:** Generowanie treści edukacyjnej wymaga grounding w zewnętrznych źródłach. Tavily + multi-step tool calling daje AI możliwość weryfikacji informacji przed generowaniem. Bez tego halucynacje są nieuniknione (17-33% rate nawet w RAG systemach wg Stanford).
 
 ## Common Pitfalls
 
 ### Pitfall 1: Halucynacje URL-i i Cytatow
 
-**What goes wrong:** AI generuje fikcyjne URL-e lub cytuje nieistniejace zrodla.
+**What goes wrong:** AI generuje fikcyjne URL-e lub cytuje nieistniejace źródła.
 
-**Why it happens:** AI "pamięta" stare URL-e z treningu lub wymysla plausible-looking links.
+**Why it happens:** AI "pamięta" stare URL-e z treningu lub wymyśla plausible-looking links.
 
 **How to avoid:**
 1. Wymagaj web search PRZED generowaniem contentu (multi-step)
 2. Przechowuj tylko URL-e z tool results, nie z generacji AI
 3. Waliduj URL-e przed zapisaniem (HEAD request lub Tavily extract)
-4. Jasne instrukcje w prompcie: "Uzyj TYLKO url-i ze znalezionych zrodel"
+4. Jasne instrukcje w prompcie: "Użyj TYLKO url-i ze znalezionych źródeł"
 
-**Warning signs:** URL-e 404, domeny ktore nie istnieja, URL-e do stron z 2020 roku.
+**Warning signs:** URL-e 404, domeny które nie istnieją, URL-e do stron z 2020 roku.
 
-### Pitfall 2: Niespojne Tlumaczenie Terminologii
+### Pitfall 2: Niespójne Tłumaczenie Terminologii
 
-**What goes wrong:** Ten sam termin techniczny tlumaczony roznie w roznych sekcjach.
+**What goes wrong:** Ten sam termin techniczny tłumaczony różnie w różnych sekcjach.
 
-**Why it happens:** Brak glossary, AI wybiera rozne tlumaczenia.
+**Why it happens:** Brak glossary, AI wybiera różne tłumaczenia.
 
 **How to avoid:**
 1. Zdefiniuj glossary terminow technicznych w system prompcie
-2. "key terms" pozostaw po angielsku z polskim wyjasnieniem w nawiasie
-3. Konsekwentne formatowanie: "dependency injection (wstrzykiwanie zaleznosci)"
+2. "key terms" pozostaw po angielsku z polskim wyjaśnieniem w nawiasie
+3. Konsekwentne formatowanie: "dependency injection (wstrzykiwanie zależności)"
 
-**Warning signs:** "callback" raz jako "wywolanie zwrotne", raz jako "funkcja callback".
+**Warning signs:** "callback" raz jako "wywołanie zwrotne", raz jako "funkcja callback".
 
 ### Pitfall 3: Nieaktualne Informacje Mimo Web Search
 
 **What goes wrong:** Content zawiera przestarzale wersje, deprecated APIs.
 
-**Why it happens:** Web search zwraca stare artykuly, AI nie weryfikuje dat.
+**Why it happens:** Web search zwraca stare artykuły, AI nie weryfikuje dat.
 
 **How to avoid:**
 1. Dodaj rok do search query: "{topic} documentation 2026"
-2. Preferuj oficjalna dokumentacje nad blogposty
+2. Preferuj oficjalna dokumentację nad blogposty
 3. Instrukcja w prompcie: "Weryfikuj wersje oprogramowania"
 4. Extractuj z official docs, nie z random tutoriali
 
@@ -615,31 +615,31 @@ export async function getOrGenerateContent(
 
 ### Pitfall 4: Za Dlugi Content Przekraczajacy Token Limit
 
-**What goes wrong:** Generowanie sie urywa, brak podsumowania lub zakonczenia.
+**What goes wrong:** Generowanie się urywa, brak podsumowania lub zakonczenia.
 
 **Why it happens:** Chapter ma za duzo topics, output przekracza maxOutputTokens.
 
 **How to avoid:**
 1. Limit 3-5 topics per chapter (wymus w curriculum generation)
 2. Ustaw maxOutputTokens: 8192 dla content generation
-3. Jesli chapter duzy - dziel na sub-sections i generuj osobno
-4. Monitoruj token usage, alert jesli blisko limitu
+3. Jeśli chapter duzy - dziel na sub-sections i generuj osobno
+4. Monitoruj token usage, alert jeśli blisko limitu
 
-**Warning signs:** Content konczy sie w polowie zdania, brak sekcji "Podsumowanie".
+**Warning signs:** Content kończy się w polowie zdania, brak sekcji "Podsumowanie".
 
 ### Pitfall 5: Duplikaty Zrodel i Circular References
 
-**What goes wrong:** Te same zrodla cytowane wielokrotnie z roznymi ID, zrodla prowadza do siebie.
+**What goes wrong:** Te same źródła cytowane wielokrotnie z różnymi ID, źródła prowadzą do siebie.
 
-**Why it happens:** Multiple tool calls zwracaja te same results, brak deduplication.
+**Why it happens:** Multiple tool calls zwracają te same results, brak deduplication.
 
 **How to avoid:**
-1. Deduplikuj zrodla po URL przed zapisaniem
-2. Normalizuj URL-e (usun query params, trailing slash)
-3. Limit zrodel na sekcje (max 10)
-4. Waliduj ze zrodla nie sa circular (A cytuje B, B cytuje A)
+1. Deduplikuj źródła po URL przed zapisaniem
+2. Normalizuj URL-e (usuń query params, trailing slash)
+3. Limit źródeł na sekcję (max 10)
+4. Waliduj ze źródła nie są circular (A cytuje B, B cytuje A)
 
-**Warning signs:** 15 zrodel z ktorych 10 to duplikaty, zrodlo "Oficjalna dokumentacja" bez URL.
+**Warning signs:** 15 źródeł z których 10 to duplikaty, źródło "Oficjalna dokumentacja" bez URL.
 
 ## Code Examples
 
@@ -847,9 +847,9 @@ export function SourceList({ sources }: SourceListProps) {
 | Server-side rendering markdown | Client-side with react-markdown | Standard | Interactive, customizable |
 
 **Deprecated/outdated:**
-- `useCompletion` dla content generation - uzyj `streamText` z tools
-- Storing pre-rendered HTML - uzyj markdown source
-- Manual URL scraping - uzyj Tavily extract API
+- `useCompletion` dla content generation - użyj `streamText` z tools
+- Storing pre-rendered HTML - użyj markdown source
+- Manual URL scraping - użyj Tavily extract API
 - Single-language content - track language per section for future
 
 ## Open Questions

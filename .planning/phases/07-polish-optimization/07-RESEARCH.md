@@ -6,9 +6,9 @@
 
 ## Summary
 
-Faza 7 obejmuje cztery kluczowe obszary: (1) audyt i naprawa responsywnego designu dla mobilnych, (2) mechanizm odswiezania bazy wiedzy przez scheduled jobs, (3) dashboard monitorowania kosztow AI, oraz (4) ogolna optymalizacja wydajnosci.
+Faza 7 obejmuje cztery kluczowe obszary: (1) audyt i naprawa responsywnego designu dla mobilnych, (2) mechanizm odświeżania bazy wiedzy przez scheduled jobs, (3) dashboard monitorowania kosztów AI, oraz (4) ogólna optymalizacja wydajności.
 
-Projekt obecnie uzywa Tailwind CSS v4 z shadcn/ui, ale sidebar i layout mają staly padding `pl-60` bez responsywnych breakpointow - wymaga to naprawy dla mobile-first design. Dla scheduled jobs mamy dwie opcje: Vercel Cron Jobs lub Supabase pg_cron. Dla cost monitoring najlepszym rozwiazaniem jest Helicone (otwartoźrodłowy, darmowy tier 10k req/mies, natywna integracja z Vercel AI SDK). Performance optimization obejmuje lazy loading, bundle analysis, i Next.js Image optimization.
+Projekt obecnie używa Tailwind CSS v4 z shadcn/ui, ale sidebar i layout mają stały padding `pl-60` bez responsywnych breakpointow - wymaga to naprawy dla mobile-first design. Dla scheduled jobs mamy dwie opcje: Vercel Cron Jobs lub Supabase pg_cron. Dla cost monitoring najlepszym rozwiazaniem jest Helicone (otwartoźrodłowy, darmowy tier 10k req/mies, natywna integracja z Vercel AI SDK). Performance optimization obejmuje lazy loading, bundle analysis, i Next.js Image optimization.
 
 **Primary recommendation:** Implementuj mobile-first responsive design z collapsible sidebar, uzyj Vercel Cron Jobs dla daily knowledge refresh, zintegruj Helicone dla cost monitoring, i uzyj @next/bundle-analyzer dla identyfikacji optimizacji.
 
@@ -18,8 +18,8 @@ Projekt obecnie uzywa Tailwind CSS v4 z shadcn/ui, ale sidebar i layout mają st
 
 | Library | Version | Purpose | Why Standard |
 |---------|---------|---------|--------------|
-| Tailwind CSS | v4 | Responsive breakpoints (sm, md, lg, xl, 2xl) | Juz w projekcie, natywne breakpoints bez konfiguracji |
-| shadcn/ui | latest | Responsive components (Drawer + Dialog pattern) | Juz w projekcie, gotowe wzorce mobile/desktop |
+| Tailwind CSS | v4 | Responsive breakpoints (sm, md, lg, xl, 2xl) | Już w projekcie, natywne breakpoints bez konfiguracji |
+| shadcn/ui | latest | Responsive components (Drawer + Dialog pattern) | Już w projekcie, gotowe wzorce mobile/desktop |
 | @next/bundle-analyzer | ^0.27 | Analiza bundle size | Oficjalny Vercel plugin, integracja z Next.js |
 | Helicone | SaaS | LLM cost/latency tracking | Open-source, darmowy tier, 1-line integration |
 | Vercel Cron Jobs | platform | Scheduled HTTP requests | Natywna integracja z Next.js, per-minute na Pro |
@@ -31,7 +31,7 @@ Projekt obecnie uzywa Tailwind CSS v4 z shadcn/ui, ale sidebar i layout mają st
 | Library | Version | Purpose | When to Use |
 |---------|---------|---------|-------------|
 | SWR | ^2.2 | Client-side data caching | Dashboard z real-time updates, deduplication |
-| pg_cron | 1.6.4+ | Database-level scheduled jobs | Alternatywa do Vercel Cron jesli potrzeba SQL jobs |
+| pg_cron | 1.6.4+ | Database-level scheduled jobs | Alternatywa do Vercel Cron jeśli potrzeba SQL jobs |
 | Lighthouse CI | latest | Automated performance testing | CI/CD pipeline dla regression testing |
 
 ### Alternatives Considered
@@ -76,7 +76,7 @@ src/
 ```
 
 ### Pattern 1: Responsive Dialog/Drawer
-**What:** Komponent ktory renderuje Dialog na desktop i Drawer na mobile
+**What:** Komponent który renderuje Dialog na desktop i Drawer na mobile
 **When to use:** Modals, forms, detail views
 **Example:**
 ```typescript
@@ -181,7 +181,7 @@ const client = anthropic({
 ```
 
 ### Pattern 5: Lazy Loading Heavy Components
-**What:** Dynamic import dla ciezkich komponentow
+**What:** Dynamic import dla ciężkich komponentów
 **When to use:** Charts, maps, heavy editors
 **Example:**
 ```typescript
@@ -214,7 +214,7 @@ export function CostDashboard({ data }) {
 - **Fixed widths without breakpoints:** Unikaj `w-60` bez `lg:w-60`, dodawaj `w-full lg:w-60`
 - **Missing touch targets:** Przyciski na mobile min 44x44px (`min-h-11 min-w-11`)
 - **Horizontal scroll na mobile:** Unikaj `overflow-x-auto` bez max-width
-- **Node-cron w serverless:** Nie dziala na Vercel/Netlify - uzyj Vercel Cron Jobs
+- **Node-cron w serverless:** Nie działa na Vercel/Netlify - uzyj Vercel Cron Jobs
 - **Eager loading wszystkiego:** Uzyj `next/dynamic` dla heavy components
 - **Custom cost tracking:** Nie buduj wlasnego - Helicone robi to lepiej
 
@@ -229,27 +229,27 @@ Problems that look simple but have existing solutions:
 | Scheduled jobs | `setInterval` / node-cron | Vercel Cron Jobs | Works in serverless, managed |
 | Bundle analysis | Manual inspection | @next/bundle-analyzer | Visual, accurate, maintained |
 | Image optimization | Manual resize | next/image | Automatic optimization, lazy loading |
-| Data caching | Manual cache | SWR / React Query | Deduplication, revalidation, stale-while-revalidate |
+| Data caching | Manual cache | SWR / React Query | Deduplication, revalidation, stałe-while-revalidate |
 
-**Key insight:** Serverless architecture wymaga platform-native scheduling (Vercel Cron), a observability wymaga dedicated tools (Helicone) - custom solutions nie dzialaja lub sa nieoptymalne.
+**Key insight:** Serverless architecture wymaga platform-native scheduling (Vercel Cron), a observability wymaga dedicated tools (Helicone) - custom solutions nie działają lub są nieoptymalne.
 
 ## Common Pitfalls
 
 ### Pitfall 1: Sidebar nie znika na mobile
-**What goes wrong:** Layout ma staly `pl-60` ktory pcha content na mobile
+**What goes wrong:** Layout ma stały `pl-60` który pcha content na mobile
 **Why it happens:** Zaprojektowane desktop-first bez mobile breakpoints
 **How to avoid:** Uzyj `lg:pl-60` zamiast `pl-60`, dodaj mobile navigation
 **Warning signs:** Content uciety na prawej stronie na mobile, horizontal scroll
 
-### Pitfall 2: Vercel Cron nie dziala na Hobby
-**What goes wrong:** Cron jobs nie triggeruja lub sa opoznione o godziny
+### Pitfall 2: Vercel Cron nie działa na Hobby
+**What goes wrong:** Cron jobs nie triggeruja lub są opoznione o godziny
 **Why it happens:** Hobby plan ma limit once per day i +/-59 min precision
-**How to avoid:** Upewnij sie ze projekt jest na Pro plan dla minute-level cron
+**How to avoid:** Upewnij się ze projekt jest na Pro plan dla minute-level cron
 **Warning signs:** Deploy fails z "Hobby accounts are limited to daily cron jobs"
 
-### Pitfall 3: Helicone nie trackuje kosztow
-**What goes wrong:** Dashboard pokazuje 0 kosztow mimo requestow
-**Why it happens:** Trzeba zmienic baseURL na helicone gateway, nie tylko dodac header
+### Pitfall 3: Helicone nie trackuje kosztów
+**What goes wrong:** Dashboard pokazuje 0 kosztów mimo requestow
+**Why it happens:** Trzeba zmienić baseURL na helicone gateway, nie tylko dodać header
 **How to avoid:** Uzyj pattern `baseURL: 'https://[provider].helicone.ai'`
 **Warning signs:** Requests widoczne ale Cost = $0.00
 
@@ -260,16 +260,16 @@ Problems that look simple but have existing solutions:
 **Warning signs:** Bundle analyzer pokazuje te same libraries w multiple chunks
 
 ### Pitfall 5: Mobile tap targets za male
-**What goes wrong:** Uzytkownik nie moze kliknac przyciskow na mobile
+**What goes wrong:** Użytkownik nie może kliknac przyciskow na mobile
 **Why it happens:** Ikony 16x16 lub 24x24 bez padding
 **How to avoid:** Min 44x44px touch targets (Tailwind: `min-h-11 min-w-11`)
 **Warning signs:** Lighthouse accessibility warning "Tap targets are too small"
 
 ### Pitfall 6: Image CLS (Cumulative Layout Shift)
-**What goes wrong:** Strona "skacze" podczas ladowania obrazow
+**What goes wrong:** Strona "skacze" podczas ładowania obrazow
 **Why it happens:** Brak width/height lub aspect-ratio
 **How to avoid:** Zawsze podawaj width/height dla next/image lub uzyj fill z aspect-ratio
-**Warning signs:** Lighthouse CLS > 0.1, widoczne "jumps" podczas ladowania
+**Warning signs:** Lighthouse CLS > 0.1, widoczne "jumps" podczas ładowania
 
 ## Code Examples
 
@@ -404,14 +404,14 @@ SELECT cron.schedule(
 
 | Old Approach | Current Approach | When Changed | Impact |
 |--------------|------------------|--------------|--------|
-| node-cron w serverless | Vercel Cron Jobs / pg_cron | 2023+ | Node-cron nie dziala w serverless, platform cron obowiązkowy |
+| node-cron w serverless | Vercel Cron Jobs / pg_cron | 2023+ | Node-cron nie działa w serverless, platform cron obowiązkowy |
 | Manual cost tracking | Helicone / Langfuse | 2024+ | Automatic tracking, dashboards, alerts out of box |
 | CSS Grid media queries | Tailwind responsive prefixes | 2020+ | Utility-first, less CSS, consistent |
 | webpack-bundle-analyzer | @next/bundle-analyzer | 2023+ | Native integration, less config |
 | Tailwind screens config (JS) | Tailwind v4 @theme (CSS) | 2025 | CSS-first config, --breakpoint-* variables |
 
 **Deprecated/outdated:**
-- `node-cron` w serverless: Nie dziala - process umiera po request
+- `node-cron` w serverless: Nie działa - process umiera po request
 - Manual `window.innerWidth`: SSR issues, uzyj Tailwind breakpoints
 - Custom token counting: Nieprecyzyjne, Helicone robi to automatycznie
 
@@ -420,19 +420,19 @@ SELECT cron.schedule(
 Things that couldn't be fully resolved:
 
 1. **Helicone on Vercel Edge Runtime**
-   - What we know: Helicone dziala z Node.js runtime
-   - What's unclear: Czy Helicone gateway dziala z Edge Runtime (`export const runtime = 'edge'`)
-   - Recommendation: Testuj z Edge, fallback na nodejs jesli problemy
+   - What we know: Helicone działa z Node.js runtime
+   - What's unclear: Czy Helicone gateway działa z Edge Runtime (`export const runtime = 'edge'`)
+   - Recommendation: Testuj z Edge, fallback na nodejs jeśli problemy
 
 2. **Cost data storage dla historical analysis**
-   - What we know: Helicone przechowuje dane, API dostepne
-   - What's unclear: Jak dlugo Helicone przechowuje dane na free tier
+   - What we know: Helicone przechowuje dane, API dostępne
+   - What's unclear: Jak długo Helicone przechowuje dane na free tier
    - Recommendation: Opcjonalnie zapisuj koszty do Supabase dla long-term analysis
 
 3. **pg_cron vs Vercel Cron dla knowledge refresh**
-   - What we know: Oba dzialaja, rozne tradeoffs
-   - What's unclear: Ktory lepszy dla HTTP calls do external APIs (Tavily)
-   - Recommendation: Vercel Cron (HTTP-native), pg_cron tylko jesli potrzeba SQL
+   - What we know: Oba działają, różne tradeoffs
+   - What's unclear: Który lepszy dla HTTP calls do external APIs (Tavily)
+   - Recommendation: Vercel Cron (HTTP-native), pg_cron tylko jeśli potrzeba SQL
 
 ## Sources
 
@@ -477,7 +477,7 @@ Things that couldn't be fully resolved:
    - Sidebar zawsze widoczny (`w-60 fixed`) - brak mobile handling
 
 2. **Sidebar** (`src/components/layout/sidebar.tsx`):
-   - `w-60 fixed` bez breakpoints - nie ukrywa sie na mobile
+   - `w-60 fixed` bez breakpoints - nie ukrywa się na mobile
    - Brak hamburger menu toggle
 
 3. **Header** (`src/components/layout/header.tsx`):
@@ -485,7 +485,7 @@ Things that couldn't be fully resolved:
    - Brak mobile menu button
 
 4. **Chat Component** (`mentor-chat.tsx`):
-   - `max-w-[80%]` - OK dla responsywnosci
+   - `max-w-[80%]` - OK dla responsywności
    - Brak dedicated mobile optimizations
 
 ### Recommended Priority

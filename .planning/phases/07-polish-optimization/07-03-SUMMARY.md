@@ -27,7 +27,7 @@ key-files:
 decisions:
   - type: architecture
     choice: lazy-refresh-flagging
-    reason: Full material regeneration too expensive for daily cron
+    reason: Full materiał regeneration too expensive for daily cron
     alternatives: [full-regeneration, background-jobs]
 
 metrics:
@@ -37,17 +37,17 @@ metrics:
 
 # Phase 7 Plan 03: Knowledge Refresh Cron Summary
 
-Vercel Cron Job dla automatycznego odswiezania wiedzy w dynamicznych domenach (AI, tech, prawo).
+Vercel Cron Job dla automatycznego odświeżania wiedzy w dynamicznych domenach (AI, tech, prawo).
 
 ## One-liner
 
-Codziennie o 5:00 UTC cron oznacza kursy z dynamicznych domen do odswiezenia materialow.
+Codziennie o 5:00 UTC cron oznacza kursy z dynamicznych domen do odświeżenia materiałów.
 
 ## What Was Done
 
 ### Task 1: Dynamic Domain Helpers (44b9669)
 
-Dodano funkcje do identyfikacji kursow wymagajacych odswiezania:
+Dodano funkcje do identyfikacji kursow wymagających odświeżania:
 
 ```typescript
 // src/lib/dal/courses.ts
@@ -62,7 +62,7 @@ export async function getCoursesNeedingRefresh(): Promise<CourseRefreshInfo[]>
 - Crypto: blockchain, web3, bitcoin, ethereum
 - Security: cybersecurity, hacking, pentesting
 
-**Kryteria odswiezania:**
+**Kryteria odświeżania:**
 - Kurs ma status "active"
 - Nie aktualizowany przez 24h
 - Temat zawiera keyword z dynamicznych domen
@@ -104,17 +104,17 @@ await supabase
 
 ## Architectural Decision: Lazy Refresh
 
-**Problem:** Pelna regeneracja materialow w cron byłaby:
+**Problem:** Pełna regeneracja materiałów w cron byłaby:
 - Droga (wiele wywolan AI)
 - Wolna (minuty na kurs)
 - Nieprzewidywalna (limity API)
 
-**Rozwiazanie MVP:** Oznaczamy kursy przez `updated_at`:
+**Rozwiązanie MVP:** Oznaczamy kursy przez `updated_at`:
 1. Cron ustawia nowy timestamp
-2. UI moze pokazac "Dostepne odswiezenie"
+2. UI może pokazać "Dostepne odswiezenie"
 3. User klika "Odswiez" -> regeneracja on-demand
 
-**Future:** Dodac kolumne `needs_refresh: boolean` dla jawnego flagowania.
+**Future:** Dodać kolumne `needs_refresh: boolean` dla jawnego flagowania.
 
 ## API Response Format
 
@@ -179,10 +179,10 @@ Brak - plan wykonany zgodnie ze specyfikacja.
 
 ## Verification Checklist
 
-- [x] isDynamicDomain helper dziala poprawnie
+- [x] isDynamicDomain helper działa poprawnie
 - [x] Cron endpoint utworzony i zabezpieczony CRON_SECRET
 - [x] vercel.json z cron configuration
-- [x] Build przechodzi bez bledow
+- [x] Build przechodzi bez błędów
 - [x] Endpoint ma 127 linii (min 50)
 
 ## Next Phase Readiness

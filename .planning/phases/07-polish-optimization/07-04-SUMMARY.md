@@ -60,7 +60,7 @@ completed: 2026-01-31
 
 ## Accomplishments
 
-- Bundle analyzer dostepny przez `ANALYZE=true npm run build`
+- Bundle analyzer dostępny przez `ANALYZE=true npm run build`
 - MentorChat lazy-loaded z loading skeleton (zmniejsza initial bundle)
 - SWR zainstalowany i gotowy do uzycia
 - Image optimization (AVIF/WebP) i tree-shaking ikon skonfigurowane
@@ -84,9 +84,9 @@ Each task was committed atomically:
 
 ## Decisions Made
 
-- **Lazy load pattern:** `ssr: false` dla komponentow uzywajacych client hooks (useChat)
-- **Loading skeleton:** Dopasowany do wymiarow MentorChat dla minimalnego layout shift
-- **Bundle analyzer trigger:** Przez env var, nie zawsze wlaczony (performance)
+- **Lazy load pattern:** `ssr: false` dla komponentów używających client hooks (useChat)
+- **Loading skeleton:** Dopasowany do wymiarów MentorChat dla minimalnego layout shift
+- **Bundle analyzer trigger:** Przez env var, nie zawsze włączony (performance)
 - **Image optimization:** AVIF jako primary (best compression), WebP jako fallback
 
 ## Deviations from Plan
@@ -110,7 +110,7 @@ None - no external service configuration required.
 - 07-03: Knowledge refresh cron job
 - 07-04: Performance optimization (bundle analyzer, lazy loading)
 
-**Projekt gotowy do produkcji.** Wszystkie 33 plany z 7 faz ukonczone.
+**Projekt gotowy do produkcji.** Wszystkie 33 plany z 7 faz ukończone.
 
 ---
 *Phase: 07-polish-optimization*

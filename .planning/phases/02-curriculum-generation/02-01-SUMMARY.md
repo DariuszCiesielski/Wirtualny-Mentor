@@ -32,7 +32,7 @@ key-files:
   modified: []
 
 key-decisions:
-  - "5 fixed levels: Poczatkujacy -> Srednio zaawansowany -> Zaawansowany -> Master -> Guru"
+  - "5 fixed levels: Początkujący -> Średnio zaawansowany -> Zaawansowany -> Master -> Guru"
   - "RLS via course_id join for nested tables (levels, chapters, outcomes)"
   - "UUID arrays for tracking completion instead of join tables"
   - "Automatic updated_at/last_activity_at via PostgreSQL triggers"
@@ -62,7 +62,7 @@ completed: 2026-01-30
 ## Accomplishments
 
 - Kompletny schemat bazy danych dla curriculum (6 tabel)
-- 24 RLS policies dla pelnej izolacji danych uzytkownikow
+- 24 RLS policies dla pełnej izolacji danych użytkowników
 - TypeScript types dla wszystkich encji bazy danych
 - DAL z 12 funkcjami dla course CRUD i progress tracking
 - Triggery dla automatycznych timestampow
@@ -81,7 +81,7 @@ completed: 2026-01-30
 
 ## Decisions Made
 
-1. **5 stalych poziomow w jezyku polskim** - Poczatkujacy, Srednio zaawansowany, Zaawansowany, Master, Guru - zamiast dynamicznych level names, dla spojnosci UI
+1. **5 stalych poziomow w jezyku polskim** - Początkujący, Średnio zaawansowany, Zaawansowany, Master, Guru - zamiast dynamicznych level names, dla spójności UI
 2. **UUID arrays dla completion tracking** - `completed_chapters UUID[]` zamiast join table - prostsze queries i atomowe updates
 3. **RLS via course_id join** - Nested tables (levels, outcomes, chapters) sprawdzaja ownership przez `EXISTS (SELECT 1 FROM courses WHERE ...)`
 4. **ON DELETE CASCADE** - Usuwanie kursu automatycznie usuwa wszystkie nested data
@@ -104,7 +104,7 @@ None.
 
 - Schemat gotowy do uzycia przez curriculum generation API
 - DAL funkcje gotowe do integracji z server actions
-- TypeScript types moga byc importowane w komponentach
+- TypeScript types mogą być importowane w komponentach
 - Brakuje: API routes dla curriculum generation, UI komponenty
 
 ---

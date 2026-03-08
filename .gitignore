@@ -50,3 +50,6 @@ supabase/.temp/
 .mcp.json
 .claude/settings.local.json
 .claude/plans/
+
+# Komunikacja Claude Code <-> Codex
+.codex/

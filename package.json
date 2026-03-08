@@ -6,7 +6,18 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "ai:status": "node scripts/ai-bridge.mjs status",
+    "ai:run": "node scripts/ai-bridge.mjs run-once",
+    "ai:loop": "node scripts/ai-bridge.mjs loop",
+    "ai:unlock": "node scripts/ai-bridge.mjs unlock",
+    "ai:health": "node scripts/ai-bridge.mjs health",
+    "ai:mode": "node scripts/ai-bridge.mjs mode",
+    "ai:mode:auto": "node scripts/ai-bridge.mjs mode auto",
+    "ai:mode:codex": "node scripts/ai-bridge.mjs mode codex-only",
+    "ai:mode:claude": "node scripts/ai-bridge.mjs mode claude-only",
+    "ai:mode:pause": "node scripts/ai-bridge.mjs mode manual-pause",
+    "ai:ui": "node scripts/ai-bridge-ui.mjs"
   },
   "dependencies": {
     "@ai-sdk/anthropic": "^3.0.31",

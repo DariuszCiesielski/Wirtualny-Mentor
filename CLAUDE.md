@@ -19,6 +19,7 @@ npm run dev              # Serwer deweloperski (localhost:3000)
 npm run build            # Build produkcyjny
 npm run lint             # ESLint
 ANALYZE=true npm run build  # Bundle analyzer
+npm run ai:ui            # AI Bridge — terminalowy panel koordynacji agentów
 ```
 
 ## Konwencje
@@ -331,3 +332,13 @@ Typ: `LevelName` w `src/types/database.ts`
 // Focus Panel Sheet: max-h-[80vh] (NIE h-[85vh]), rounded-t-xl
 // WAŻNE: min-w-0 na flex child z truncate (inaczej flexbox nie pozwoli skurczyć)
 ```
+
+## Multi-Agent Coordination
+
+1. Przed edycją przeczytaj `.ai/PROJECT-STATE.md`, ostatnie handoffy i aktywne lease'y.
+2. Pracuj tylko w przydzielonym zakresie i `allowed_paths`.
+3. Jeśli inny agent ma nakładający się zakres, zatrzymaj się i zgłoś `BLOCKED`.
+4. Preferuj osobny branch lub worktree per zadanie.
+5. Na koniec sesji zapisz handoff do `.ai/handoffs/` i zaktualizuj `.ai/PROJECT-STATE.md`.
+6. Nigdy nie przechowuj sekretów w `.ai/*`.
+7. Używaj GSD tylko gdy jest wyraźnie zażądane.

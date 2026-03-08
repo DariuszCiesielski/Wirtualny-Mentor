@@ -1,0 +1,42 @@
+{
+  "pollIntervalSeconds": 20,
+  "timeouts": {
+    "codexSeconds": 1800,
+    "claudeSeconds": 1800,
+    "checkSeconds": 900,
+    "healthSeconds": 20
+  },
+  "checks": [
+    "npm run build",
+    "npm run lint"
+  ],
+  "safety": {
+    "maxAutoTasksPerRun": 1,
+    "autoCreateNextTask": false,
+    "requireClaudeAcceptance": true
+  },
+  "mode": {
+    "default": "auto",
+    "recoverToAuto": true
+  },
+  "gsd": {
+    "useInClaudePrompt": false,
+    "instruction": "Use GSD workflow for structured execution and verification."
+  },
+  "paths": {
+    "protocol": ".codex/PROTOCOL.md",
+    "tasksDir": ".codex/tasks",
+    "reportsDir": ".codex/reports",
+    "archivedDir": ".codex/archived",
+    "stateDir": ".codex/state",
+    "logsDir": ".codex/logs"
+  },
+  "commands": {
+    "codexBin": "codex",
+    "claudeBin": "claude"
+  },
+  "models": {
+    "codex": "",
+    "claude": ""
+  }
+}

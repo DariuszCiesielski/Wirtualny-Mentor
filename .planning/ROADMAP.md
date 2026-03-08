@@ -230,10 +230,12 @@ Plans:
 **Plans**: 4 plans in 3 waves
 
 Plans:
-- [ ] 08-01-PLAN.md — DB migration, typy, schematy, DAL, prompts, provider config, shadcn Popover+Command
-- [ ] 08-02-PLAN.md — Komponent Combobox, formularz BusinessProfileForm, strona /onboarding
-- [ ] 08-03-PLAN.md — Chat AI onboardingu (API + UI), banner na dashboardzie
-- [ ] 08-04-PLAN.md — Integracja: flow /onboarding, edycja w /profile, curriculum prompt injection
+- [x] 08-01-PLAN.md — DB migration, typy, schematy, DAL, prompts, provider config, shadcn Popover+Command ✓
+- [x] 08-02-PLAN.md — Komponent Combobox, formularz BusinessProfileForm, strona /onboarding ✓
+- [x] 08-03-PLAN.md — Chat AI onboardingu (API + UI), banner na dashboardzie ✓
+- [x] 08-04-PLAN.md — Integracja: flow /onboarding, edycja w /profile, curriculum prompt injection ✓
+
+**Completed:** 2026-03-08
 
 ---
 
@@ -276,14 +278,14 @@ v2.0: 8 -> 9 -> 10
 | 5. Notes System & Embeddings | 5/5 | Complete | 2026-01-31 |
 | 6. Mentor Chatbot | 3/3 | Complete | 2026-01-31 |
 | 7. Polish & Optimization | 4/4 | Complete | 2026-01-31 |
-| 8. Business Onboarding | 0/4 | Planned | — |
+| 8. Business Onboarding | 4/4 | Complete | 2026-03-08 |
 | 9. Business Suggestions | 0/? | Pending | — |
 | 10. Business Ideas & Lead Generation | 0/? | Pending | — |
 
 **v1.0 Total:** 33/33 plans complete (100%)
-**v2.0 Total:** 0/4+ plans (0%) — phase 8 planned
+**v2.0 Total:** 4/4+ plans (~33%) — phase 8 complete
 
 ---
 *Roadmap created: 2025-01-30*
 *v2.0 phases added: 2026-03-08*
-*Last updated: 2026-03-08*
+*Last updated: 2026-03-08 — phase 8 complete*

@@ -85,12 +85,12 @@ Requirements for milestone v2.0. Each maps to roadmap phases (starting from Phas
 
 ### Business Onboarding
 
-- [ ] **ONB-01**: Uzytkownik moze wypelnic formularz profilu biznesowego (branza, rola, cel, wielkosc firmy)
-- [ ] **ONB-02**: Uzytkownik moze opcjonalnie doprecyzowac profil w krotkim chacie z AI (2-3 pytania)
-- [ ] **ONB-03**: AI generuje podsumowanie profilu (experience_summary) z odpowiedzi chatu
-- [ ] **ONB-04**: Dashboard wyswietla banner zachecajacy do uzupelnienia profilu (dopoki onboarding nie ukonczony)
-- [ ] **ONB-05**: Uzytkownik moze edytowac profil biznesowy ze strony /profile
-- [ ] **ONB-06**: Profil biznesowy wplywa na generowanie kursow (wstrzykniecie kontekstu do ClarifyingChat)
+- [x] **ONB-01**: Uzytkownik moze wypelnic formularz profilu biznesowego (branza, rola, cel, wielkosc firmy)
+- [x] **ONB-02**: Uzytkownik moze opcjonalnie doprecyzowac profil w krotkim chacie z AI (2-3 pytania)
+- [x] **ONB-03**: AI generuje podsumowanie profilu (experience_summary) z odpowiedzi chatu
+- [x] **ONB-04**: Dashboard wyswietla banner zachecajacy do uzupelnienia profilu (dopoki onboarding nie ukonczony)
+- [x] **ONB-05**: Uzytkownik moze edytowac profil biznesowy ze strony /profile
+- [x] **ONB-06**: Profil biznesowy wplywa na generowanie kursow (wstrzykniecie kontekstu do ClarifyingChat)
 
 ### Business Suggestions
 
@@ -223,12 +223,12 @@ Which phases cover which requirements. Updated during roadmap creation.
 | UX-03 | Phase 2 | Complete |
 | UX-04 | Phase 2 | Complete |
 | UX-05 | Phase 1 | Complete |
-| ONB-01 | Phase 8 | Pending |
-| ONB-02 | Phase 8 | Pending |
-| ONB-03 | Phase 8 | Pending |
-| ONB-04 | Phase 8 | Pending |
-| ONB-05 | Phase 8 | Pending |
-| ONB-06 | Phase 8 | Pending |
+| ONB-01 | Phase 8 | Complete |
+| ONB-02 | Phase 8 | Complete |
+| ONB-03 | Phase 8 | Complete |
+| ONB-04 | Phase 8 | Complete |
+| ONB-05 | Phase 8 | Complete |
+| ONB-06 | Phase 8 | Complete |
 | SUG-01 | Phase 9 | Pending |
 | SUG-02 | Phase 9 | Pending |
 | SUG-03 | Phase 9 | Pending |
@@ -258,4 +258,4 @@ Which phases cover which requirements. Updated during roadmap creation.
 ---
 *Requirements defined: 2025-01-30*
 *v2.0 requirements added: 2026-03-08*
-*Last updated: 2026-03-08 — v2.0 traceability complete*
+*Last updated: 2026-03-08 — ONB-01..06 complete (phase 8)*

@@ -10,61 +10,42 @@ Każdy może nauczyć się czegokolwiek dzięki spersonalizowanemu, aktualnemu p
 
 ## Requirements
 
-### Validated
+### Validated (v1.0 — shipped)
 
-(None yet — ship to validate)
+**Program nauczania:** Temat/link → pytania doprecyzowujące → 5-poziomowy kurs (Początkujący → Guru) z materiałami, linkami, instrukcjami
+**Praktyczne instrukcje:** Narzędzia z linkami, instalacja krok po kroku, komendy z wyjaśnieniami
+**System oceny:** Quizy, testy końcowe, progresja poziomów, skip, remediacja, powtarzanie
+**Chatbot mentor:** Metoda sokratyczna, RAG z notatek, coaching, streaming
+**Notatki:** CRUD, linkowanie do lekcji, embedding w pgvector, search
+**Aktualna wiedza:** Tavily web search, analiza linków, cytowanie źródeł
+**Konto:** Rejestracja, logowanie, profil, postęp, historia
+**Dodatkowe (post-v1):** Focus Panel (Pomodoro + sounds), Gamification (punkty + odznaki), Lesson Images (AI + stock), Materiały źródłowe (PDF/DOCX/TXT → RAG), Inline Mentor Chat
 
 ### Active
 
-**Program nauczania:**
-- [ ] Użytkownik podaje temat lub link do źródła
-- [ ] AI zadaje pytania doprecyzowujące (cele, doświadczenie, dostępny czas)
-- [ ] AI generuje spersonalizowany program z 5 poziomami (Początkujący → Średnio zaawansowany → Zaawansowany → Master → Guru)
-- [ ] Każdy poziom zawiera szczegółowe materiały jak w podręczniku
-- [ ] Materiały zawierają linki do zewnętrznych zasobów (dokumentacje, kursy, artykuły)
+## Current Milestone: v2.0 Business Enablement
 
-**Praktyczne instrukcje:**
-- [ ] AI podaje konkretne narzędzia z linkami
-- [ ] Instrukcje instalacji krok po kroku
-- [ ] Komendy do użycia z wyjaśnieniami
-- [ ] Oczekiwane wyniki i jak je interpretować
+**Goal:** Przekształcenie platformy edukacyjnej w narzędzie generujące wartość biznesową — onboarding poznaje użytkownika, AI proponuje pomysły na narzędzia przy lekcjach, lead generation kieruje do kontaktu.
 
-**System oceny:**
-- [ ] Quizy sprawdzające wiedzę w trakcie nauki
-- [ ] Test końcowy na każdym poziomie
-- [ ] Przejście do następnego poziomu po zdaniu testu
-- [ ] Możliwość ręcznego przeskoczenia poziomu (dla zaawansowanych)
-- [ ] Dodatkowe materiały przy błędnych odpowiedziach
-- [ ] Możliwość powtórzenia testu
+**Target features:**
+- Onboarding biznesowy (hybryda: formularz + opcjonalny chat AI)
+- Sugestie narzędzi biznesowych (AI analizuje lekcję + profil, na żądanie)
+- Strona pomysłów biznesowych (zbiorcza z filtrem po kursie)
+- Lead generation (warunkowe CTA kontaktowe)
+- Wpływ profilu na generowanie kursów (lepsze dopasowanie)
 
-**Chatbot mentor:**
-- [ ] Odpowiada na pytania użytkownika (nawet zaawansowane)
-- [ ] Wspiera i motywuje
-- [ ] Ma dostęp do notatek użytkownika
-- [ ] Pełni rolę mentora/nauczyciela/coacha
+**Design doc:** `docs/plans/2026-03-08-business-onboarding-design.md`
 
-**Notatki:**
-- [ ] Użytkownik może tworzyć własne notatki podczas nauki
-- [ ] Notatki zapisywane i dostępne później
-- [ ] Chatbot może odwoływać się do notatek
+### Out of Scope (v2.0)
 
-**Aktualna wiedza:**
-- [ ] Integracja z web search (aktualne informacje)
-- [ ] Odświeżanie bazy wiedzy dla dynamicznych dziedzin (codziennie)
-- [ ] AI może analizować linki podane przez użytkownika
-
-**Konto użytkownika:**
-- [ ] Rejestracja i logowanie
-- [ ] Zapisywanie postępu nauki
-- [ ] Historia ukończonych kursów
-
-### Out of Scope
-
-- Aplikacja mobilna (natywna) — web-first, mobile później
+- Aplikacja mobilna (natywna) — web-first
 - Generowanie podcastów/audio — skupiamy się na tekście
 - Społeczność/forum — użytkownik uczy się sam z AI
 - Certyfikaty/dyplomy — nie wydajemy oficjalnych certyfikatów
-- Płatności/subskrypcje w v1 — najpierw działający produkt
+- Klucze API użytkownika (user_api_keys) — osobna faza
+- Freemium (limity, billing, subscription) — osobna faza
+- White-label (platform_contact_settings w DB) — osobna faza
+- Analityka interakcji (business_suggestion_interactions) — osobna faza
 
 ## Context
 
@@ -104,4 +85,4 @@ Każdy może nauczyć się czegokolwiek dzięki spersonalizowanemu, aktualnemu p
 | 5 poziomów nauczania | Początkujący → Guru daje jasną ścieżkę rozwoju | — Pending |
 
 ---
-*Last updated: 2025-01-30 after initialization*
+*Last updated: 2026-03-08 — milestone v2.0 Business Enablement started*

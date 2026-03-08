@@ -22,6 +22,7 @@ import {
 import { searchWeb, extractUrls } from "@/lib/tavily/client";
 import { getDocumentsByIds, searchChunksSemantic } from "@/lib/dal/source-documents";
 import { z } from "zod";
+import { getBusinessProfile } from "@/lib/onboarding/onboarding-dal";
 
 const requestSchema = z.object({
   userInfo: z.object({
@@ -135,6 +136,24 @@ ${standardsSearch.results.map((r) => `- ${r.title}: ${r.content.slice(0, 200)}`)
       ? CURRICULUM_FROM_MATERIALS_SYSTEM_PROMPT
       : CURRICULUM_SYSTEM_PROMPT;
 
+    // ===== BUSINESS PROFILE CONTEXT =====
+    let businessContext = "";
+    const businessProfile = await getBusinessProfile();
+    if (businessProfile) {
+      const parts = [
+        "## Kontekst biznesowy użytkownika:",
+        `- Branża: ${businessProfile.industry}`,
+        `- Rola: ${businessProfile.role}`,
+        `- Cel: ${businessProfile.business_goal}`,
+        businessProfile.experience_summary
+          ? `- Doświadczenie: ${businessProfile.experience_summary}`
+          : null,
+        "",
+        "Dostosuj przykłady i case studies do branży użytkownika.",
+      ];
+      businessContext = parts.filter(Boolean).join("\n");
+    }
+
     // ===== GENERATE CURRICULUM =====
     const result = streamObject({
       model: getModel("curriculum"),
@@ -148,6 +167,7 @@ ${standardsSearch.results.map((r) => `- ${r.title}: ${r.content.slice(0, 200)}`)
 - Doswiadczenie: ${userInfo.experience === "beginner" ? "Poczatkujacy" : userInfo.experience === "intermediate" ? "Srednio zaawansowany" : "Zaawansowany"}
 - Dostepny czas: ${userInfo.weeklyHours} godzin tygodniowo
 
+${businessContext}
 ${materialContext}
 ${searchResults}
 ${sourceContent}

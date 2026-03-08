@@ -14,6 +14,7 @@ import {
   CLARIFYING_WITH_MATERIALS_SYSTEM_PROMPT,
 } from "@/lib/ai/curriculum/prompts";
 import { getDocumentsByIds } from "@/lib/dal/source-documents";
+import { getBusinessProfile } from "@/lib/onboarding/onboarding-dal";
 
 // Convert UIMessage format (parts) to CoreMessage format (content)
 interface UIMessagePart {
@@ -72,6 +73,27 @@ export async function POST(req: Request) {
       } catch (err) {
         console.warn("[clarify] Failed to load document summaries:", err);
       }
+    }
+
+    // Inject business profile context if available
+    const businessProfile = await getBusinessProfile();
+    if (businessProfile) {
+      const businessContext = [
+        "\n\nKONTEKST BIZNESOWY UŻYTKOWNIKA:",
+        `- Branża: ${businessProfile.industry}`,
+        `- Rola: ${businessProfile.role}`,
+        `- Cel biznesowy: ${businessProfile.business_goal}`,
+        businessProfile.experience_summary
+          ? `- Podsumowanie: ${businessProfile.experience_summary}`
+          : null,
+        "",
+        "Zadaj 1-2 pytania doprecyzowujące w kontekście biznesowym użytkownika.",
+        "Proponuj praktyczne przykłady z branży użytkownika.",
+      ]
+        .filter(Boolean)
+        .join("\n");
+
+      systemPrompt += businessContext;
     }
 
     const result = streamText({
